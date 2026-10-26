@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run the Inference CLI in the Conda environment simai.
+set -eu
+inference_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+exec "$inference_root/joint_scheduling/jsim" "$@"

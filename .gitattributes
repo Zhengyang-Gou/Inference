@@ -1,0 +1,2 @@
+# Identify dependency code in repository statistics.
+third_party/** linguist-vendored=true

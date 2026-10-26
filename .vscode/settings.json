@@ -1,4 +1,3 @@
 {
-    "python-envs.defaultEnvManager": "ms-python.python:conda",
-    "python-envs.defaultPackageManager": "ms-python.python:conda"
+    "python.defaultInterpreterPath": "/home/m0nesy/miniconda3/envs/simai/bin/python"
 }

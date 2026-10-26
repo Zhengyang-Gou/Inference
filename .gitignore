@@ -1,0 +1,32 @@
+# Python caches (simai is managed by Conda outside the repository)
+__pycache__/
+*.py[cod]
+
+# Generated builds, experiment results and local scratch files
+/joint_scheduling/artifacts/
+/artifacts/
+/bin/
+/work/
+/.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Optional third-party tools: generated files only (ASTRA's build/ has sources).
+/third_party/simccl/src/build/
+/third_party/simccl/results/
+/third_party/aicb/results/
+/third_party/aicb/workload/aiob_inputs/
+/third_party/vidur/vidur/data/aicb_workload/
+/third_party/vidur/simulator_output/
+/third_party/astra_sim/build/*/build/
+/third_party/astra_sim/build/*/result/
+*.egg-info/
+
+# Editor and operating-system temporary files
+*.swp
+*.swo
+*~
+.DS_Store

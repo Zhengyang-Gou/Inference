@@ -1,0 +1,49 @@
+name: Inference baseline regression
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'inference'
+      - 'environment.yml'
+      - 'joint_scheduling/**'
+      - 'third_party/**'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'scripts/**'
+      - '.github/workflows/inference.yml'
+  pull_request:
+    paths:
+      - 'inference'
+      - 'environment.yml'
+      - 'joint_scheduling/**'
+      - 'third_party/**'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'scripts/**'
+      - '.github/workflows/inference.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v4
+        with:
+          activate-environment: ""
+          auto-activate: false
+      - name: Create project environment
+        run: ./joint_scheduling/bootstrap.sh
+      - name: Build vendored network backend
+        run: ./inference backend build --jobs 2
+      - name: Check backend readiness
+        run: ./inference backend doctor
+      - name: Check metrics, resources, network and end-to-end replay
+        run: ./joint_scheduling/check.sh

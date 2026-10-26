@@ -1,0 +1,12 @@
+#!/bin/sh
+# Use simai without changing the caller's directory or requiring activation.
+set -eu
+if [ "${CONDA_DEFAULT_ENV:-}" = simai ] && [ -x "${CONDA_PREFIX:-}/bin/python" ]; then
+    exec "$CONDA_PREFIX/bin/python" "$@"
+fi
+task_conda=${CONDA_EXE:-conda}
+if ! command -v "$task_conda" >/dev/null 2>&1; then
+    printf '%s\n' 'Conda is unavailable. Initialize Conda and run ./joint_scheduling/bootstrap.sh.' >&2
+    exit 2
+fi
+exec "$task_conda" run --no-capture-output --name simai python "$@"

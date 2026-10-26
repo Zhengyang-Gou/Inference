@@ -1,0 +1,74 @@
+{
+  "format": "inference-third-party-v1",
+  "integration_mode": "ordinary_source_files_no_submodules",
+  "components": [
+    {
+      "name": "ns3",
+      "path": "third_party/ns3",
+      "upstream_repository": "https://github.com/aliyun/ns-3-alibabacloud",
+      "upstream_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+      "license_file": "third_party/ns3/LICENSE",
+      "license": "GPL-2.0 (see per-file headers)",
+      "role": "active_network_backend",
+      "source_manifest": "third_party/ns3/SOURCE_MANIFEST.json",
+      "local_changes": [
+        "Remove upstream Git metadata, an editor swap file and documentation outside simulation/.",
+        "Build compatibility overlays are applied only in isolated build copies."
+      ]
+    },
+    {
+      "name": "vidur",
+      "path": "third_party/vidur",
+      "upstream_repository": "https://github.com/aliyun/SimAI",
+      "upstream_revision": "a57d765c5478f319c5f5ab6fdc53f9cc7f461743",
+      "upstream_path": "vidur-alibabacloud",
+      "license_file": "third_party/vidur/LICENSE",
+      "license": "MIT",
+      "role": "inference_reference",
+      "local_changes": [
+        "Preserve existing P/D implementation and local path adaptations.",
+        "Remove upstream marketing images and repository management files."
+      ]
+    },
+    {
+      "name": "aicb",
+      "path": "third_party/aicb",
+      "upstream_repository": "https://github.com/aliyun/aicb",
+      "upstream_revision": "23eec3c48ca2d2d93dd888a4c7b22ab4421e782f",
+      "license_file": "third_party/aicb/License",
+      "license": "Apache-2.0",
+      "role": "inference_workload_reference",
+      "local_changes": [
+        "Retain inference workload generators, mocked inference models and shared utilities.",
+        "Remove training entrypoints/models, unused get_comp_out, old reports, downloads and marketing assets."
+      ]
+    },
+    {
+      "name": "simccl",
+      "path": "third_party/simccl",
+      "upstream_repository": "https://github.com/aliyun/SimCCL",
+      "upstream_revision": "fd7cd57d16f9bd42e3ccb70911c977e18ec294b9",
+      "license_file": "third_party/simccl/LICENSE",
+      "license": "Apache-2.0",
+      "role": "collective_communication_reference",
+      "local_changes": [
+        "Preserve existing Inference sibling paths for ASTRA and mock includes.",
+        "Remove upstream repository metadata and documentation assets."
+      ]
+    },
+    {
+      "name": "astra_sim",
+      "path": "third_party/astra_sim",
+      "upstream_repository": "https://github.com/aliyun/SimAI",
+      "upstream_revision": "a57d765c5478f319c5f5ab6fdc53f9cc7f461743",
+      "upstream_path": "astra-sim-alibabacloud",
+      "license_file": "third_party/astra_sim/LICENSE",
+      "license": "MIT",
+      "role": "collective_support_and_legacy_reference",
+      "local_changes": [
+        "Preserve existing CMake, SimCCL, configuration and local log-path adaptations.",
+        "Original simulator build scripts are retained as reference and are not the active Inference backend."
+      ]
+    }
+  ]
+}
