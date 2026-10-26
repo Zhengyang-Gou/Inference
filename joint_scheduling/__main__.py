@@ -1,4 +1,4 @@
-"""Configuration, trace evaluation and offline plotting; no simulator is launched."""
+"""Workload generation, baseline simulation, observation and experiment suites."""
 
 import argparse
 import json
@@ -43,8 +43,35 @@ def main(argv=None):
     demo.add_argument("--output", required=True, type=Path)
     demo.add_argument("--strategy", default="synthetic_demo")
     demo.add_argument("--seed", type=int, default=7)
+    generate = commands.add_parser("generate-workload", help="生成可重复的请求到达、长度和 SLO 负载")
+    generate.add_argument("--spec", type=Path, required=True)
+    generate.add_argument("--output", type=Path, required=True)
+    generate.add_argument("--seed", type=int, help="覆盖负载规格中的随机种子")
+    experiments = commands.add_parser("run-experiments", help="串行执行参数矩阵并汇总结果和失败记录")
+    experiments.add_argument("--spec", type=Path, required=True)
+    experiments.add_argument("--output", type=Path, required=True)
+    experiments.add_argument("--plot", action="store_true")
+    experiments.add_argument("--fail-fast", action="store_true")
+    experiments.add_argument("--dry-run", action="store_true", help="仅显示运行计划，不创建输出或启动网络后端")
     args = parser.parse_args(argv)
     try:
+        if args.command == "generate-workload":
+            from .backend.runtime import read_json
+            from .workload import write_workload
+            workload = write_workload(read_json(args.spec), args.output, args.seed)
+            print("已生成 {} 个请求：{}".format(len(workload["requests"]), args.output.resolve()))
+            return 0
+        if args.command == "run-experiments":
+            from .experiments import plan_suite, run_suite
+            if args.dry_run:
+                plan = plan_suite(args.spec)
+                print(json.dumps({"total_runs": len(plan["runs"]), "runs": plan["runs"]}, ensure_ascii=False, indent=2))
+                return 0
+            report = run_suite(args.spec, args.output, args.plot, args.fail_fast,
+                               progress=lambda row: print("{}: {}{}".format(row["run_id"], row["status"],
+                                   " — " + row["error"] if row.get("error") else ""), flush=True))
+            print("实验汇总：{}".format(args.output.resolve() / "summary.json"))
+            return 0 if report["status"] == "completed" else 2
         # Toolchain operations must remain usable even if an experiment config
         # is temporarily missing or invalid while the user edits it.
         if args.command == "backend":

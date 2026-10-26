@@ -4,7 +4,7 @@ Inference 是面向大模型 Prefill–Decode 分离推理的调度研究仓库�
 
 当前可运行的是 **CPU 上的真实 ns-3 网络简单基线**：请求到达 → P 计算与集合通信 → 返回首 token → 整份 KV 交接 → D 输出后续 token → 导出指标与图表。已实现配置校验、拓扑、物理对象容量账本、统一时间与网络反馈、统计和绘图；**联合优化、逐层 KV 就绪与 SLO 启动门控尚未实现**。
 
-这是独立维护的 Inference 项目。第三方源码以普通文件保存在 `third_party/`，构建不依赖嵌套 Git 仓库或 Git 子模块。第三方代码的来源和许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+这是独立维护的 Inference 项目。第三方源码以普通文件保存在 `third_party/`，构建不依赖嵌套 Git 仓库或 Git 子模块。第三方代码的来源、版本和各组件许可证路径见 [组件清单](third_party/manifest.json)。
 
 ## 目录与职责
 
@@ -19,7 +19,10 @@ Inference/
 │   ├── reservations/              # 物理对象、共享引用和读依赖账本
 │   ├── feedback/                  # 统一时钟与依赖完成接口
 │   ├── backend/                   # ns-3 适配器和简单请求基线
-│   └── evaluation/                # 请求/token 轨迹、统计与绘图
+│   ├── evaluation/                # 请求/token 轨迹、统计与绘图
+│   ├── workload/                  # 到达过程、请求长度和 SLO 负载生成
+│   ├── observation/               # 运行状态、延迟观测和状态时间线
+│   └── experiments/               # 参数矩阵、多 seed 实验与汇总
 ├── third_party/                   # 保留来源及许可的第三方源码
 │   ├── ns3/                       # 当前基线使用的网络后端
 │   ├── vidur/                     # 保留的推理仿真参考实现
@@ -27,7 +30,6 @@ Inference/
 │   ├── simccl/                    # 保留的集合通信流量模型
 │   ├── astra_sim/                 # 保留的计算/通信仿真框架
 │   └── manifest.json              # 第三方组件来源与版本记录
-├── THIRD_PARTY_NOTICES.md          # 第三方许可、来源与裁剪说明
 ├── scripts/check_repository.py     # 独立仓库结构与网络源码完整性检查
 ├── joint_scheduling_explanation.md # 研究方案与目标
 ├── assets/                        # 方案图
@@ -36,7 +38,9 @@ Inference/
 
 `third_party/vidur` 等保留组件尚未接入当前请求基线。当前执行器使用独立的轮询/FIFO 规则，不复刻完整 Vidur/Sarathi 批处理，也不支持连续批处理、PP/EP 或共享前缀命中加速。
 
-外层 Git 仓库由本项目独立管理；`SimAI/`、嵌套 Git、上游子模块和上游工作流已移除。保留的第三方源码随本仓库一起维护，原版权和许可见上述说明。AICB 已裁去训练入口、训练模型、安装包和历史示例结果。
+这些参考组件保留用于后续批处理、性能采样和集合通信接入。ns-3 已裁去无关无线/移动网络及上游示例，保留当前依赖与后续拓扑、通信观测和并行仿真代码；保留依据见 [第三方目录说明](third_party/README.md)。
+
+外层 Git 仓库由本项目独立管理；`SimAI/`、嵌套 Git、上游子模块和上游工作流已移除。保留的第三方源码随本仓库一起维护，原版权和许可保留在各组件中，路径见组件清单。AICB 已裁去训练入口、训练模型、安装包和历史示例结果。
 
 ## 快速运行
 
@@ -56,6 +60,21 @@ conda activate simai
 `bootstrap.sh` 创建或更新 `simai`，显式使用 conda-forge 安装 Python 3.12，再从项目 requirements 安装运行依赖；根目录 `environment.yml` 同步记录环境定义。`./inference` 和 `check.sh` 会自动调用 `simai`；手动运行 Python 时先执行 `conda activate simai`。
 
 当前网络模型使用服务器共享全双工 NIC、ECMP、RDMA 与拥塞控制；节点内通信采用共享局部 FIFO 链路。计算时间来自离线采样，计算文件不得重复包含本后端显式模拟的通信时间。详见 [后端说明](joint_scheduling/backend/README.md)。
+
+## 负载生成、状态观测与批量实验
+
+```bash
+./inference generate-workload --spec joint_scheduling/configs/workload_example.json --output joint_scheduling/artifacts/generated-workload.json
+./inference --config joint_scheduling/configs/baseline_smoke.json run-baseline --workload joint_scheduling/artifacts/generated-workload.json --output joint_scheduling/artifacts/generated-run --plot
+./inference run-experiments --spec joint_scheduling/configs/experiments_example.json --output joint_scheduling/artifacts/suite-example --dry-run
+./inference run-experiments --spec joint_scheduling/configs/experiments_example.json --output joint_scheduling/artifacts/suite-example
+```
+
+[负载生成](joint_scheduling/workload/README.md) 支持周期、Poisson 和突发到达，以及长短请求和 SLO 混合。到达与长度使用独立随机流，同 seed 下改变到达率仍保留对应请求长度。
+
+每次基线运行自动导出 [状态观测](joint_scheduling/observation/README.md)：队列、计算/执行忙闲、在途通信、显存、时间积分统计和延迟后可见状态；`--plot` 另外生成状态时间线。观测不增加网络事件，`feedback.observation_delay_us` 控制状态何时可见。在途字节是等待完成的整条逻辑消息，不是剩余在线字节或实际 NIC 利用率。
+
+[批量实验](joint_scheduling/experiments/README.md) 示例运行 2 种 NIC 带宽 × 2 种到达率 × 2 个 seed，共 8 次，生成独立结果、失败记录及跨 seed 汇总。失败不会变成零值成功样本；存在失败时命令返回非零。运行器仍使用当前轮询/FIFO/整份 KV 基线，拒绝扫描尚未实现的策略参数。
 
 ## 配置、评估与研究入口
 

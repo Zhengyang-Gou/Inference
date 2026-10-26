@@ -8,6 +8,9 @@
 
 ```text
 joint_scheduling/
+├── workload/              # 可复现的请求到达、长度和 SLO 生成
+├── observation/           # 事件驱动状态、延迟可见性与时间积分统计
+├── experiments/           # 参数矩阵、多 seed 执行与失败隔离
 ├── configs/
 │   └── default.json        # 六个模块共用的实验配置
 ├── topology/              # 物理拓扑、P/D 到 GPU 的映射、检查用拓扑导出
@@ -104,3 +107,7 @@ joint_scheduling/
 绘图需要在对应 Python 环境安装 `joint_scheduling/evaluation/requirements-plot.txt`。demo 是明确标记的合成数据，不是策略效果实验。精确指标口径、未完成请求处理、接口与多策略比较见 `evaluation/README.md`。
 
 第三方组件的来源和版本记录在根目录 `third_party/manifest.json`。当前网络后端使用 `third_party/ns3/SOURCE_MANIFEST.json` 与 `backend/backend.lock.json` 校验 vendored 源码 SHA256，再在隔离副本中构建；无需初始化子模块或保留上游 Git 元数据。`third_party/vidur`、`aicb`、`simccl` 和 `astra_sim` 是保留的第三方组件，尚未接入当前请求基线。优化策略尚未实现，仅修改策略名称不会使其生效。反馈接口见 feedback/README.md。
+
+## 实验基础功能
+
+负载、观测和批量运行已接入统一 CLI。用 `generate-workload --spec ... --output ...` 创建真实基线可读的请求文件；`run-baseline` 自动生成 observation/，`--plot` 同时生成状态时间线；`run-experiments --spec ... --output ...` 串行执行参数矩阵并导出 runs.csv、comparison.csv 与 summary.json。详情见 workload/README.md、observation/README.md 和 experiments/README.md。

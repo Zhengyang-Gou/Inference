@@ -13,7 +13,28 @@
       "source_manifest": "third_party/ns3/SOURCE_MANIFEST.json",
       "local_changes": [
         "Remove upstream Git metadata, an editor swap file and documentation outside simulation/.",
-        "Build compatibility overlays are applied only in isolated build copies."
+        "Build compatibility overlays are applied only in isolated build copies.",
+        "Prune unrelated wireless, mobile, emulation and visualization modules; retain active dependency closure, inference-relevant future modules, their module docs and tests. Remove unused Python binding generators and upstream example programs."
+      ],
+      "active_modules": [
+        "bridge",
+        "config-store",
+        "core",
+        "internet",
+        "network",
+        "point-to-point",
+        "stats",
+        "traffic-control"
+      ],
+      "future_modules": [
+        "applications",
+        "flow-monitor",
+        "mobility",
+        "mpi",
+        "mtp",
+        "nix-vector-routing",
+        "point-to-point-layout",
+        "topology-read"
       ]
     },
     {

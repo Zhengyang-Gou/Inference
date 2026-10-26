@@ -12,7 +12,7 @@ from collections import deque
 from dataclasses import asdict
 from pathlib import Path
 
-from .build import BackendError, require_backend
+from .build import require_backend
 from .client import Ns3Backend
 from .runtime import ComputeProfile, load_workload
 from ..evaluation import TraceRecorder, analyze_trace
@@ -20,11 +20,15 @@ from ..evaluation.export import export_result
 from ..feedback import NetworkTransfer
 from ..reservations import PhysicalObjectReservation
 from ..reservations.ledger import CapacityLedger
+from ..observation import StateObserver
 
 
 class _Baseline:
-    def __init__(self, config, backend, recorder, profile, requests):
+    def __init__(self, config, backend, recorder, profile, requests, observer):
         self.config, self.backend, self.recorder, self.profile = config, backend, recorder, profile
+        self.observer = observer
+        self.compute_active = set()
+        self.request_counts = {"arrived_count": 0, "completed_count": 0, "failed_count": 0, "incomplete_count": 0}
         self.instances = {placement.instance_id: placement for placement in config.topology.placements}
         self.prefills = [p.instance_id for p in config.topology.placements if p.role == "prefill"]
         self.decodes = [p.instance_id for p in config.topology.placements if p.role == "decode"]
@@ -50,6 +54,22 @@ class _Baseline:
 
     def emit(self, event, **data):
         self.recorder.record_event(event, self.backend.now_seconds(), **data)
+        self.capture(event)
+
+    def capture(self, reason):
+        now = self.backend.now_seconds()
+        instances = {key: {"role": placement.role, "gpu_ids": list(placement.gpu_ids),
+            "queue_length": len(self.queues[key]),
+            "head_request_id": self.queues[key][0] if self.queues[key] else None,
+            "oldest_queue_wait_seconds": now - self.requests[self.queues[key][0]]["queued_at_seconds"] if self.queues[key] else 0.0,
+            "execution_busy": self.busy[key], "compute_busy": key in self.compute_active}
+            for key, placement in sorted(self.instances.items())}
+        self.observer.capture(self.request_counts, instances, self.ledger.snapshot(), reason)
+
+    def queue_started(self, instance, row):
+        wait = self.backend.now_seconds() - row["queued_at_seconds"]
+        self.observer.queue_started(instance, wait)
+        self.emit("queue_dequeued", request_id=row["request_id"], instance_id=instance, queue_wait_seconds=wait)
 
     def _objects(self, row):
         rid = row["request_id"]
@@ -63,15 +83,21 @@ class _Baseline:
 
     def arrive(self, rid):
         row = self.requests[rid]
+        self.request_counts["arrived_count"] += 1
+        self.request_counts["incomplete_count"] += 1
         self.recorder.request_arrived(rid, self.backend.now_seconds(), row.get("ttft_slo_seconds"),
                                       row.get("itl_slo_seconds"), row["output_tokens"])
         row["state"] = "queued_prefill"
-        self.emit("binding_committed", request_id=rid, prefill_instance_id=row["p"], decode_instance_id=row["d"])
+        row["queued_at_seconds"] = self.backend.now_seconds()
         if any(obj.total_size_bytes > self.ledger.capacities[obj.memory_domain_id] for obj in self._objects(row)):
             row["state"] = "failed"
+            self.request_counts["failed_count"] += 1
+            self.request_counts["incomplete_count"] -= 1
             self.recorder.request_failed(rid, self.backend.now_seconds(), "request exceeds GPU KV capacity even when run alone")
+            self.capture("request_failed")
             return
         self.queues[row["p"]].append(rid)
+        self.emit("binding_committed", request_id=rid, prefill_instance_id=row["p"], decode_instance_id=row["d"])
         self.kick_prefill(row["p"])
 
     def kick_prefill(self, instance):
@@ -85,6 +111,7 @@ class _Baseline:
         self.queues[instance].popleft()
         self.busy[instance] = True
         row["state"] = "prefill"
+        self.queue_started(instance, row)
         for obj in objects:
             if obj.object_id.startswith("p:"):
                 self.ledger.materialize(obj.memory_domain_id, obj.object_id, obj.total_size_bytes)
@@ -101,6 +128,9 @@ class _Baseline:
 
         def segment(index):
             def compute_finished():
+                if instance.instance_id in self.compute_active:
+                    self.compute_active.remove(instance.instance_id)
+                    self.emit("compute_segment_completed", request_id=row["request_id"], instance_id=instance.instance_id)
                 if index < remaining:
                     self.allreduce(row["request_id"], instance.gpu_ids, sample["collective_bytes"],
                                    lambda: segment(index + 1))
@@ -108,6 +138,9 @@ class _Baseline:
                     self.emit("compute_step_completed", request_id=row["request_id"], phase=phase, instance_id=instance.instance_id)
                     complete()
             if index < remaining or remaining == 0:
+                self.compute_active.add(instance.instance_id)
+                self.emit("compute_segment_started", request_id=row["request_id"], instance_id=instance.instance_id,
+                          modeled_compute_seconds=compute_part)
                 self.backend.call_at(self.backend.now_seconds() + compute_part, compute_finished)
             else:
                 compute_finished()
@@ -116,9 +149,12 @@ class _Baseline:
     def transfer(self, rid, kind, src, dst, size, complete):
         self.transfer_counter += 1
         transfer = NetworkTransfer("transfer-{}".format(self.transfer_counter), kind, src, dst, size)
+        local = src // self.config.topology.gpus_per_node == dst // self.config.topology.gpus_per_node
+        self.observer.transfer_started(transfer, "local" if local else "inter_node")
         self.emit("transfer_started", request_id=rid, transfer_id=transfer.transfer_id, transfer_kind=kind,
                   source_gpu_id=src, destination_gpu_id=dst, size_bytes=size)
         def finished(progress):
+            self.observer.transfer_completed(transfer.transfer_id)
             self.emit("transfer_completed", request_id=rid, transfer_id=transfer.transfer_id, transfer_kind=kind,
                       source_reads_complete=progress.source_reads_complete, destination_ready=progress.destination_ready)
             complete()
@@ -168,9 +204,10 @@ class _Baseline:
             for gpu in d.gpu_ids:
                 self.ledger.materialize("gpu-{}".format(gpu), "d:" + rid, amount)
             row["state"] = "queued_decode"
+            row["queued_at_seconds"] = self.backend.now_seconds()
+            self.queues[row["d"]].append(rid)
             self.emit("kv_ready", request_id=rid)
             self.emit("resources", request_id=rid, domains=self.ledger.snapshot())
-            self.queues[row["d"]].append(rid)
             self.kick_decode(row["d"])
             self.kick_all_prefill()
         total = row["input_tokens"] * self.profile.kv_bytes_per_token
@@ -194,6 +231,7 @@ class _Baseline:
         row = self.requests[rid]
         row["state"] = "decode"
         self.busy[instance] = True
+        self.queue_started(instance, row)
         self.execute_step(row, "decode", row["input_tokens"] + row["generated"] - 1,
                           lambda: self.decode_done(rid))
 
@@ -211,12 +249,16 @@ class _Baseline:
             self.finish_request(rid)
         else:
             row["state"] = "queued_decode"
+            row["queued_at_seconds"] = self.backend.now_seconds()
             self.queues[row["d"]].append(rid)
+            self.emit("decode_requeued", request_id=rid, instance_id=row["d"])
         self.kick_decode(row["d"])
 
     def finish_request(self, rid):
         row = self.requests[rid]
         row["state"] = "completed"
+        self.request_counts["completed_count"] += 1
+        self.request_counts["incomplete_count"] -= 1
         self.recorder.request_completed(rid, self.backend.now_seconds())
         self.ledger.release_request(rid)
         self.emit("resources", request_id=rid, domains=self.ledger.snapshot())
@@ -256,12 +298,16 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
                     "backend": backend.metadata, "compute_profile_provenance": profile.provenance,
                     "workload_provenance": workload_provenance, "effective_baseline": snapshot["effective_baseline"],
                     "compute_profile_sha256": hashlib.sha256(profile_copy.read_bytes()).hexdigest()}
-        with TraceRecorder(output / "events.jsonl", "round_robin_fifo_ns3", config.runtime.seed, metadata) as recorder:
-            baseline = _Baseline(config, backend, recorder, profile, requests)
+        with TraceRecorder(output / "events.jsonl", "round_robin_fifo_ns3", config.runtime.seed, metadata) as recorder, \
+                StateObserver(output / "observation", backend, config.feedback.observation_delay_us) as observer:
+            baseline = _Baseline(config, backend, recorder, profile, requests, observer)
+            baseline.capture("initial")
             for row in requests:
                 if row["arrival_seconds"] <= config.runtime.time_limit_seconds:
                     backend.call_at(row["arrival_seconds"], lambda rid=row["request_id"]: baseline.arrive(rid))
             backend.run_until(config.runtime.time_limit_seconds)
+            baseline.capture("simulation_end")
+            observer.finish()
             recorder.finish(backend.now_seconds())
             (output / "final_resources.json").write_text(json.dumps(baseline.ledger.snapshot(), indent=2) + "\n")
     result = analyze_trace(output / "events.jsonl", config.evaluation)
@@ -269,4 +315,6 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
     if make_plots:
         from ..evaluation.plots import plot_results
         plot_results([output / "result"], output / "figures", config.evaluation)
+        from ..observation.plots import plot_observation
+        plot_observation(output / "observation")
     return result

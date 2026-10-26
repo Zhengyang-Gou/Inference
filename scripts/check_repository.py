@@ -21,7 +21,7 @@ def require_path(relative):
 
 
 def main():
-    for name in ("inference", "environment.yml", "scripts/simai-python", "README.md", "THIRD_PARTY_NOTICES.md",
+    for name in ("inference", "environment.yml", "scripts/simai-python", "README.md",
                  "joint_scheduling/backend/backend.lock.json", "third_party/manifest.json"):
         require_path(name)
     manifest = json.loads((ROOT / "third_party/manifest.json").read_text(encoding="utf-8"))
@@ -30,6 +30,8 @@ def main():
     for component in manifest["components"]:
         require_path(component["path"])
         require_path(component["license_file"])
+        for name in component.get("active_modules", []) + component.get("future_modules", []):
+            require_path(component["path"] + "/simulation/src/" + name + "/CMakeLists.txt")
         revision = component["upstream_revision"]
         if len(revision) != 40 or any(char not in "0123456789abcdef" for char in revision):
             raise ValueError("Invalid upstream revision: {}".format(component["name"]))

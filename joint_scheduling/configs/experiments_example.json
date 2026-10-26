@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "base_config": "baseline_smoke.json",
+  "workload_spec": "workload_example.json",
+  "seeds": [7, 19],
+  "sweep": {
+    "topology.nic_bandwidth_gbps": [100, 200],
+    "workload.arrival.rate_rps": [150, 300]
+  }
+}

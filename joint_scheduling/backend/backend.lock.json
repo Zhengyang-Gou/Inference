@@ -6,5 +6,5 @@
   "completion_semantics": "all_bytes_acknowledged_at_sender",
   "endpoint_model": "one_shared_full_duplex_nic_per_physical_server",
   "source_manifest": "third_party/ns3/SOURCE_MANIFEST.json",
-  "source_sha256": "d45b7caa8a71f63e07cba9dd856e24f8cf3a1afd580dbf1c6b3cdb289ad820e2"
+  "source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6"
 }

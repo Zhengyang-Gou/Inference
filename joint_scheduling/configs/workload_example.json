@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "description": "Synthetic mixed request fixture; not a measured production workload",
+  "seed": 7,
+  "arrival": {
+    "pattern": "poisson",
+    "count": 12,
+    "rate_rps": 300,
+    "start_seconds": 0.0
+  },
+  "classes": [
+    {
+      "name": "short",
+      "weight": 0.75,
+      "input_tokens": {"type": "uniform", "min": 64, "max": 128},
+      "output_tokens": {"type": "choice", "values": [2, 3, 4]},
+      "ttft_slo_seconds": 0.02,
+      "itl_slo_seconds": 0.005
+    },
+    {
+      "name": "long",
+      "weight": 0.25,
+      "input_tokens": {"type": "uniform", "min": 256, "max": 512},
+      "output_tokens": 4,
+      "ttft_slo_seconds": 0.03,
+      "itl_slo_seconds": 0.006
+    }
+  ]
+}
