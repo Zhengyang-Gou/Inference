@@ -20,7 +20,11 @@ class NetworkResources:
     def for_gpus(self, source, destination):
         src, dst = source // self.topology.gpus_per_node, destination // self.topology.gpus_per_node
         if src == dst:
+            if getattr(self.topology, 'intra_node_model', 'shared_fifo') == 'gpu_ports':
+                return (f'local:gpu-{source}:tx', f'local:gpu-{destination}:rx')
             return ("local:{}".format(src),)
+        if getattr(self.topology, 'nic_model', 'shared_node') == 'per_gpu':
+            src, dst = source, destination
         if (src, dst) not in self.cache:
             def distances(root):
                 result, pending = {root: 0}, deque([root])

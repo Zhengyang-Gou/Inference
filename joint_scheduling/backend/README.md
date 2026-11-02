@@ -2,13 +2,13 @@
 
 运行时已拆为请求、P/D、KV、计算、通信、显存与记录组件，`runner.py` 保留输入检查和运行/导出入口。所有权、兼容端口与功能组合见 [研究系统说明](../RESEARCH_SYSTEM.md)。每次结果新增 `reproducibility.json`、源码归档及 `runtime_components.json`。
 
-DeepSeek-V3/H800 的 TP4/EP8 profile 已提供公开采样推导版，覆盖 16K 上下文、长请求分块和合批；生成、AICB/AIOB 导入及估算边界见 [MoE profile](MOE_PROFILE.md)。
+DeepSeek-V3/H800 的 TP1、P-EP32 / D-EP128 主 profile 已提供公开采样推导版，支持 P/D 独立权重和显存账本；旧 TP4/EP8 profile 保留，覆盖 16K 上下文、长请求分块和合批；生成、AICB/AIOB 导入及估算边界见 [MoE profile](MOE_PROFILE.md)。
 
-`slo_mlu` 支持 KV 晋升和 EP 分阶段保护，`runtime.network_priority_enabled` 控制真实 NIC/交换机数据优先级。RPC 为版本 3，需要重建后端；覆盖只进入隔离构建，详见 [MLU 调度](../kv_scheduler/MLU.md)。
+`slo_mlu` 支持 KV 晋升和 EP 分阶段保护，`runtime.network_priority_enabled` 控制仿真 NIC/交换机数据优先级。RPC 为版本 4，增加 GPU 本地端口命令，需要重建后端；覆盖只进入隔离构建，详见 [MLU 调度](../kv_scheduler/MLU.md)。
 
 当前已能在 CPU 上运行请求端到端基线，支持整份交接、Prefill 后分块，以及逐层 KV 就绪后分块立即传输。
 
-实验性 EP 路径已接入真实网络：节点内 TP、跨 TP team 的 dispatch→专家计算→combine 可与 KV 共享链路；当前使用轮询绑定，联合选择和绑定预测明确禁用。配置、128 GPU 布局和模型边界见 [EP 接入说明](EXPERT_PARALLEL.md)。
+实验性 EP 路径已接入分组网络仿真：节点内 TP、跨 TP team 的 dispatch→专家计算→combine 可与 KV 共享链路；支持轮询和 P 轮询/D 均衡随机的静态绑定，联合选择和绑定预测明确禁用。配置、160 GPU 主布局及旧 128 GPU 对照和模型边界见 [EP 接入说明](EXPERT_PARALLEL.md)。
 
 绑定窗口、完整预测诊断和有界联合选择均已接入，默认关闭。`binding.joint_selection_enabled=true` 与 `policy=joint_lexicographic` 启用候选剪枝＋增量贪心，并在绑定时整批原子预留；轮询保留原 Prefill admission 预留时机。联合模式默认不调用完整预测器，声明决策开销与实际墙钟诊断分开；具体模型和边界见 [绑定说明](../binding/README.md)。
 
@@ -42,7 +42,7 @@ conda activate simai
 - 构建指纹包含源文件、工具链、平台和仓库位置；清单保存可执行文件 SHA256。运行拒绝陈旧或被替换的二进制。
 - 编译器、源版本或仓库位置变化时 build 会保留不兼容的旧生成目录并重新配置。doctor 同时检查动态加载和协议自检。
 - 构建日志在 `joint_scheduling/artifacts/backend/current/build.log`，运行日志在对应 `network/backend.log`；RPC 有超时，异常退出会关闭子进程。
-- `check.sh` 使用同一套测试检查指标、资源、真实网络及端到端确定性。GitHub Actions 工作流已加入，提交到远端后可在 CI 执行。
+- `check.sh` 使用同一套测试检查指标、资源、分组网络仿真及端到端确定性。GitHub Actions 工作流已加入，提交到远端后可在 CI 执行。
 
 ```bash
 ./joint_scheduling/check.sh
@@ -65,15 +65,15 @@ smoke 验证提高带宽降低传输时间、接收端汇聚竞争、12 个请�
 逐层计算重复 80 层、每层两次 AllReduce、每 token KV 为 327680 bytes。
 每个 rank 的权重核算包括分片矩阵与复制的 RMSNorm。
 
-导出的 `provenance.synthetic=true` 表示它仍是**公开算子数据组成的估算**，不是 Llama-3.1 整模型实测。
+导出的 `provenance.synthetic=true` 表示它仍是**公开算子数据组成的估算**，作为 Llama-3.1 的仿真算子组合。
 当前不包含最终词表投影、最终 norm、embedding 输出集合通信、CPU/采样开销，也未单独验证 3.1 的 RoPE 内核；
 低于最小 attention 样本长度时使用明确记录的低长度锚点。超出最大样本长度不外推。
-TP 集合通信由本项目 ns-3 拓扑重新执行，不使用 DGX 网络时间替代跨服务器通信。
+TP 集合通信由本项目 ns-3 拓扑重新执行，通信时间由仿真网络模型单独给出。
 详细来源、commit、哈希、插值方法和省略项均写入参数文件。
 
 参照 `fixtures/compute_profile.json`：
 
-- 明确记录来源与 synthetic。真实研究应换成目标模型、硬件与 TP 下的性能采样。
+- 明确记录来源与 synthetic。仿真研究应固定模型、设备代价标签与 TP 对应的计算参数，并进行覆盖检查和敏感性分析。
 - `compute_seconds` 不包含本后端显式模拟的通信；每个阶段声明 TP 和每步 AllReduce 次数。
 - `collective_bytes` 是单次 AllReduce 的每 rank 输入大小；当前采用 ring reduce-scatter + all-gather 的流量及依赖，不复刻 NCCL 自动算法选择。
 - 按 token 数在提供点之间线性插值，超出覆盖范围或 TP 不匹配时报错，不静默外推。
@@ -90,7 +90,7 @@ TP 集合通信由本项目 ns-3 拓扑重新执行，不使用 DGX 网络时间
 
 每个性能采样步骤将计算均分到声明的 AllReduce 前。AllReduce 前一轮完成后才提交下一轮，最后推进计算或返回 token。schema 1 保留阶段级模型；schema 2 对每层分别执行这个依赖过程，层完成后产生 KV 就绪事件。传输可以与后续层重叠，但会通过共享网络真实影响后续集合通信，不假设其免费重叠。
 
-网络完成采用“发送端已确认全部字节 ACK”的保守语义，此时目标可用且源端读依赖解除。它可能晚于目标 GPU 最早可读时刻，不代表 GPU DMA 的精确测量。
+网络完成采用“发送端已确认全部字节 ACK”的保守语义，此时目标可用且源端读依赖解除。它可能晚于目标 GPU 最早可读时刻，是本仿真的传输完成定义。
 
 ## 拓扑与局部互联
 
@@ -98,7 +98,7 @@ TP 集合通信由本项目 ns-3 拓扑重新执行，不使用 DGX 网络时间
 ./inference export-topology --format simai --output joint_scheduling/artifacts/network.topo
 ```
 
-后端文件使用 SimAI 六字段头部与链路语法，网络端点聚合为物理服务器：每服务器共享一张全双工 NIC。GPU → 服务器映射保留在配置。节点内 GPU 传输使用一个可配置共享局部 FIFO 链路；节点间走实际 RDMA 网络。这不是逐 GPU 独占 NIC 的 rail-optimized 模型，也不模拟 NVLink 硬件拓扑细节。
+后端文件使用 SimAI 六字段头部与链路语法。`topology.nic_model=shared_node` 保留每服务器共享 NIC；`per_gpu` 为每 GPU 一个全双工 RDMA 端点，`nic_bandwidth_gbps` 始终表示节点合计并均分到 GPU。节点内 `intra_node_model=shared_fifo` 保留整节点 FIFO；`gpu_ports` 为每 GPU 独立的发送/接收端口，带宽字段表示单端口能力，相反方向和不冲突的传输可并发，共用端口排队。SLO 资源估计和网络遥测使用相同端点/端口映射。它不模拟完整 NVSwitch 仲裁或多 rail 网络。
 
 `topology.intra_node_bandwidth_gbps/intra_node_latency_us` 控制局部链路。原生文件的 GPUsPerServer=1 表示每个网络端点聚合一台服务器，不能误读为计算实例只有一个 GPU。baseline_smoke.json 的 P/D 在不同 Leaf，覆盖跨 Leaf 交接。
 
@@ -186,7 +186,7 @@ run/
 
 基线执行器已接入 observation/。观测将计算时间与等待集合通信的实例忙碌时间分开统计，记录 KV/collective 逻辑消息生命周期及显存变化，并落实 feedback.observation_delay_us。普通状态观测不创建 ns-3 事件，尚未到达的请求不会出现在可见状态中。动态网络观测按 network_observation_interval_us 采样，并延迟 observation_delay_us 可见；scheduling_overhead_us 在受控 KV 模式中形成实际决策延迟。
 
-workload/ 可生成请求文件，experiments/ 可执行多配置与多 seed 矩阵，输入路径会解析并冻结。本地执行支持轮询/联合绑定与 FIFO/Chunked/合批 Prefill、Decode 连续批处理及前缀缓存组合。联合预测在分块/合批配置下使用有界队列重放和聚合网络近似，详见 binding/README.md。网络 RPC 协议现为 v2，增加分类 SEND/LOCAL 与 STATS；仅适配器修改，无 vendored 网络算法变更，升级后需重新 build。
+workload/ 可生成请求文件，experiments/ 可执行多配置与多 seed 矩阵，输入路径会解析并冻结。本地执行支持轮询/联合绑定与 FIFO/Chunked/合批 Prefill、Decode 连续批处理及前缀缓存组合。联合预测在分块/合批配置下使用有界队列重放和聚合网络近似，详见 binding/README.md。网络 RPC 协议现为 v4，支持分类 SEND/LOCAL、LOCAL_PORTS 与 STATS；仅适配器修改，无 vendored 网络算法变更，升级后需重新 build。
 
 PFC 压力验证还修正了两个阻断拥塞运行的问题：适配器为交换机端口配置仅供单跳 PFC 控制包使用的地址；隔离构建修正上游 `QbbNetDevice::Resume` 将优先级误当 QP 索引的空指针路径，按设备类型恢复普通/NVLS 发送。原始 vendored 源码及内容锁保持不变，精确修补代码随 build.py 纳入构建指纹。真实 6 源 incast 测试要求观察到 PFC 并全部完成。此前失败日志已随历史实验记录清理；修复实现与回归测试保留。
 

@@ -14,6 +14,8 @@ class BudgetEstimator(MLUBudgetMixin, RuntimeComponent):
         seconds = max(size / (self.scheduler.resources.capacities[key] *
                       (1-self.config.kv_scheduler.safety_margin_fraction)) for key, size in work.items())
         latency = 2 * (len(ranks)-1) * self.config.topology.link_latency_us * 4 / 1e6
+        if self.config.topology.intra_node_model == 'gpu_ports' and len({g // self.config.topology.gpus_per_node for g in ranks}) == 1:
+            latency = 2 * (len(ranks)-1) * self.config.topology.intra_node_latency_us / 1e6
         return sample["collectives_per_step"] * (seconds+latency)
 
     def decode_step_seconds(self, row):

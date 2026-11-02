@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "seed": 7,
-  "description": "Synthetic sustained pressure for one second; periodic open-loop arrivals, preset 64/128/256 outputs, same SLOs across all policies and load levels. No measured GPU profile.",
+  "description": "Synthetic sustained pressure for one second; periodic open-loop arrivals, preset 64/128/256 outputs, same SLOs across all policies and load levels. Uses a synthetic simulation compute profile.",
   "arrival": {
     "pattern": "periodic",
     "duration_seconds": 1.0,

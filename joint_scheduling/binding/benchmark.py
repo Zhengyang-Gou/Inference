@@ -1,6 +1,6 @@
 """Actual backend round timings for cold 1/8/16 request windows.
 
-Run separately from regression/other experiments. Uses the production ns-3
+Run separately from regression/other experiments. Uses the simulation ns-3
 runner, selected-batch resource reservations and diagnostic wall clock. Exact
 simulated output is one token to keep this scheduler benchmark small, while
 selection only sees max_output_tokens=16 and predicts the configured horizon.
@@ -75,7 +75,7 @@ def benchmark(config_path, output, repetitions=20):
         full[str(count)] = quantiles(samples)
     report = dict(python=sys.version, platform=platform.platform(), simulated_decision_overhead_us=5,
         profile_sha256=result.summary['run']['metadata']['compute_profile_sha256'],
-        scope='cold production callback including state processing, pruning, scoring, atomic reservation and dispatch timer; live ns-3 backend',
+        scope='cold simulation callback including state processing, pruning, scoring, atomic reservation and dispatch timer; live ns-3 backend',
         limitations='No warmed queue/cache; one actual token keeps execution small; selection sees cap 16. Startup/serving outside round timer. Run without concurrent regression.',
         target_p99_us=50, target_is_guarantee=False, rows=rows,
         whole_predictor_us=full, whole_predictor_scope='one fixed all-on-first-P/D plan, pure prediction only; not an equal-work end-to-end comparison',

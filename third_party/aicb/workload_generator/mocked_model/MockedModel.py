@@ -118,7 +118,6 @@ class MockedParamsBase:
         """Load parameters from command line arguments"""
         # List of parameters that can be overridden by command line args
         arg_params = [
-            'aiob_enable',
             'seq_length',
             'micro_batch',
             'world_size',
@@ -128,7 +127,7 @@ class MockedParamsBase:
             'moe_enable',
             'result_dir',
             'phase',
-            'aiob_forward_loops'
+            'cost_file'
         ]
         
         # Override parameters with values from args if they exist

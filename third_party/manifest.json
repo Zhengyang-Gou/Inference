@@ -48,7 +48,8 @@
       "role": "inference_reference",
       "local_changes": [
         "Preserve existing P/D implementation and local path adaptations.",
-        "Remove upstream marketing images and repository management files."
+        "Remove upstream marketing images and repository management files.",
+        "Retain CPU simulation and offline cost-data lookup; remove profiling programs and automatic sample collection."
       ]
     },
     {
@@ -58,10 +59,11 @@
       "upstream_revision": "23eec3c48ca2d2d93dd888a4c7b22ab4421e782f",
       "license_file": "third_party/aicb/License",
       "license": "Apache-2.0",
-      "role": "inference_workload_reference",
+      "role": "offline_workload_reference",
       "local_changes": [
-        "Retain inference workload generators, mocked inference models and shared utilities.",
-        "Remove training entrypoints/models, unused get_comp_out, old reports, downloads and marketing assets."
+        "Retain inference workload generators, symbolic inference models and shared utilities.",
+        "Remove training entrypoints/models, unused get_comp_out, old reports, downloads and marketing assets.",
+        "Keep CPU-only symbolic workload generation and offline cost parsers; remove model execution, collectors, device timers and their dependencies."
       ]
     },
     {

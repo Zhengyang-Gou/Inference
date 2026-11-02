@@ -58,7 +58,11 @@ class Ns3Backend:
         self.metadata = {"backend": "simai_ns3_rdma", "protocol_version": LOCK["protocol_version"],
                          "ns3_revision": self.state["revision"], "build_fingerprint": self.state["fingerprint"],
                          "completion_semantics": LOCK["completion_semantics"],
-                         "endpoint_model": LOCK["endpoint_model"], "congestion_control": congestion_control,
+                         "endpoint_model": topology.nic_model, "congestion_control": congestion_control,
+                         "nic_bandwidth_gbps_per_node": topology.nic_bandwidth_gbps,
+                         "nic_bandwidth_gbps_per_endpoint": topology.endpoint_bandwidth_gbps,
+                         "local_model": topology.intra_node_model,
+                         "local_bandwidth_scope": "per_gpu_tx_rx_port" if topology.intra_node_model == 'gpu_ports' else "shared_node_fifo",
                          "packet_bytes": packet_bytes, "switch_buffer_bytes": switch_buffer_bytes,
                          "seed": seed, "ns3_seed": seed + 1,
                          "network_priority_enabled": network_priority_enabled,
@@ -122,14 +126,15 @@ class Ns3Backend:
         return self._register("TIMER {id} " + str(target - self.now_ns), callback)
 
     def send_hosts(self, source, destination, size_bytes, callback, kind="kv", priority=2):
+        """Send between RDMA endpoint IDs (server IDs in legacy shared mode)."""
         if kind not in ("kv", "collective"):
             raise BackendError("unknown transfer kind")
         if type(priority) is not int or not 0 <= priority <= 3:
             raise BackendError('data priority must be an integer in [0, 3]')
         if any(type(value) is not int for value in (source, destination, size_bytes)):
             raise BackendError("endpoint IDs and byte count must be integers")
-        if not 0 <= source < self.topology.num_nodes or not 0 <= destination < self.topology.num_nodes:
-            raise BackendError("host ID outside topology")
+        if not 0 <= source < self.topology.network_endpoint_count or not 0 <= destination < self.topology.network_endpoint_count:
+            raise BackendError("endpoint ID outside topology")
         if size_bytes < 1:
             raise BackendError("transfer size must be positive")
         # A receiver sequence number is 32-bit in the pinned model. Large logical
@@ -153,6 +158,24 @@ class Ns3Backend:
             left -= amount
         return identifiers
 
+    def _send_local_gpus(self, source, destination, size_bytes, callback, kind):
+        remaining = [math.ceil(size_bytes / (64 * 1024 * 1024))]
+        def done():
+            remaining[0] -= 1
+            if not remaining[0]:
+                callback()
+        identifiers = []
+        left = size_bytes
+        while left:
+            amount = min(left, 64 * 1024 * 1024)
+            command = "LOCAL_PORTS {{id}} {} {} {} {} {} {} {}".format(
+                source // self.topology.gpus_per_node, source, destination, amount,
+                round(self.topology.intra_node_bandwidth_gbps * 1e9),
+                round(self.topology.intra_node_latency_us * 1000), kind)
+            identifiers.append(self._register(command, done))
+            left -= amount
+        return identifiers
+
     def submit(self, transfer, on_progress):
         if transfer.kind not in ("kv", "collective"):
             raise BackendError("unknown transfer kind")
@@ -163,6 +186,8 @@ class Ns3Backend:
         for gpu in (transfer.source_gpu_id, transfer.destination_gpu_id):
             if type(gpu) is not int or not 0 <= gpu < self.topology.num_gpus:
                 raise BackendError("GPU ID outside topology")
+        if type(transfer.size_bytes) is not int or transfer.size_bytes < 1:
+            raise BackendError("transfer size must be a positive integer")
         self._logical_transfers.add(transfer.transfer_id)
         def done():
             self._logical_transfers.remove(transfer.transfer_id)
@@ -170,9 +195,16 @@ class Ns3Backend:
                 self._part_owners.pop(identifier, None)
             on_progress(TransferProgress(transfer.transfer_id, self.now_seconds(), True, True))
         try:
-            parts = self.send_hosts(transfer.source_gpu_id // self.topology.gpus_per_node,
-                                   transfer.destination_gpu_id // self.topology.gpus_per_node,
-                                   transfer.size_bytes, done, transfer.kind, transfer.priority)
+            source, destination = transfer.source_gpu_id, transfer.destination_gpu_id
+            local = source // self.topology.gpus_per_node == destination // self.topology.gpus_per_node
+            if local and self.topology.intra_node_model == 'gpu_ports':
+                parts = self._send_local_gpus(source, destination, transfer.size_bytes, done, transfer.kind)
+            elif local:
+                host = source // self.topology.gpus_per_node
+                parts = self.send_hosts(host, host, transfer.size_bytes, done, transfer.kind, transfer.priority)
+            else:
+                parts = self.send_hosts(self.topology.network_endpoint(source), self.topology.network_endpoint(destination),
+                                       transfer.size_bytes, done, transfer.kind, transfer.priority)
             for identifier in parts:
                 self._part_owners[identifier] = transfer.transfer_id
             return parts

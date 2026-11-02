@@ -8,8 +8,6 @@ from vidur.config import (
 from vidur.logger import init_logger
 
 import os
-import sys
-import subprocess
 import json
 import time as time_module
 from pathlib import Path
@@ -51,8 +49,8 @@ class AICBGlobalCache:
     [AICB优化 B+C方案] 全局AICB数据缓存
     
     Features / 功能:
-    1. Plan C (Lookup): Cache loaded AICB data to avoid repeated CSV reads and subprocess calls
-       方案C (查表): 缓存已加载的AICB数据，避免重复CSV读取和subprocess调用
+    1. Plan C (Lookup): Cache loaded AICB data to avoid repeated CSV reads and offline table checks
+       方案C (查表): 缓存已加载的AICB数据，避免重复CSV读取和离线查表
     2. Plan B (Interpolation): Use head-tail token linear interpolation for unmatched seq values
        方案B (插值): 对于没有精确匹配的seq值，使用首尾token线性插值
     3. Persistence: Save cache index and data to disk for cross-run reuse
@@ -70,7 +68,7 @@ class AICBGlobalCache:
         self._stats = {
             'cache_hits': 0,        # Exact cache hits / 精确命中查表
             'interpolations': 0,    # Interpolation hits / 插值命中
-            'aicb_calls': 0,        # Actual AICB subprocess calls / 实际AICB subprocess调用
+            'aicb_calls': 0,        # Offline cost-table checks
             'csv_loads': 0,         # CSV file load count / CSV文件加载次数
         }
         
@@ -166,9 +164,9 @@ class AICBGlobalCache:
         self._save_cache_entry(key, data)
     
     def record_aicb_call(self) -> None:
-        """Record an actual AICB subprocess call / 记录一次实际的AICB subprocess调用"""
+        """Record an offline cost-table check / 记录一次实际的AICB 离线查表"""
         self._stats['aicb_calls'] += 1
-        self._log(f"[AICB调用] 第{self._stats['aicb_calls']}次subprocess调用")
+        self._log(f"[AICB调用] 第{self._stats['aicb_calls']}次离线查表")
     
     def record_csv_load(self) -> None:
         """Record a CSV file load / 记录一次CSV文件加载"""
@@ -648,204 +646,15 @@ class ExecutionTime(BaseEntity):
         # 使用基于代码文件位置的绝对路径
         return str(_AICB_ROOT / "results" / "workload" / filename)
     
-    def _generate_aicb_csv(self):
-        """Generate AICB CSV file / 生成AICB CSV文件"""
-        model_name, model_json_file, tp, pp, ws, ep, bs, seq, phase = self._get_aicb_params()
-        logger.debug(f"_generate_aicb_csv: model_name={model_name} model_json_file={model_json_file} tp={tp} pp={pp} ws={ws} ep={ep} bs={bs} seq={seq} phase={phase}")
-        # Use absolute path based on code file location
-        # 使用基于代码文件位置的绝对路径
-        cwd = str(_AICB_ROOT)
-        cwd_path = Path(cwd)
-        
-        logger.debug(f'\n{"="*80}')
-        logger.debug(f'===== AICB CSV Generation Debug Info =====')
-        logger.debug(f'{"="*80}')
-        
-        # Check if AICB directory exists / 检查 AICB 目录是否存在
-        if not cwd_path.exists():
-            logger.error(f'AICB directory does not exist: {cwd}')
-            logger.error(f'Please ensure AICB is properly installed')
-            return False
-        
-        logger.debug(f'AICB Root Directory: {cwd_path}')
-        logger.debug(f'AICB Root exists: {cwd_path.exists()}')
-        
-        # Check results/workload directory / 检查 results/workload 目录
-        results_dir = cwd_path / "results" / "workload"
-        logger.debug(f'Results directory: {results_dir}')
-        logger.debug(f'Results directory exists: {results_dir.exists()}')
-        
-        # Create directory if not exists / 如果不存在，创建目录
-        if not results_dir.exists():
-            logger.debug(f'Creating results directory: {results_dir}')
-            results_dir.mkdir(parents=True, exist_ok=True)
-        
-        # List existing files in results/workload directory
-        # 列出 results/workload 目录下已有的文件
-        if results_dir.exists():
-            existing_files = list(results_dir.glob('*.csv'))
-            logger.debug(f'Existing CSV files in results/workload ({len(existing_files)} files):')
-            for f in existing_files[:10]:
-                logger.debug(f'  - {f.name}')
-            if len(existing_files) > 10:
-                logger.debug(f'  ... and {len(existing_files) - 10} more files')
-        
-        # Build AICB command / 构建AICB命令
-        cmd = [
-            sys.executable,
-            "-m", "workload_generator.Vidur_workload_generator",
-            model_name,
-            model_json_file,
-            "--seq_length", str(seq),
-            "--micro_batch", str(bs),
-            "--world_size", str(ws),
-            "--tensor_model_parallel_size", str(tp),
-            "--expert_model_parallel_size", str(ep),
-            "--aiob_enable",
-            "--phase", phase,
-        ]
-        
-        if pp > 1:
-            cmd.extend(["--pipeline_model_parallel", str(pp)])
-
-        # Print command for manual execution / 打印可以手动执行的命令
-        cmd_str = " ".join(cmd)
-        logger.debug(f'\n===== Command Details =====')
-        logger.debug(f'Working directory: cd {cwd_path}')
-        logger.debug(f'Full command: {cmd_str}')
-        logger.debug(f'One-liner: cd {cwd_path} && {cmd_str}')
-        
-        # Expected output CSV file path / 预期生成的文件路径
-        expected_csv = self._get_aicb_csv_path()
-        logger.debug(f'Expected output CSV file: {expected_csv}')
-        
-        try:
-            logger.debug(f'\n===== Executing Command =====')
-            result = subprocess.run(cmd, cwd=cwd_path, capture_output=True, text=True, timeout=300)
-            
-            logger.debug(f'Return code: {result.returncode}')
-            if result.stdout.strip():
-                logger.debug(f'STDOUT: {result.stdout.strip()}')
-            if result.stderr.strip():
-                logger.debug(f'STDERR: {result.stderr.strip()}')
-            
-            # Check results/workload directory after command execution
-            # 检查命令执行后 results/workload 目录的变化
-            logger.debug(f'===== Post-execution Check =====')
-            if results_dir.exists():
-                new_files = list(results_dir.glob('*.csv'))
-                logger.debug(f'CSV files after execution ({len(new_files)} files)')
-                    
-                if os.path.exists(expected_csv):
-                    logger.debug(f'SUCCESS: Expected CSV file was created!')
-                else:
-                    logger.warning(f'Expected CSV file was NOT created!')
-                    similar_files = list(results_dir.glob(f'*{model_name}*{phase}*.csv'))
-                    if similar_files:
-                        logger.debug(f'Similar files found: {[f.name for f in similar_files]}')
-                    else:
-                        logger.debug(f'No similar files found matching pattern: *{model_name}*{phase}*.csv')
-            
-            if result.returncode != 0:
-                logger.error(f'AICB command failed with return code {result.returncode}')
-                return False
-            else:
-                logger.debug(f'AICB command succeeded (returncode=0)')
-                return True
-                
-        except subprocess.TimeoutExpired:
-            logger.error('AICB command timed out after 300 seconds')
-            return False
-        except Exception as e:
-            logger.error(f'Failed to run AICB command: {e}', exc_info=True)
-            return False
+    def _offline_aicb_csv_available(self):
+        """Use only an existing offline cost table."""
+        return os.path.isfile(self._get_aicb_csv_path())
 
 
-    def _generate_or_find_bs1_csv(
-        self, model_name, ws, tp, pp, ep, bs, seq, phase, original_csv_path
-    ) -> str:
-        """
-        [AICB Safe Mode] Always use bs=1 to generate or find CSV.
-        [AICB Safe Mode] 始终使用 bs=1 生成或查找 CSV
-        
-        Reason: DeepSeek-V3-671B prefill AICB profiling fails on H20 (SM90)
-        when tp>=4, due to FlashMLA `flash_mla_sparse_fwd` kernel's h_q
-        alignment requirement (B_H=64). This does not affect decode or
-        other models.
-        原因: DeepSeek-V3-671B prefill 在 H20 (SM90) 上当 tp>=4 时 AICB
-        profiling 失败，因 FlashMLA flash_mla_sparse_fwd kernel 的 h_q
-        对齐要求 (B_H=64)。不影响 decode 或其他模型。
-        
-        Strategy / 策略:
-          1. If requested bs=1, generate directly / 如果请求的就是 bs=1, 直接生成
-          2. If bs>1, look for existing bs=1 CSV / 如果 bs>1, 查找已有的 bs=1 CSV
-          3. If bs=1 CSV missing, generate it / 如果 bs=1 CSV 不存在, 生成它
-        
-        Args:
-            model_name: Model name / 模型名
-            ws, tp, pp, ep: Parallelism config / 并行配置
-            bs: Original requested batch size (may be > 1)
-            seq: Sequence length / 序列长度
-            phase: Stage (prefill/decode) / 阶段
-            original_csv_path: Original CSV path (may be bs>1)
-        
-        Returns:
-            Path to found or generated CSV (may be bs=1 CSV)
-        """
-        logger.debug(f'[AICB Safe Mode] CSV不存在: {original_csv_path}')
-        logger.debug(f'[AICB Safe Mode] 请求参数: model={model_name}, bs={bs}, seq={seq}, phase={phase}')
-        
-        # ---- Case 1: bs=1 already, generate directly ----
-        # ---- 情况1: 本身就是 bs=1, 直接生成 ----
-        if bs == 1:
-            logger.debug(f'[AICB Safe Mode] bs=1, 直接生成...')
-            _GLOBAL_AICB_CACHE.record_aicb_call()
-            if self._generate_aicb_csv():
-                if os.path.exists(original_csv_path):
-                    logger.debug(f'[AICB Safe Mode] Successfully generated bs=1 CSV: {original_csv_path}')
-                    return original_csv_path
-                else:
-                    logger.warning('[AICB Safe Mode] 生成后未找到 CSV (文件名可能不匹配)')
-            else:
-                logger.warning('[AICB Safe Mode] bs=1 生成失败')
-            return original_csv_path
-        
-        # ---- Case 2: bs > 1, skip original bs, use bs=1 instead ----
-        # ---- 情况2: bs > 1, 跳过原始 bs, 直接使用 bs=1 ----
-        logger.debug(f'[AICB Safe Mode] bs={bs} > 1, 跳过原始bs (避免CUDA kernel错误), 使用 bs=1')
-        
-        # Temporarily switch to bs=1 to get the bs=1 CSV path
-        # 临时切换到 bs=1 以获取 bs=1 的 CSV 路径
-        original_bs = self._replica_config.batch_size
-        self._replica_config.batch_size = 1
-        bs1_csv_path = self._get_aicb_csv_path()
-        self._replica_config.batch_size = original_bs  # Restore immediately / 立即恢复
-        
-        logger.debug(f'[AICB Safe Mode] bs=1 CSV 路径: {bs1_csv_path}')
-        
-        # Check if bs=1 CSV already exists
-        # 检查 bs=1 CSV 是否已存在
-        if os.path.exists(bs1_csv_path):
-            logger.debug('[AICB Safe Mode] 找到已有 bs=1 CSV (无需生成)')
-            return bs1_csv_path
-        
-        # bs=1 CSV doesn't exist, generate it
-        # bs=1 CSV 不存在, 生成它
-        logger.debug('[AICB Safe Mode] bs=1 CSV 不存在, 开始生成...')
-        original_bs = self._replica_config.batch_size
-        self._replica_config.batch_size = 1
-        
-        _GLOBAL_AICB_CACHE.record_aicb_call()
-        gen_ok = self._generate_aicb_csv()
-        
-        self._replica_config.batch_size = original_bs  # Restore / 恢复
-        
-        if gen_ok and os.path.exists(bs1_csv_path):
-            logger.debug(f'[AICB Safe Mode] Successfully generated bs=1 CSV: {bs1_csv_path}')
-            return bs1_csv_path
-        else:
-            logger.warning('[AICB Safe Mode] bs=1 生成失败或未找到 CSV')
-            return original_csv_path  # 返回原路径, 后续 fallback 逻辑会处理
+    def _find_bs1_csv(self, model_name, ws, tp, pp, ep, bs, seq, phase, original_csv_path):
+        """Optional batch-one proxy from an existing offline table."""
+        path = original_csv_path.replace(f"-bs{bs}-", "-bs1-")
+        return path if os.path.isfile(path) else original_csv_path
 
     def _load_aicb_data(self) -> Dict[int, Dict[str, Dict[str, float]]]:
         """
@@ -899,13 +708,13 @@ class ExecutionTime(BaseEntity):
                 # (SM90) when tp>=4, due to FlashMLA flash_mla_sparse_fwd kernel's
                 # h_q alignment requirement (B_H=64). Does not affect decode or
                 # other models.
-                full_csv_path = self._generate_or_find_bs1_csv(
+                full_csv_path = self._find_bs1_csv(
                     model_name, ws, tp, pp, ep, bs, seq, phase, full_csv_path
                 )
             else:
                 # Normal mode: generate CSV with actual batch size
                 _GLOBAL_AICB_CACHE.record_aicb_call()
-                self._generate_aicb_csv()
+                self._offline_aicb_csv_available()
             
             if not os.path.exists(full_csv_path):
                 # ============================================================
@@ -1060,15 +869,15 @@ class ExecutionTime(BaseEntity):
         
         if not os.path.exists(csv_path):
             if self._config.aicb_force_bs1:
-                # [AICB Safe Mode] Use bs=1, avoid CUDA kernel compatibility issues
+                # [AICB Safe Mode] Use the optional offline batch-one proxy
                 logger.debug(f"[AICB] last_seq CSV not found: {csv_path}")
-                csv_path = self._generate_or_find_bs1_csv(
+                csv_path = self._find_bs1_csv(
                     model_name, ws, tp, pp, ep, bs, last_seq, phase, csv_path
                 )
             else:
                 # Normal mode: generate with actual batch size
                 _GLOBAL_AICB_CACHE.record_aicb_call()
-                self._generate_aicb_csv()
+                self._offline_aicb_csv_available()
         
         if os.path.exists(csv_path):
             _GLOBAL_AICB_CACHE.record_csv_load()

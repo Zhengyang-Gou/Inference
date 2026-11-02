@@ -4,9 +4,9 @@
 
 推荐从 [研究系统说明](RESEARCH_SYSTEM.md) 和 [研究配置](configs/research/README.md) 开始。`backend/execution/` 按职责组合运行时；旧命令和 `backend.runtime` 的计算 profile 导入保持兼容。
 
-**已实现拓扑后端导出、物理对象容量账本、真实 ns-3 时钟/网络适配器、简单请求基线及 evaluation 的统计与绘图。已实现 schema 2 逐层 KV 就绪与分块立即传输、动态网络观测、集合通信保护和 SLO 门控。`run-baseline` 支持候选剪枝＋增量贪心或轮询绑定，可与前缀缓存、FIFO/Chunked/合批 Prefill 和 Decode 连续批处理组合；预测采用有界近似，不复刻完整 Vidur/Sarathi 批处理；计算数据需要提供并校准。**
+**已实现拓扑后端导出、物理对象容量账本、ns-3 仿真 时钟/网络适配器、简单请求基线及 evaluation 的统计与绘图。已实现 schema 2 逐层 KV 就绪与分块立即传输、动态网络观测、集合通信保护和 SLO 门控。`run-baseline` 支持候选剪枝＋增量贪心或轮询绑定，可与前缀缓存、FIFO/Chunked/合批 Prefill 和 Decode 连续批处理组合；预测采用有界近似，不复刻完整 Vidur/Sarathi 批处理；计算参数需要显式提供并验证覆盖范围。**
 
-实验性 [EP 接入](backend/EXPERT_PARALLEL.md) 可使跨节点 collective 使用 EP dispatch/combine、TP 保持节点内，支持共享专家计算队列和五种 KV 模式；当前仅轮询绑定，EP 联合选择与绑定预测会明确拒绝。
+实验性 [EP 接入](backend/EXPERT_PARALLEL.md) 可使跨节点 collective 使用 EP dispatch/combine、TP 保持节点内，支持共享专家计算队列和五种 KV 模式；支持轮询和 P 轮询/D 均衡随机的静态绑定，EP 联合选择与绑定预测会明确拒绝。
 
 ## 目录
 
@@ -27,7 +27,7 @@ joint_scheduling/
 ├── backend/               # 固定版本构建、ns-3 适配器、简单基线与回归
 ├── bootstrap.sh           # 创建或更新 Conda 环境 simai
 ├── jsim                   # 固定项目环境下的统一入口
-├── check.sh               # 全部测试与真实网络 smoke
+├── check.sh               # 全部测试与分组网络仿真 smoke
 ├── config.py              # 统一加载与跨模块检查
 ├── validation.py          # 公共字段校验
 └── __main__.py            # 配置与拓扑检查命令
@@ -77,7 +77,7 @@ joint_scheduling/
 - 每个机架暂对应一个 Leaf，每台服务器暂抽象为一个共享的全双工网卡；各方向需分别核算容量。
 - `p0/d0` 分别使用第一个机架的两对节点，`p1/d1` 对应第二个机架，各实例的 GPU 互不重叠。
 - 这个部署允许比较同 Leaf 与跨 Leaf 的 P/D 绑定，并为跨节点集合通信与 KV 的共享资源竞争提供条件。
-- 参数是示例值，不能视为已校准实验条件。检查图不展开 GPU 内部互联；后端通过可配置的共享局部 FIFO 链路表示它。
+- 参数是功能示例值；正式仿真使用 research 配置。检查图不展开 GPU 内部互联；后端通过可配置的共享局部 FIFO 链路表示它。
 
 ## 单位与资源语义
 
@@ -91,7 +91,7 @@ joint_scheduling/
 - 共享前缀按物理对象与内存域去重；预留转为实际占用时等量转换，避免重复计数。
 - 当前仅暴露已确认存在的 ECMP 配置名；自适应路由和理想多路径对照应在有对应后端实现后再添加。
 
-## 运行真实网络基线
+## 运行分组网络仿真基线
 
 ```bash
 ./joint_scheduling/bootstrap.sh
@@ -101,7 +101,7 @@ joint_scheduling/
 ./joint_scheduling/check.sh
 ```
 
-示例计算数据明确标记为 synthetic，真实网络基线能够验证反馈和统计，但其数值不代表真实模型性能。现已支持显式逐层 Prefill 与 KV 分块立即传输，也支持动态带宽额度、集合通信保护与 SLO 门控；可在同一后端继续研究联合绑定。模型边界、输入格式与版本维护步骤见 backend/README.md。
+示例计算数据明确标记为 synthetic，分组网络仿真基线能够验证反馈和统计，但其数值不代表真实模型性能。现已支持显式逐层 Prefill 与 KV 分块立即传输，也支持动态带宽额度、集合通信保护与 SLO 门控；可在同一后端继续研究联合绑定。模型边界、输入格式与版本维护步骤见 backend/README.md。
 
 ## 统计与绘图
 

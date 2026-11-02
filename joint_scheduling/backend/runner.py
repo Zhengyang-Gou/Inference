@@ -14,6 +14,8 @@ from ..evaluation.pressure import summarize_pressure
 from ..observation import StateObserver
 from ..observation.monitor import DisabledStateObserver
 from ..kv_scheduler.mlu import validate_settings as validate_mlu_settings
+from ..binding import Binding
+from ..binding.static import binding_plan_document, endpoint_policy, plan_summary
 
 
 from .execution import ExecutionCoordinator
@@ -22,7 +24,7 @@ from .execution import ExecutionCoordinator
 _Baseline = ExecutionCoordinator
 
 
-def run_baseline(config, output_dir, workload_path=None, profile_path=None, make_plots=False, kv_mode=None, *, hooks=None, source_snapshot=None):
+def run_baseline(config, output_dir, workload_path=None, profile_path=None, make_plots=False, kv_mode=None, *, hooks=None, source_snapshot=None, binding_plan=None):
     backend_state = require_backend()
     backend_identity = json.loads(backend_state['manifest'].read_text())
     if kv_mode is not None:
@@ -38,6 +40,16 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
         if not workload_path.is_absolute():
             workload_path = config.config_path.parent / workload_path
     requests, workload_provenance = load_workload(workload_path)
+    bindings = None
+    if endpoint_policy(config.binding) == 'balanced_random':
+        expected_plan = binding_plan_document(requests, config.topology, config.binding)
+        if binding_plan is not None and binding_plan != expected_plan:
+            raise ValueError('frozen binding plan does not match workload, topology and binding settings')
+        binding_plan = expected_plan if binding_plan is None else binding_plan
+        bindings = tuple(Binding(row['request_id'], row['prefill_instance_id'], row['decode_instance_id'])
+                         for row in binding_plan['bindings'])
+    elif binding_plan is not None:
+        raise ValueError('a frozen binding plan requires binding.policy=balanced_random')
     profile = ComputeProfile(profile_path)
     validate_ep_profile(config, profile)
     if config.runtime.prefill_batch_size > 1 and not config.runtime.prefill_batch_token_budget:
@@ -95,7 +107,7 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
     (output / "workload.json").write_bytes(Path(workload_path).read_bytes())
     snapshot = asdict(config)
     snapshot["config_path"] = str(config.config_path)
-    snapshot["effective_baseline"] = {"endpoint_selection": "joint_lexicographic" if joint else "round_robin", "prefill": "token_budget_running_first_fcfs" if config.runtime.prefill_batch_token_budget else "chunk_round_robin" if config.runtime.prefill_chunk_tokens else "fifo",
+    snapshot["effective_baseline"] = {"endpoint_selection": endpoint_policy(config.binding), "prefill": "token_budget_running_first_fcfs" if config.runtime.prefill_batch_token_budget else "chunk_round_robin" if config.runtime.prefill_chunk_tokens else "fifo",
                                       "prefill_batch_size": config.runtime.prefill_batch_size,
                                       "prefill_batch_token_budget": config.runtime.prefill_batch_token_budget,
                                       "prefill_chunk_tokens": config.runtime.prefill_chunk_tokens,
@@ -120,6 +132,15 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
         binding_decision_overhead_us=config.binding.decision_overhead_us,
         binding_prediction_use="sampled_diagnostics" if joint else "diagnostics_only",
         reservation_timing="atomic_binding_batch" if joint else "at_prefill_start")
+    if binding_plan is not None:
+        (output/'binding_plan.json').write_text(json.dumps(binding_plan, indent=2)+'\n')
+        snapshot['effective_baseline'].update(binding_seed=config.binding.seed,
+            binding_plan_sha256=binding_plan['bindings_sha256'])
+    if config.expert_parallel.enabled and config.expert_parallel.rank_unit == 'gpu':
+        snapshot['effective_baseline'].update(ep_rank_unit='gpu',
+            attention_dp_instances={role:sum(p.role==role for p in config.topology.placements) for role in ('prefill','decode')},
+            ep_sizes_by_phase={role:next(len(g) for g in config.expert_parallel.groups
+                if next(p.role for p in config.topology.placements if p.instance_id==g[0])==role) for role in ('prefill','decode')})
     (output / "resolved_config.json").write_text(json.dumps(snapshot, indent=2) + "\n")
     portable_config = asdict(config)
     portable_config.pop('config_path')
@@ -149,7 +170,7 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
                                detailed=config.recording.detailed,
                                measurement_window=(config.evaluation.window_start_seconds,
                                                    config.evaluation.window_end_seconds)) as observer:
-            baseline = _Baseline(config, backend, recorder, profile, requests, observer, hooks=hooks)
+            baseline = _Baseline(config, backend, recorder, profile, requests, observer, hooks=hooks, bindings=bindings)
             try:
                 (output/'runtime_components.json').write_text(json.dumps(dict(schema_version=1,
                     request_state='immutable_inputs_with_named_progress_and_legacy_mapping',
@@ -182,6 +203,8 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
             pending_blocks=len(baseline.scheduler.pending),inflight_blocks=len(baseline.scheduler.inflight))
     if baseline.binding_report is not None:
         result.summary["binding"] = baseline.binding_report
+    if binding_plan is not None:
+        result.summary['static_binding'] = plan_summary(binding_plan)
     export_result(result, output / "result", snapshot, copy_trace=False)
     if make_plots:
         from ..evaluation.plots import plot_results

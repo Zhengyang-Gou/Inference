@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provenance": {
     "synthetic": true,
-    "description": "Tiny two-layer integration fixture for prefix reuse, chunk/packed Prefill, continuous Decode and joint binding; not measured GPU performance."
+    "description": "Tiny two-layer integration fixture for prefix reuse, chunk/packed Prefill, continuous Decode and joint binding; synthetic simulation costs."
   },
   "network_communication_excluded": true,
   "model": "synthetic-composed-execution",

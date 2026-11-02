@@ -1,6 +1,6 @@
 # 研究系统边界与推荐流程
 
-当前研究问题是：P/D 分离的 MoE 推理中，KV 传输如何影响 EP 通信，SLO 调度如何影响请求表现。正式运行路径是自有 profile 驱动执行器 + ns-3 RDMA 网络；GPU 计算时间由 profile 给出，CPU 上推进仿真。没有运行 vLLM 或目标 H800 集群实测。
+当前研究问题是：P/D 分离的 MoE 推理中，KV 传输如何影响 EP 通信，SLO 调度如何影响请求表现。正式运行路径是自有 profile 驱动执行器 + ns-3 RDMA 网络；GPU 计算时间由 profile 给出，CPU 上推进仿真。全部实验在 CPU 上推进计算事件和网络事件。
 
 唯一推荐配置入口为 [research/README.md](configs/research/README.md)。完整 Azure 策略矩阵、网络优先级消融、短程集成验证和固定流量诊断有不同的命名与输出类型，不能互相替代。
 
@@ -58,12 +58,14 @@
 | MoE EP | 节点内 TP、跨节点 dispatch/combine、专家 FIFO、chunk/packed P、连续 D、KV/MLU | EP 仍禁止联合选择与绑定预测；主研究另关闭前缀缓存和绑定窗口 |
 | 固定网络诊断 | audited 单 case/seed、固定请求、逐层立即 KV、1 ms 观测、节点内 TP | 原生网络优先级关闭；流类别须有独立端点对；端口重用冷却必须满足；输入未排空时失败 |
 
-当前 EP8 是 8 个 TP team，不是其他引擎中 EP rank 数的通用定义；异步源 batch，没有全组 batch 屏障；Decode 仍为聚合 dense step 后执行 MoE 层。H800 profile 是 `estimated_not_target_calibrated`，专家路由是模型假设，SLO 来自实验配置。该轮整理不接入 vLLM、不升级这些执行语义。
+主研究使用 160 GPU、TP1、P-EP32 / D-EP128；EP rank 对应 GPU，Attention 为 DP32/DP128。两阶段各一个模型单元；权重和显存账本按阶段核算，不单独制造 DP 大数据流。旧 EP8 则为 8 个 TP team；异步源 batch，没有全组 batch 屏障；Decode 仍为聚合 dense step 后执行 MoE 层。H800 profile 是 `estimated_simulation_profile`，专家路由是模型假设，SLO 来自实验配置。研究范围限定为这些显式仿真语义。
 
-`output_tokens` 是仿真终止真值，MLU/绑定预测使用声明的可见输出上限。轮询路径的物理显存预留仍沿用原实现，按仿真输出增长量计算；它不是实机引擎的在线 KV block 分配器。本次只拆清职责，保留该行为供后续单独升级。
+主研究网络改为每 GPU 独立 RDMA 端点（400 Gbps，节点总计 3.2 Tbps），Leaf 上联逻辑聚合总计 6.4 Tbps；节点内使用每 GPU 发送/接收端口各 160 GB/s 的无阻塞交换抽象。物理节点身份仍用于本地/远程判断，网络端点 ID 用于路由、拥塞、遥测和固定流量重放。独立端口可并发，共用端口排队；旧共享 NIC/FIFO 模式保留。RPC v4，升级须重建后端。
+
+`output_tokens` 是仿真终止真值，MLU/绑定预测使用声明的可见输出上限。轮询路径的物理显存预留仍沿用原实现，按仿真输出增长量计算；该分配规则是当前容量模型的一部分；分页或动态分配须作为独立仿真机制研究。
 
 ## 第三方与回归入口
 
-`third_party/ns3` 是实际网络后端；Vidur、AICB、SimCCL、ASTRA-Sim 当前为参考或采样/工作负载工具来源，未充当在线请求执行器。具体来源/许可证以 [manifest](../third_party/manifest.json) 为准。
+`third_party/ns3` 是分组网络仿真后端；Vidur、AICB、SimCCL、ASTRA-Sim 提供 CPU 仿真、离线代价和工作负载参考。具体来源/许可证以 [manifest](../third_party/manifest.json) 为准。
 
 完整回归运行 `./joint_scheduling/check.sh`。原功能测试保留；新增接口/状态所有权、观测副本、脏源码归档、固定流量完整重放测试。`backend/fixtures/runtime_equivalence.json` 冻结整理前 Dense/MoE 参考产物哈希，检查 token 时刻、请求结果、传输统计和资源释放不变；小 fixture 仅验证机制。Azure 四请求诊断另外按原输入重跑核对，不能用它评价持续负载承载率。

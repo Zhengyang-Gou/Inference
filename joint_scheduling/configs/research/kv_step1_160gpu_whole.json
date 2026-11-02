@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "base_config": "base.json",
+  "profile": "../../profiles/deepseek_v3_h800_tp1_ep32_ep128_estimated.json",
+  "workload": "../../../data/azure/conv_40rps_representative_5s.json",
+  "seeds": [
+    7
+  ],
+  "cases": [
+    {
+      "id": "whole",
+      "overrides": {
+        "runtime.kv_transfer_mode": "whole_ready_immediate",
+        "kv_scheduler.policy": "slo_slack",
+        "kv_scheduler.slo_priority_enabled": false,
+        "kv_scheduler.collective_protection_enabled": false
+      }
+    }
+  ],
+  "common_overrides": {
+    "runtime.time_limit_seconds": 40.0,
+    "evaluation.window_start_seconds": 0.0,
+    "evaluation.window_end_seconds": 30.0,
+    "binding.policy": "balanced_random",
+    "binding.seed": 7,
+    "binding.window_enabled": false,
+    "binding.prediction_enabled": false,
+    "binding.joint_selection_enabled": false,
+    "prefix_cache.enabled": false,
+    "runtime.network_priority_enabled": false,
+    "runtime.packet_payload_bytes": 8000,
+    "feedback.network_observation_enabled": true,
+    "feedback.network_observation_interval_us": 1000
+  },
+  "comparison": {
+    "purpose": "kv_policy",
+    "allowed_changes": [
+      "runtime.kv_transfer_mode",
+      "kv_scheduler.policy",
+      "kv_scheduler.slo_priority_enabled",
+      "kv_scheduler.collective_protection_enabled"
+    ],
+    "fixed": {
+      "runtime.time_limit_seconds": 40.0,
+      "evaluation.window_start_seconds": 0.0,
+      "evaluation.window_end_seconds": 30.0,
+      "evaluation.default_ttft_slo_seconds": 1.0,
+      "evaluation.default_itl_slo_seconds": 0.1,
+      "binding.policy": "balanced_random",
+      "binding.seed": 7,
+      "binding.window_enabled": false,
+      "binding.prediction_enabled": false,
+      "binding.joint_selection_enabled": false,
+      "prefix_cache.enabled": false,
+      "expert_parallel.enabled": true,
+      "runtime.network_priority_enabled": false,
+      "runtime.packet_payload_bytes": 8000,
+      "runtime.prefill_chunk_tokens": 512,
+      "runtime.prefill_batch_token_budget": 2048,
+      "runtime.prefill_batch_size": 16,
+      "runtime.decode_batch_size": 64,
+      "feedback.network_observation_enabled": true,
+      "feedback.network_observation_interval_us": 1000,
+      "feedback.observation_delay_us": 100
+    },
+    "input_sha256": {
+      "profile": "59e28f3221c73230a7b4dd7028762b48193e76578f3af43b30e92adce5155438",
+      "workload": "bbed3141bb8cbe34d09be5608e53d7af06b147045782cc14c34d7261704070b2"
+    }
+  },
+  "experiment_type": "end_to_end"
+}

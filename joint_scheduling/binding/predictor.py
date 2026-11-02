@@ -19,14 +19,14 @@ from ..prefix_cache import PrefixCache
 from ..prefix_cache.layout import PrefixPlan
 from ..reservations import PhysicalObjectReservation
 from ..reservations.ledger import CapacityLedger
-from ..topology import build_manifest
+from ..topology import build_manifest, local_resources
 
 
 def topology_resources(topology):
     graph = build_manifest(topology)
-    switches = {s["id"]: i for i, s in enumerate(graph["switches"], topology.num_nodes)}
+    switches = {s["id"]: i for i, s in enumerate(graph["switches"], topology.network_endpoint_count)}
     def node(name):
-        return int(name.split("-")[1]) if name.startswith("node-") else switches[name]
+        return int(name.split("-")[1]) if name.startswith(("node-", "gpu-")) else switches[name]
     result = {}
     for link in graph["links"]:
         a, b = node(link["src"]), node(link["dst"])
@@ -34,9 +34,7 @@ def topology_resources(topology):
             key = "edge:{}:{}".format(src, dst)
             result[key] = dict(node_id=src, peer_id=dst,
                                capacity_bps=link["bandwidth_bytes_per_second"]*8)
-    for host in range(topology.num_nodes):
-        result["local:{}".format(host)] = dict(node_id=host, peer_id=host,
-            capacity_bps=topology.intra_node_bandwidth_gbps*1e9)
+    result.update(local_resources(topology))
     return result
 
 
@@ -52,10 +50,11 @@ class _Rollout:
         self.placements = {p.instance_id: p for p in config.topology.placements}
         self.capacities, self.queue_delays = {}, {}
         observed = state.get("network")
+        observed_resources = observed['resources'] if observed else {}
         ports = {(p["node_id"], p["peer_id"]): p for p in observed["resources"].values()} if observed else {}
         for key, capacity in resources.capacities.items():
             raw = resources.initial[key]
-            port = ports.get((raw["node_id"], raw["peer_id"]), {})
+            port = observed_resources.get(key, {}) if key.startswith('local:') else ports.get((raw["node_id"], raw["peer_id"]), {})
             available = max(capacity*.01, capacity*(1-config.kv_scheduler.safety_margin_fraction)
                             - port.get("other_bytes_per_second", 0))
             self.capacities[key] = available

@@ -1,7 +1,6 @@
 {
-  "status": "estimated_not_target_calibrated",
-  "whole_model_measured": false,
-  "target_configuration_measured": false,
+  "status": "estimated_simulation_profile",
+  "modeling_scope": "simulation_compute_costs",
   "model": "deepseek-ai/DeepSeek-V3",
   "gpu": "NVIDIA H800",
   "tp_size": 4,
@@ -583,13 +582,13 @@
     "source_revision": "449602428a1b023acb8a505d4f34fef536535db6"
   },
   "limitations": [
-    "Target TP/EP, contexts and batches are analytically scaled from a few source anchors, not measured curves or an error bound.",
-    "No target-engine end-to-end calibration; no CPU scheduling, sampling, embedding/final vocabulary projection timing.",
+    "Simulation TP/EP, context and batch grids are analytically scaled from source anchors; no statistical error bound is inferred.",
+    "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.",
     "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
     "Balanced periodic routing is an experimental assumption, not Azure or learned DeepSeek router data.",
     "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
     "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
     "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
-    "FP8 parameter allocation estimates omit runtime workspaces/activation buffers and MTP weights; no real engine memory admission guarantee."
+    "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget."
   ]
 }

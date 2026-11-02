@@ -114,7 +114,7 @@ def build_public_profile(mlp_path, attention_path, tp_size=4, source_commit="", 
     weights_per_gpu = math.ceil(matrix_parameters * 2 / tp_size) + norm_parameters * 2
     profile = dict(schema_version=2,
                    provenance=dict(synthetic=True,
-                       description="Estimated Llama-3.1-70B FP16 proxy composed from shape-matched Llama-3-70B A100 operator medians; not an end-to-end GPU measurement.",
+                       description="Estimated Llama-3.1-70B FP16 simulation proxy composed from shape-matched Llama-3-70B A100 offline operator medians.",
                        target_model="meta-llama/Llama-3.1-70B-Instruct", source_model="meta-llama/Meta-Llama-3-70B",
                        device="A100 80GB", dtype="float16", tensor_parallel_size=tp_size, model_shape=copy.deepcopy(SHAPE),
                        source_repo="https://github.com/microsoft/vidur", source_commit=source_commit,
@@ -141,7 +141,7 @@ def build_public_profile(mlp_path, attention_path, tp_size=4, source_commit="", 
     if target_model == "meta-llama/Meta-Llama-3-70B":
         provenance = profile["provenance"]
         provenance.update(target_model=target_model,
-            description="Estimated Meta-Llama-3-70B FP16 composed from matching public A100 operator medians; not an end-to-end engine measurement.",
+            description="Estimated Meta-Llama-3-70B FP16 simulation proxy composed from matching public A100 operator medians.",
             architecture_crosscheck="Model name and tensor shapes match the public profiling source; no Llama-3.1 transfer assumed.",
             model_config_sources=["https://github.com/microsoft/vidur/blob/"+source_commit+"/vidur/config/model_config.py"])
         provenance["omissions"] = [item for item in provenance["omissions"] if "Llama-3.1" not in item]
@@ -151,9 +151,9 @@ def build_public_profile(mlp_path, attention_path, tp_size=4, source_commit="", 
         profile["provenance"]["chunked_prefill"] = dict(
             maximum_exported_chunk_tokens=prefill_chunk_tokens,
             timing="Match prefill query chunk and cached context to measured attention; linear/embedding use query tokens only. Uniform layers; embedding once per chunk.",
-            multi_request_prefill="Packed linear/embedding at total query tokens; sum independent per-request attention estimates; not a measured multi-request GPU kernel.",
+            multi_request_prefill="Simulation composition: packed linear/embedding costs at total query tokens plus independent per-request attention estimates.",
             short_chunk_assumption="Below the minimum chunk with cached-context measurements, anchor attention to that minimum measured query size; linear operators retain query-size dependence.")
-    audit = dict(status="estimated_operator_proxy", whole_model_measured=False,
+    audit = dict(status="estimated_operator_proxy", modeling_scope="simulation_operator_proxy",
                  measured_linear_range=[min(linear), max(linear)], measured_prefill_attention_range=[min(prefill), max(prefill)],
                  measured_decode_attention_range=[min(decode), max(decode)],
                  exported_prefill_range=[1, pmax], exported_decode_range=[1, dmax],

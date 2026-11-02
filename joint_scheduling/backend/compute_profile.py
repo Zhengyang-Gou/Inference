@@ -5,6 +5,12 @@ from ..validation import require_mapping
 from .inputs import read_json, number
 
 
+def profile_kind(provenance):
+    """Classify an offline simulation input without deployment prerequisites."""
+    return provenance.get('profile_kind',
+        'synthetic_profile' if provenance['synthetic'] else 'source_profile')
+
+
 class ComputeProfile:
     def __init__(self, path):
         self.path = Path(path).resolve()
@@ -19,6 +25,14 @@ class ComputeProfile:
             raise ValueError("compute profile must exclude explicitly simulated communication")
         self.kv_bytes_per_token = number(self.raw.get("kv_bytes_per_token"), "kv_bytes_per_token", True, True)
         self.weights_bytes_per_gpu = number(self.raw.get("weights_bytes_per_gpu"), "weights_bytes_per_gpu", integral=True)
+        weights = self.raw.get('weights_bytes_per_gpu_by_phase')
+        if weights is not None and (not isinstance(weights, dict) or set(weights) != {'prefill', 'decode'}):
+            raise ValueError('phase weights require prefill and decode')
+        self.weights_bytes_per_gpu_by_phase = {phase: number(
+            weights[phase] if weights is not None else self.weights_bytes_per_gpu,
+            'weights_bytes_per_gpu_by_phase.'+phase, integral=True) for phase in ('prefill', 'decode')}
+        if weights is not None and self.weights_bytes_per_gpu != max(self.weights_bytes_per_gpu_by_phase.values()):
+            raise ValueError('legacy weight scalar must equal the maximum phase weight')
         self.phases = require_mapping(self.raw.get("phases"), "profile.phases")
         for phase in ("prefill", "decode"):
             values = require_mapping(self.phases.get(phase), "profile.phases." + phase)
@@ -84,6 +98,9 @@ class ComputeProfile:
                 raise ValueError("EP requires a layered schema 2 compute profile")
             from .expert_parallel import ExpertProfile
             self.expert = ExpertProfile(self.raw["expert_parallel"], len(self.phases["prefill"]["layers"]))
+
+    def weights_for_phase(self, phase):
+        return self.weights_bytes_per_gpu_by_phase[phase]
 
     def prefill_chunks(self, tokens, tp_size, chunk_tokens, cached_tokens=0):
         number(tokens, "prefill tokens", True, True)
@@ -176,7 +193,7 @@ class ComputeProfile:
             raise ValueError("decode TP size does not match profile")
         batches = config.get("batches", [])
         if not batches or size > batches[-1]["batch_size"]:
-            raise ValueError("decode batch size {} is outside calibrated batch coverage".format(size))
+            raise ValueError("decode batch size {} is outside declared batch coverage".format(size))
         lo = max((b for b in batches if b["batch_size"] <= size), key=lambda b: b["batch_size"])
         hi = min((b for b in batches if b["batch_size"] >= size), key=lambda b: b["batch_size"])
         samples = [self._interpolate(dict(b, collectives_per_step=config["collectives_per_step"]), tokens, "decode batch") for b in (lo, hi)]
@@ -254,7 +271,7 @@ class ComputeProfile:
     def _interpolate(config, tokens, phase):
         points = config["points"]
         if tokens < points[0]["tokens"] or tokens > points[-1]["tokens"]:
-            raise ValueError("{} token count {} is outside calibrated profile coverage [{}, {}]".format(
+            raise ValueError("{} token count {} is outside declared profile coverage [{}, {}]".format(
                 phase, tokens, points[0]["tokens"], points[-1]["tokens"]))
         left = right = points[0]
         for point in points:

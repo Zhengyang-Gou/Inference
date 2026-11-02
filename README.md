@@ -2,11 +2,15 @@
 
 Inference 是面向大模型 Prefill–Decode 分离推理的调度研究仓库，研究 P/D 实例联合绑定、KV 传输与集合通信竞争，以及请求级 SLO 达标完成吞吐。
 
-当前主研究入口是 [Azure + DeepSeek-V3 的 EP/KV 对照](joint_scheduling/configs/research/README.md)：固定 128 GPU、节点内 TP4、跨节点 EP8，比较 Immediate / FIFO / MLU。计算使用 **尚未在目标集群校准的估算 profile**，网络由 ns-3 执行；这不是 vLLM 实机吞吐测试。该入口关闭绑定预测、联合选择和前缀缓存，相关功能与测试仍保留。其他配置的用途见 [配置目录](joint_scheduling/configs/README.md)，整理前快照与复现方法见 [冻结基线](joint_scheduling/RESEARCH_BASELINE.md)。
+**本仓库只做仿真。** 请求、计算、容量和通信事件均在 CPU 上推进；H800 等设备名称用于标识离线计算代价，节点与网络由显式参数建模。
+
+当前主研究入口是 [Azure + DeepSeek-V3 的 EP/KV 对照](joint_scheduling/configs/research/README.md)：160 GPU、TP1，Prefill 为 Attention DP32 / Expert EP32，Decode 为 DP128 / EP128，比较 Immediate / FIFO / MLU。计算使用 **公开数据推导的仿真计算 profile**，网络由 ns-3 分组模型执行，研究范围限定为离散事件仿真。该入口关闭绑定预测、联合选择和前缀缓存，相关功能与测试仍保留。其他配置的用途见 [配置目录](joint_scheduling/configs/README.md)，整理前快照与复现方法见 [冻结基线](joint_scheduling/RESEARCH_BASELINE.md)。
 
 运行时组件、允许的功能组合、输入/源码归档和两类实验的边界，统一见 [研究系统说明](joint_scheduling/RESEARCH_SYSTEM.md)。
 
-当前可运行的是 **CPU 上的真实 ns-3 网络简单基线**，支持整份 KV、Prefill 后分块、逐层立即，以及动态观测下的集合通信保护和 SLO/FIFO KV 放行模式。已实现显式逐层计算/通信依赖、物理对象容量账本、统一时间与网络反馈、统计和绘图；已实现按共享资源补充带宽令牌、在途额度、集合通信保护及请求级 SLO 余量排序；**已实现可选的候选剪枝＋增量贪心联合绑定**。逐层模式需要显式 schema 2 计算性能文件，示例是 synthetic，不能视为真实 GPU 测量。
+请求负载、模型、节点/网络拓扑、P/D 比例、TP/EP、带宽、SLO 和实验矩阵的统一前置口径见根目录 [实验报告](实验报告.md)。
+
+当前可运行的是 **CPU 上的 ns-3 分组网络仿真基线**，支持整份 KV、Prefill 后分块、逐层立即，以及动态观测下的集合通信保护和 SLO/FIFO KV 放行模式。已实现显式逐层计算/通信依赖、物理对象容量账本、统一时间与网络反馈、统计和绘图；已实现按共享资源补充带宽令牌、在途额度、集合通信保护及请求级 SLO 余量排序；**已实现可选的候选剪枝＋增量贪心联合绑定**。逐层模式需要显式 schema 2 计算性能文件，示例为 synthetic，使用显式仿真代价。
 
 这是独立维护的 Inference 项目。第三方源码以普通文件保存在 `third_party/`，构建不依赖嵌套 Git 仓库或 Git 子模块。第三方代码的来源、版本和各组件许可证路径见 [组件清单](third_party/manifest.json)。
 
@@ -61,7 +65,7 @@ Inference/
 └── .github/workflows/inference.yml # 基线回归工作流
 ```
 
-`third_party/vidur` 等保留组件尚未接入当前请求基线。当前执行器使用可选联合/轮询绑定和 FIFO/按 token 块轮转/多请求token预算合批的 Prefill 规则，不复刻完整 Vidur/Sarathi 批处理，支持可选 Decode 连续批处理（需提供批量时延曲线），尚不支持 PP。实验性 [EP 路径](joint_scheduling/backend/EXPERT_PARALLEL.md) 支持节点内 TP、跨节点 dispatch/专家计算/combine 与 KV 共享网络；当前 EP 仅支持轮询绑定，不支持联合选择或绑定预测。前缀复用由自有 `prefix_cache` 模块模拟，使用显式前缀身份和缓存命中计算样本，不保存真实模型 KV 张量。
+`third_party/vidur` 等保留组件尚未接入当前请求基线。当前执行器使用可选联合/轮询绑定和 FIFO/按 token 块轮转/多请求token预算合批的 Prefill 规则，不复刻完整 Vidur/Sarathi 批处理，支持可选 Decode 连续批处理（需提供批量时延曲线），尚不支持 PP。实验性 [EP 路径](joint_scheduling/backend/EXPERT_PARALLEL.md) 支持节点内 TP、跨节点 dispatch/专家计算/combine 与 KV 共享网络；当前 EP 支持静态轮询和均衡随机绑定，不支持联合选择或绑定预测。前缀复用由自有 `prefix_cache` 模块模拟，使用显式前缀身份和缓存命中计算样本，不保存真实模型 KV 张量。
 
 Dense 路径中的前缀缓存、Chunked/合批 Prefill、Decode 连续批处理现可与绑定预测及联合选择同时开启。
 执行按 token 区间更新共享 KV，预测按实际本地组批规则重新评估已有与新增请求，受确定性工作预算约束。
@@ -188,4 +192,4 @@ KV 在途额度现可按可用带宽、实际块完成反馈和集合通信可�
 
 `./scripts/simai-python scripts/check_repository.py` 可以在未安装项目依赖、未构建后端时检查目录完整性、嵌套 Git 残留与网络源码内容。`check.sh` 和 CI 也会执行此检查。克隆本仓库后无需执行 `git submodule update`。
 
-后端在 `joint_scheduling/artifacts/backend/` 中建立隔离副本，记录工具链、构建指纹及二进制 SHA256。变更第三方网络源码时，应同步审查来源清单、内容锁和回归结果。`check.sh` 检查统计、资源、真实网络及端到端确定性；GitHub Actions 在推送或拉取请求中执行相同基线回归。
+后端在 `joint_scheduling/artifacts/backend/` 中建立隔离副本，记录工具链、构建指纹及二进制 SHA256。变更第三方网络源码时，应同步审查来源清单、内容锁和回归结果。`check.sh` 检查统计、资源、分组网络仿真及端到端确定性；GitHub Actions 在推送或拉取请求中执行相同基线回归。

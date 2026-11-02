@@ -14,7 +14,6 @@ limitations under the License.
 # /usr/bin/python3
 from utils.utils import CommType, CommGroup
 from log_analyzer.utils import convert_msg_to_size, convert_size_to_msg
-from utils.benchmark_logger import BenchLogger
 from log_analyzer.log import LogItem, Log
 
 COMM_OP = "comm op"

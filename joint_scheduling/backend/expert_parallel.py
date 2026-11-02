@@ -16,6 +16,7 @@ from ..validation import ConfigError, integer, read_settings, require_mapping
 class ExpertParallelConfig:
     enabled: bool = False
     groups: tuple = field(default=(), metadata={"internal": True})
+    rank_unit: str = field(default='tp_team', metadata={'choices': ('tp_team', 'gpu')})
 
 
 def parse_config(raw):
@@ -27,7 +28,7 @@ def parse_config(raw):
         raise ConfigError("expert_parallel.groups must contain lists of at least two instance IDs")
     if bool(groups) != settings.enabled:
         raise ConfigError("expert_parallel.enabled requires groups; disabled EP must have no groups")
-    return ExpertParallelConfig(settings.enabled, tuple(tuple(g) for g in groups))
+    return ExpertParallelConfig(settings.enabled, tuple(tuple(g) for g in groups), settings.rank_unit)
 
 
 def validate_config(config):
@@ -47,8 +48,11 @@ def validate_config(config):
         seen.update(group)
     if seen != set(placements):
         raise ConfigError("EP groups must cover every P/D instance exactly once")
-    if len({len(g) for g in ep.groups}) != 1:
-        raise ConfigError("This EP profile uses one shared expert layout; all EP groups must have equal size")
+    for role in ('prefill', 'decode'):
+        if len({len(g) for g in ep.groups if placements[g[0]].role == role}) != 1:
+            raise ConfigError('EP groups within each phase must have equal size')
+    if ep.rank_unit == 'gpu' and any(len(p.gpu_ids) != 1 for p in placements.values()):
+        raise ConfigError('GPU-rank EP requires TP1 for every attention instance')
     for p in placements.values():
         if len({g // config.topology.gpus_per_node for g in p.gpu_ids}) != 1:
             raise ConfigError("EP mode requires every TP instance to stay within one node")
@@ -135,7 +139,9 @@ def validate_profile(config, profile):
     for group in config.expert_parallel.groups:
         if profile.expert.raw["num_experts"] % len(group):
             raise ValueError("num_experts must be divisible by each EP group size")
-        declared=profile.provenance.get('expert_parallel_size')
+        role = next(p.role for p in config.topology.placements if p.instance_id == group[0])
+        declared=profile.provenance.get('expert_parallel_sizes', {}).get(role,
+            profile.provenance.get('expert_parallel_size'))
         if declared is not None and declared != len(group):
             raise ValueError('EP group size does not match the compute profile expert_parallel_size')
     for p in config.topology.placements:
@@ -422,4 +428,7 @@ class ExpertParallelMixin:
                 limitations=['no_global_EP_batch_barrier', 'affine_assignment_and_active_expert_compute_profile',
                              'no_activation_memory_accounting', 'no_joint_binding_prediction',
                              'decode_dense_step_then_aggregated_MoE_layers'])
+            if self.config.expert_parallel.rank_unit == 'gpu':
+                value.update(rank_unit='gpu', phase_ep_sizes={role: next(len(g) for g in self.config.expert_parallel.groups
+                    if self.instances[g[0]].role == role) for role in ('prefill', 'decode')})
             (self.observer.output.parent/'expert_parallel_summary.json').write_text(json.dumps(value, indent=2)+'\n')

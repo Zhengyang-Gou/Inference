@@ -12,9 +12,11 @@ import tempfile
 from dataclasses import asdict
 from pathlib import Path
 
-from ..backend.runtime import ComputeProfile,read_json
+from ..backend.runtime import ComputeProfile,read_json,load_workload
+from ..backend.compute_profile import profile_kind
 from ..backend.expert_parallel import validate_profile
 from ..config import load_config
+from ..binding.static import binding_plan_document, endpoint_policy, plan_summary
 from ..workload.trace import profile_coverage
 
 
@@ -113,22 +115,42 @@ def audit_comparison(plan,contract):
     common={k:v for k,v in _flatten(reference).items() if k not in allowed and k not in locations}
     common_hash=hashlib.sha256(json.dumps(dict(settings=common,input_sha256=actual),sort_keys=True,default=str,separators=(',',':')).encode()).hexdigest()
     provenance=workload.get('provenance',{})
-    profile_status=profile.provenance.get('calibration_status',
-        'synthetic_profile' if profile.provenance['synthetic'] else 'source_declared_measurement_not_independently_verified')
+    profile_status=profile_kind(profile.provenance)
+    static_binding = None
+    if endpoint_policy(config.binding) == 'balanced_random':
+        ordered_requests, _ = load_workload(plan['fixed_workload'])
+        document = binding_plan_document(ordered_requests, config.topology, config.binding)
+        for cfg in cfgs.values():
+            candidate = binding_plan_document(ordered_requests, cfg.topology, cfg.binding)
+            if candidate != document:
+                raise ValueError('matched comparison requires an identical frozen binding plan')
+        static_binding = plan_summary(document)
     return dict(schema_version=1,purpose=contract['purpose'],passed=True,allowed_changes=allowed,fixed_settings=fixed,
         common_config_sha256=common_hash,input_sha256=actual,cases=cases,pairwise_differences=pairwise,
         seeds=plan['source_spec']['seeds'],pairing='All cases use identical frozen input bytes; network seed paired within each seed group.',
+        static_binding=static_binding,
         model=dict(name=profile.raw.get('model'),status=profile_status,synthetic=profile.provenance['synthetic'],
-            tp_size=profile.phases['prefill']['tp_size'],ep_size_unit='TP_teams' if profile.expert else None,
-            ep_teams_per_group=len(config.expert_parallel.groups[0]) if profile.expert else None,
-            model_group_gpus=len(config.expert_parallel.groups[0])*profile.phases['prefill']['tp_size'] if profile.expert else None,
+            tp_size=profile.phases['prefill']['tp_size'],ep_size_unit=(
+                'GPU_ranks' if config.expert_parallel.rank_unit == 'gpu' else 'TP_teams') if profile.expert else None,
+            ep_teams_per_group=(len(config.expert_parallel.groups[0]) if len({len(g) for g in config.expert_parallel.groups}) == 1 else None) if profile.expert else None,
+            model_group_gpus=(len(config.expert_parallel.groups[0])*profile.phases['prefill']['tp_size']
+                if len({len(g) for g in config.expert_parallel.groups}) == 1 else None) if profile.expert else None,
+            ep_sizes_by_phase={role: next(len(g) for g in config.expert_parallel.groups
+                if next(p.role for p in config.topology.placements if p.instance_id == g[0]) == role)
+                for role in ('prefill', 'decode')} if profile.expert else None,
+            weights_bytes_per_gpu_by_phase=profile.weights_bytes_per_gpu_by_phase,
             ep_execution='asynchronous_source_batch_dispatch_expert_fifo_combine' if profile.expert else None),
         workload=dict(request_count=len(requests),source_format=provenance.get('source_format'),
             source_sha256=provenance.get('source_sha256'),arrival_time_scaled=provenance.get('arrival_time_scaled'),
             injection_duration_seconds=provenance.get('injection_duration_seconds'),actual_selected_rate_rps=provenance.get('actual_selected_rate_rps'),
             max_input_tokens=max(r['input_tokens'] for r in requests),max_output_tokens=max(r['output_tokens'] for r in requests)),
         topology=dict(gpus=config.topology.num_gpus,nodes=config.topology.num_nodes,gpus_per_node=config.topology.gpus_per_node,
-            nic_bandwidth_gbps=config.topology.nic_bandwidth_gbps),
+            nic_bandwidth_gbps=config.topology.nic_bandwidth_gbps,nic_model=config.topology.nic_model,
+            endpoint_bandwidth_gbps=config.topology.endpoint_bandwidth_gbps,
+            num_leaves=config.topology.num_leaves,num_spines=config.topology.num_spines,
+            uplink_bandwidth_gbps=config.topology.uplink_bandwidth_gbps,
+            intra_node_model=config.topology.intra_node_model,
+            intra_node_bandwidth_gbps=config.topology.intra_node_bandwidth_gbps),
         fixed_conditions=dict(packet_payload_bytes=config.runtime.packet_payload_bytes,prefill_chunk_tokens=config.runtime.prefill_chunk_tokens,
             prefill_batch_token_budget=config.runtime.prefill_batch_token_budget,prefill_batch_size=config.runtime.prefill_batch_size,
             decode_batch_size=config.runtime.decode_batch_size,observation_delay_us=config.feedback.observation_delay_us,

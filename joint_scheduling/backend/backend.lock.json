@@ -1,10 +1,10 @@
 {
-  "protocol_version": 3,
+  "protocol_version": 4,
   "ns3_repository": "https://github.com/aliyun/ns-3-alibabacloud",
   "ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
   "cmake_version": "3.31.10",
   "completion_semantics": "all_bytes_acknowledged_at_sender",
-  "endpoint_model": "one_shared_full_duplex_nic_per_physical_server",
+  "endpoint_model": "configurable_shared_node_or_per_gpu_full_duplex_nics",
   "source_manifest": "third_party/ns3/SOURCE_MANIFEST.json",
   "source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6"
 }

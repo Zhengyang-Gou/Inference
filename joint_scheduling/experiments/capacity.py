@@ -5,6 +5,7 @@ import math
 from collections import defaultdict
 
 from ..workload.trace import profile_coverage
+from ..binding.static import plan_bindings
 
 
 def estimate_capacity(workload, profile, config):
@@ -71,13 +72,15 @@ def estimate_capacity(workload, profile, config):
             return
         a, b = src // topology.gpus_per_node, dst // topology.gpus_per_node
         if a == b:
-            key = "node-{}:local".format(a)
-            resource_bytes[key] += amount
-            capacities[key] = topology.intra_node_bandwidth_gbps * 1e9 / 8
+            keys = (f'gpu-{src}:local-tx', f'gpu-{dst}:local-rx') if topology.intra_node_model == 'gpu_ports' else (f'node-{a}:local',)
+            for key in keys:
+                resource_bytes[key] += amount
+                capacities[key] = topology.intra_node_bandwidth_gbps * 1e9 / 8
             return
-        for key in ("node-{}:tx".format(a), "node-{}:rx".format(b)):
+        keys = (f'gpu-{src}:tx', f'gpu-{dst}:rx') if topology.nic_model == 'per_gpu' else (f'node-{a}:tx', f'node-{b}:rx')
+        for key in keys:
             resource_bytes[key] += amount
-            capacities[key] = topology.nic_bandwidth_gbps * 1e9 / 8
+            capacities[key] = topology.endpoint_bandwidth_gbps * 1e9 / 8
         la, lb = a // topology.nodes_per_leaf, b // topology.nodes_per_leaf
         if la != lb:
             for key in ("leaf-{}:uplink-tx".format(la), "leaf-{}:uplink-rx".format(lb)):
@@ -90,9 +93,12 @@ def estimate_capacity(workload, profile, config):
         for rank, src in enumerate(ranks):
             flow(src, ranks[(rank + 1) % len(ranks)], per_edge_payload)
 
-    for index, row in enumerate(workload["requests"]):
+    placements = {p.instance_id: p for p in ps + ds}
+    bindings = {b.request_id: b for b in plan_bindings(workload['requests'], topology, config.binding)}
+    for row in workload["requests"]:
         inp, out = row["input_tokens"], row["output_tokens"]
-        p, d = ps[index % len(ps)], ds[index % len(ds)]
+        binding = bindings[row['request_id']]
+        p, d = placements[binding.prefill_instance_id], placements[binding.decode_instance_id]
         if inp not in p_cache:
             p_cost, p_edge, p_groups = 0.0, 0, 0
             for curve, groups in p_curves:

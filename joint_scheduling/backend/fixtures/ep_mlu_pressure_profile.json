@@ -2,7 +2,7 @@
   "schema_version": 2,
   "provenance": {
     "synthetic": true,
-    "description": "Synthetic EP/KV sustained contention validation. Not hardware calibration or a capacity measurement."
+    "description": "Synthetic EP/KV sustained contention validation. Finite synthetic simulation scenario."
   },
   "network_communication_excluded": true,
   "model": "synthetic-EP-integration",

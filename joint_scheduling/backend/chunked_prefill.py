@@ -75,7 +75,7 @@ def validate_chunked(raw, number):
 def interpolate_chunk(raw, chunk_tokens, cached_tokens):
     def bracket(rows, key, value):
         if not rows[0][key] <= value <= rows[-1][key]:
-            raise ValueError('chunked prefill {}={} outside calibrated coverage [{}, {}]'.format(key, value, rows[0][key], rows[-1][key]))
+            raise ValueError('chunked prefill {}={} outside declared profile coverage [{}, {}]'.format(key, value, rows[0][key], rows[-1][key]))
         lo = max((r for r in rows if r[key] <= value), key=lambda r:r[key])
         hi = min((r for r in rows if r[key] >= value), key=lambda r:r[key])
         return lo, hi, 0 if lo is hi else (value-lo[key])/(hi[key]-lo[key])

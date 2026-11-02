@@ -53,7 +53,8 @@ class MoEProfileTests(unittest.TestCase):
         self.assertLess(raw['weights_bytes_per_gpu'],30*2**30)
         self.assertGreater(audit['parameter_count'],670e9)
         self.assertLess(audit['parameter_count'],672e9)
-        self.assertFalse(audit['target_configuration_measured'])
+        self.assertEqual(audit['status'],'estimated_simulation_profile')
+        self.assertEqual(raw['provenance']['profile_kind'],'estimated_simulation_profile')
         self.assertTrue(raw['provenance']['synthetic'])
         coverage=profile_coverage(dict(requests=[dict(request_id='long',input_tokens=14050,output_tokens=39)]),profile)
         self.assertEqual(coverage['out_of_coverage_count'],0)
@@ -79,6 +80,19 @@ class MoEProfileTests(unittest.TestCase):
         after=self.load(modified,'after.json')
         self.assertAlmostEqual(after.expert.compute_seconds('decode',[2,0,1]),2*5.75e-6)
         self.assertEqual(after.kv_bytes_per_token,profile.kv_bytes_per_token)
+
+    def test_tp1_asymmetric_ep_has_distinct_phase_weights_and_one_kv_copy(self):
+        raw,audit=build_moe_profile(MODEL,anchors(),tp_size=1,prefill_ep_size=32,decode_ep_size=128)
+        profile=self.load(raw)
+        self.assertEqual(profile.kv_bytes_per_token,70272)
+        self.assertEqual(raw['provenance']['expert_parallel_sizes'],{'prefill':32,'decode':128})
+        self.assertGreater(profile.weights_for_phase('prefill'),profile.weights_for_phase('decode'))
+        self.assertEqual(profile.weights_bytes_per_gpu,max(profile.weights_bytes_per_gpu_by_phase.values()))
+        self.assertLess(profile.weights_for_phase('prefill'),76*2**30)
+        self.assertEqual(audit['ep_sizes_by_phase'],{'prefill':32,'decode':128})
+        validate_profile(load_config(PACKAGE/'configs/research/base.json'),profile)
+        malformed=copy.deepcopy(raw);malformed['weights_bytes_per_gpu_by_phase']['decode']=-1
+        with self.assertRaises(ValueError):self.load(malformed,'invalid.json')
 
     def test_dense_layer_overrides_cached_attention_and_serial_overhead_once(self):
         raw=build_moe_profile(MODEL,anchors())[0]
@@ -158,7 +172,7 @@ class MoEProfileTests(unittest.TestCase):
 
 @unittest.skipUnless(backend_available(),'native network backend not built')
 class ExpertActiveWeightsRuntimeTests(unittest.TestCase):
-    def test_real_gpu_tasks_charge_only_the_experts_selected_for_that_target(self):
+    def test_simulated_gpu_tasks_charge_only_the_selected_experts(self):
         cfg=load_config(PACKAGE/'configs/ep_smoke.json')
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);raw=json.loads(cfg.profile_path().read_text())

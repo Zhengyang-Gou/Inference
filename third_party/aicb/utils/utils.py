@@ -25,16 +25,11 @@ import math
 import re
 import numpy as np
 
-try:
-    import torch
-except ImportError as e:
-    torch = None
-    print("Failed to import 'torch'.")
 
 def generate_masked_orthogonal_rank_groups(
     world_size: int, parallel_size: List[int], mask: List[bool],
 ) -> List[List[int]]:
-    """Generate orthogonal parallel groups based on the parallel size and mask.
+    r"""Generate orthogonal parallel groups based on the parallel size and mask.
 
     Arguments:
         world_size (int): world size
@@ -219,26 +214,10 @@ class RankGenerator(object):
         ranks = generate_masked_orthogonal_rank_groups(self.world_size, parallel_size, mask)
         return ranks
 
-def gelu_impl(x):
-    """OpenAI's gelu implementation."""
-    return (
-        0.5 * x * (1.0 + torch.tanh(0.7978845608028654 * x * (1.0 + 0.044715 * x * x)))
-    )
 
 
-def openai_gelu(x):
-    return gelu_impl(x)
 
 
-def erf_gelu(x):
-    return (
-        x
-        * 0.5
-        * (
-            torch.erf(x / 1.41421).to(dtype=x.dtype)
-            + torch.ones_like(x).to(dtype=x.dtype)
-        )
-    )
 
 
 def Comp_with_aiob(workload, compute_cache):
@@ -466,37 +445,7 @@ def process_all_keys(input_file):
         print("Invalid JSON content:\n", corrected_content)
 
 
-def cuda_timing_decorator(func):
-    def wrapper(*args, **kwargs):
 
-        start_event = torch.cuda.Event(enable_timing=True)
-        end_event = torch.cuda.Event(enable_timing=True)
-
-        start_event.record()
-        result = func(*args, **kwargs)
-        end_event.record()
-        torch.cuda.synchronize()
-
-        elapsed_time_ms = start_event.elapsed_time(end_event) * 1000  # 时间以毫秒为单位
-        return result, elapsed_time_ms
-
-    return wrapper
-def get_aiob_path(args):
-    result_dir = "./results/aiob_outputs"
-    if not os.path.isdir(result_dir):
-        os.makedirs(result_dir)
-    filename = f"{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-gbs{args.global_batch}-mbs{args.micro_batch}-seq{args.seq_length}-flash_attn-{args.use_flash_attn}.txt"
-    filepath = os.path.join(result_dir, filename)
-    return filepath
-
-def write_op(time_list, args):
-    filepath = get_aiob_path(args)
-    with open(filepath, "w") as file:
-        file.write(f"train_iter:{args.epoch_num}\n")
-        data_str = json.dumps(time_list, indent=4)
-
-        file.write(data_str)
-    return filepath
 
 
 class ReduceOp(Enum):
@@ -682,13 +631,9 @@ def get_args():
 
 
 def get_aiob_params(parser: argparse.ArgumentParser):
-    parser.add_argument(
-        "--aiob_enable",
-        action="store_true",
-        help="Enable aiob to get operation real compute time",
-    )
+    parser.set_defaults(aiob_enable=False)
     parser.add_argument("--comp_filepath", type=str, default=None,
-                        help="Use aiob_lib to get operation real compute time",)
+                        help="Read an existing offline compute-cost file",)
     parser.add_argument("--gated_linear_unit", default=False)
     parser.add_argument("--bias_gelu_fusion", action="store_true",
                         help='Enable bias and gelu fusion.')

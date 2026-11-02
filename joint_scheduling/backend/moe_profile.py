@@ -207,12 +207,20 @@ def _knots(maximum, zero=False):
 
 def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
                       max_context=16384, prefill_chunk_tokens=512,
-                      prefill_batch_token_budget=2048, decode_batch_size=64):
-    """Export a declared anchor-derived estimate, never target-hardware calibration."""
+                      prefill_batch_token_budget=2048, decode_batch_size=64, *,
+                      prefill_ep_size=None, decode_ep_size=None):
+    """Export an offline anchor-derived simulation cost model."""
     for key,value in dict(tp_size=tp_size,ep_size=ep_size,max_context=max_context,
         prefill_chunk_tokens=prefill_chunk_tokens,prefill_batch_token_budget=prefill_batch_token_budget,
         decode_batch_size=decode_batch_size).items():
         number(value,key,positive=True,integral=True)
+    phase_eps = dict(prefill=ep_size if prefill_ep_size is None else prefill_ep_size,
+                     decode=ep_size if decode_ep_size is None else decode_ep_size)
+    for phase, size in phase_eps.items():
+        number(size, phase+'_ep_size', positive=True, integral=True)
+        if 256 % size:
+            raise ValueError('DeepSeek experts must divide each phase EP evenly')
+    phase_layout = prefill_ep_size is not None or decode_ep_size is not None
     if prefill_chunk_tokens > max_context or prefill_batch_token_budget < prefill_chunk_tokens:
         raise ValueError("profile chunk must fit the context and packed token budget")
     if anchors.get("gpu") != "NVIDIA H800" or anchors.get("model") != "deepseek-ai/DeepSeek-V3":
@@ -312,18 +320,21 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
     local_fp8=(61*attention_parameters+dense_parameters+shared_parameters)/tp_size+routed_parameters/(tp_size*ep_size)
     # FP8 matrices and one FP32 scale per 128x128 block; BF16 embedding/norm.
     weights=math.ceil(local_fp8*(1+4/128**2)+embeddings*2/tp_size+norms*2)
+    phase_weights = {phase: math.ceil(((61*attention_parameters+dense_parameters+shared_parameters)/tp_size+
+        routed_parameters/(tp_size*size))*(1+4/128**2)+embeddings*2/tp_size+norms*2)
+        for phase, size in phase_eps.items()}
     limitations=[
-        "Target TP/EP, contexts and batches are analytically scaled from a few source anchors, not measured curves or an error bound.",
-        "No target-engine end-to-end calibration; no CPU scheduling, sampling, embedding/final vocabulary projection timing.",
+        "Simulation TP/EP, context and batch grids are analytically scaled from source anchors; no statistical error bound is inferred.",
+        "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.",
         "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
         "Balanced periodic routing is an experimental assumption, not Azure or learned DeepSeek router data.",
         "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
         "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
         "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
-        "FP8 parameter allocation estimates omit runtime workspaces/activation buffers and MTP weights; no real engine memory admission guarantee.",
+        "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget.",
     ]
-    provenance=dict(synthetic=True,description="Estimated H800 DeepSeek-V3 TP/EP profile derived from attributable compute anchors; not a calibrated target engine.",
-        calibration_status="estimated_not_target_calibrated",target_model="deepseek-ai/DeepSeek-V3",device="NVIDIA H800",
+    provenance=dict(synthetic=True,description="Estimated H800 DeepSeek-V3 TP/EP simulation cost profile derived from attributable offline compute anchors.",
+        profile_kind="estimated_simulation_profile",target_model="deepseek-ai/DeepSeek-V3",device="NVIDIA H800",
         tensor_parallel_size=tp_size,expert_parallel_size=ep_size,model_config=file_identity(model_config_path),
         model_shape=expected,source_kind=anchors.get("source_kind"),sources=copy.deepcopy(anchors.get("sources",[])),
         source_observations=copy.deepcopy(anchors["observations"]),measurement_unit="seconds",exported_unit="seconds",
@@ -345,11 +356,18 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
             routing_pattern=[[(i+j*32)%256 for j in range(8)] for i in range(256)],prefill_layer_ids=list(range(3,61)),decode_layers=58,
             expert_compute_seconds_per_assignment={phase:a/tp_size for phase in ("prefill","decode")},
             expert_compute_seconds_per_active_expert={phase:b/tp_size for phase in ("prefill","decode")},expert_tp_collectives_per_call=1))
-    audit=dict(status="estimated_not_target_calibrated",whole_model_measured=False,target_configuration_measured=False,
+    audit=dict(status="estimated_simulation_profile",modeling_scope="simulation_compute_costs",
         model="deepseek-ai/DeepSeek-V3",gpu="NVIDIA H800",tp_size=tp_size,ep_size=ep_size,
         layers=61,moe_layers=58,routed_experts=256,top_k=8,
         parameter_count=61*attention_parameters+dense_parameters+shared_parameters+routed_parameters+embeddings+norms,
         weights_bytes_per_gpu=weights,weights_gib_per_gpu=weights/2**30,
         kv_bytes_per_token_per_gpu=61*layer_kv//tp_size,kv_bytes_per_token_per_tp_team=61*layer_kv,
         exported_coverage=provenance["coverage"],source_anchors=copy.deepcopy(anchors),limitations=limitations)
+    if phase_layout:
+        provenance.pop('expert_parallel_size')
+        provenance.update(expert_parallel_sizes=phase_eps, expert_rank_unit='gpu' if tp_size == 1 else 'tp_team')
+        profile.update(weights_bytes_per_gpu=max(phase_weights.values()), weights_bytes_per_gpu_by_phase=phase_weights)
+        audit.update(ep_size=None, ep_sizes_by_phase=phase_eps, weights_bytes_per_gpu=max(phase_weights.values()),
+            weights_gib_per_gpu=max(phase_weights.values())/2**30, weights_bytes_per_gpu_by_phase=phase_weights,
+            weights_gib_per_gpu_by_phase={p: n/2**30 for p,n in phase_weights.items()})
     return profile,audit

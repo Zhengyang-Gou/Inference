@@ -3,6 +3,7 @@
 import copy
 import json
 from collections import deque
+from ..topology import local_resources
 
 
 class NetworkObserver:
@@ -21,11 +22,8 @@ class NetworkObserver:
         raw = self.backend.network_snapshot()
         now = raw["time_ns"] / 1e9
         ports = {row["resource_id"]: dict(row) for row in raw["resources"]}
-        for host in range(self.topology.num_nodes):
-            key = "local:{}".format(host)
-            ports.setdefault(key, dict(resource_id=key, node_id=host, peer_id=host,
-                capacity_bps=round(self.topology.intra_node_bandwidth_gbps * 1e9), tx_bytes=0,
-                kv_bytes=0, collective_bytes=0, other_bytes=0, queue_bytes=0, pfc_pause_count=0))
+        for key, row in local_resources(self.topology).items():
+            ports.setdefault(key, row)
         span = now - self.previous["time_seconds"] if self.previous is not None else 0
         for key, port in ports.items():
             old = self.previous["resources"].get(key) if self.previous is not None else None
@@ -82,10 +80,7 @@ class StaticNetworkObserver:
     def __init__(self, backend, topology):
         raw = backend.network_snapshot()
         resources = {r["resource_id"]: dict(r) for r in raw["resources"]}
-        for host in range(topology.num_nodes):
-            key = "local:{}".format(host)
-            resources[key] = dict(resource_id=key, node_id=host, peer_id=host,
-                                 capacity_bps=topology.intra_node_bandwidth_gbps*1e9)
+        resources.update(local_resources(topology))
         for row in resources.values():
             row.update(queue_bytes=0, utilization=0.0, pfc_pause_delta=0,
                        collective_bytes_per_second=0.0, other_bytes_per_second=0.0)

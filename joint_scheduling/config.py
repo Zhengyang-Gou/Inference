@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .binding import BindingConfig
+from .binding.static import endpoint_policy, validate_static_settings
 from .backend.runtime import RuntimeConfig, parse_config as parse_runtime
 from .backend.expert_parallel import ExpertParallelConfig, parse_config as parse_ep, validate_config as validate_ep
 from .feedback import FeedbackConfig
@@ -38,7 +39,7 @@ class ExperimentConfig:
         notes = []
         profile = self.feedback.compute_profile_path
         if not profile:
-            notes.append("尚未指定计算性能数据；运行仿真前需要提供并校准。")
+            notes.append("尚未指定计算性能数据；运行仿真前需要提供计算模型并检查覆盖范围。")
         elif not self.profile_path().is_file():
             notes.append("计算性能数据文件不存在：{}".format(self.profile_path()))
         notes.append("run-baseline 支持整份、分块、逐层立即和动态 SLO/FIFO KV 门控；逐层模式需 schema 2，可选有界 P/D 联合选择。")
@@ -46,7 +47,8 @@ class ExperimentConfig:
             "已开启" if self.prefix_cache.enabled else "已关闭"))
         notes.append("绑定窗口{}，完整方案诊断{}，实际 P/D 选择为 {}。".format(
             "已开启" if self.binding.window_enabled else "已关闭", "已开启" if self.binding.prediction_enabled else "已关闭",
-            "候选剪枝与增量贪心" if self.binding.joint_selection_enabled and self.binding.policy == "joint_lexicographic" else "轮询"))
+            {"joint_lexicographic": "候选剪枝与增量贪心", "balanced_random": "P 轮询、D 固定种子均衡随机",
+             "round_robin": "轮询"}[endpoint_policy(self.binding)]))
         notes.append("记录模式为 {}：必要请求轨迹与汇总始终保留，高频明细仅在 debug 模式写盘。".format(self.recording.mode))
         if self.expert_parallel.enabled:
             notes.append("实验性 EP 已开启：节点内 TP、显式专家路由及共享专家队列；当前不支持 EP 联合选择或绑定预测。")
@@ -94,6 +96,7 @@ def load_config(path=DEFAULT_CONFIG):
         recording=read_settings(RecordingConfig, raw.get("recording", {}), "recording"),
         expert_parallel=parse_ep(raw.get("expert_parallel", {})),
     )
+    validate_static_settings(config.binding)
     if any(value*1e6 >= 2**63 for value in (config.binding.window_ms, config.binding.max_wait_ms,
                                            config.binding.early_trigger_margin_ms)):
         raise ConfigError("binding window times exceed the nanosecond clock range")

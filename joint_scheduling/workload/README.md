@@ -22,7 +22,7 @@
 
 可用 `joint_scheduling.experiments.capacity.estimate_capacity` 做离线资源需求核算。
 其参考率是计算需求与平均链路载荷给出的乐观起点，`sustainable_capacity_rps` 保留为 `null`；
-必须用基线长时间回放和冻结的 SLO/积压判据另行校准。
+必须用基线长时间回放和冻结的 SLO/积压判据另行进行仿真承载率评估。
 
 `assess-calibration --plan ... --results-root ... --output ...` 只读取已经完成的基线结果，检查输入哈希、部署、
 可选模块、测量长度和种子齐全性；缺失运行保留 pending。只有较低档通过、较高档拒绝且种子齐全时，

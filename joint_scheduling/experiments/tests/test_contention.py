@@ -1,5 +1,6 @@
 """One explicit replay specification distinguishes transport from request gains."""
 import hashlib
+import csv
 import json
 import tempfile
 import unittest
@@ -47,3 +48,17 @@ class ContentionTests(unittest.TestCase):
             self.assertEqual(replay['experiment_type'],'frozen_network_replay')
             self.assertEqual(replay['source']['source_tree_sha256'],live['source']['source_tree_sha256'])
         self.assertTrue((out/'report.md').exists());self.assertTrue((out/'replay_inputs.json').exists())
+
+    @unittest.skipUnless(backend_available(),'native backend not built')
+    def test_gpu_nic_endpoint_ids_survive_frozen_replay(self):
+        raw=json.loads((self.root/'base.json').read_text())
+        raw['topology'].update(nic_model='per_gpu',nic_bandwidth_gbps=800,
+            uplink_bandwidth_gbps=800,intra_node_model='gpu_ports',intra_node_bandwidth_gbps=1280)
+        (self.root/'base.json').write_text(json.dumps(raw))
+        result=run_suite(self.save(),self.root/'out');out=self.root/'out'
+        self.assertEqual(result['status'],'completed')
+        self.assertLessEqual(result['baseline_flow_replay_max_ack_error_ns'],1)
+        with (out/'flows.csv').open() as handle:
+            flows=list(csv.DictReader(handle))
+        self.assertTrue(any(int(row['source_endpoint'])>=4 for row in flows))
+        self.assertTrue(all(int(row['source_endpoint'])//2 != int(row['destination_endpoint'])//2 for row in flows))

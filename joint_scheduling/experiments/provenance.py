@@ -9,6 +9,7 @@ import tarfile
 from pathlib import Path
 
 from ..backend.build import REPO
+from ..backend.compute_profile import profile_kind
 
 
 def sha256(path):
@@ -99,15 +100,24 @@ def record_run(output, config_snapshot, profile, workload, backend, experiment_t
         source=dict(git_head=report['git_head'], source_tree_sha256=report['source_tree_sha256'],
             archive_sha256=report['archive_sha256'], manifest=os.path.relpath(source/'manifest.json', output),
             archive=os.path.relpath(source/'source.tar.gz', output)),
-        backend=backend, profile_status=provenance.get('calibration_status',
-            'synthetic_profile' if provenance['synthetic'] else 'source_declared_measurement_not_independently_verified'),
+        backend=backend, profile_status=profile_kind(provenance),
         profile_synthetic=provenance['synthetic'],
         execution_schema='pd_profile_driven_v1',
-        parallel_semantics=dict(ep_size_unit='TP_teams',
+        parallel_semantics=dict(ep_size_unit=('GPU_ranks' if config.get('expert_parallel',{}).get('rank_unit') == 'gpu' else 'TP_teams'),
             ep_execution='asynchronous_source_batch_dispatch_expert_fifo_combine',
             decode_execution='aggregate_dense_step_then_MoE_layers') if config.get('expert_parallel',{}).get('enabled') else None,
         semantics='Feedback affects future compute/communication submissions.' if experiment_type=='end_to_end'
             else 'Submission times frozen; transport attribution only, not request/SLO improvement.')
+    if (output/'binding_plan.json').is_file():
+        identity['input_sha256']['binding_plan'] = sha256(output/'binding_plan.json')
+    if config.get('expert_parallel',{}).get('enabled') and config['expert_parallel'].get('rank_unit') == 'gpu':
+        placements={p['instance_id']:p for p in config['topology']['placements']}
+        identity['parallel_semantics']['phases']={role:dict(attention_tp=1,
+            attention_dp_instances=sum(p['role']==role for p in placements.values()),
+            expert_ep_size=next(len(g) for g in config['expert_parallel']['groups'] if placements[g[0]]['role']==role),
+            model_units=sum(placements[g[0]]['role']==role for g in config['expert_parallel']['groups']),
+            weights_bytes_per_gpu=profile_data.get('weights_bytes_per_gpu_by_phase',{}).get(role,profile_data['weights_bytes_per_gpu']))
+            for role in ('prefill','decode')}
     write_json(output/'reproducibility.json', identity)
     return identity
 
@@ -122,5 +132,5 @@ def write_suite_report(output, report):
         value=case['metrics']['slo_goodput_rps']['mean']
         lines.append(f"| {case['case_id']} | {case['successful_runs']} | {value if value is not None else '无有效样本'} |")
     lines.extend(['', '统计口径和失败样本见 [summary.json](summary.json)，各次输入、模型估算状态、源码及后端身份见 `runs/*/run/reproducibility.json`。',
-                  '', '这份报告不自动认定短时间片段代表持续负载，也不改变 profile 的校准状态。'])
+                  '', '短时间片段只解释对应仿真场景；profile 的估算类型和建模假设随输入保留。'])
     (output/'report.md').write_text('\n'.join(lines)+'\n')

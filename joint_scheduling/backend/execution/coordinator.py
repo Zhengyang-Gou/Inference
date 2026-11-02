@@ -5,6 +5,7 @@ from collections import deque
 from ..runtime import KV_TRANSFER_MODES, CONTROLLED_KV_MODES
 from ...reservations.ledger import CapacityLedger
 from ...prefix_cache import PrefixCache
+from ...binding.static import plan_bindings
 from ...kv_scheduler.adaptive import AdaptiveKVPolicy, NetworkResources
 from ...kv_scheduler.mlu import MLUKVPolicy
 from ...observation.network import NetworkObserver, StaticNetworkObserver
@@ -34,7 +35,7 @@ class ExecutionCoordinator:
         else:
             object.__setattr__(self, name, value)
 
-    def __init__(self, config, backend, recorder, profile, requests, observer, hooks=None):
+    def __init__(self, config, backend, recorder, profile, requests, observer, hooks=None, bindings=None):
         self._install_components()
         self.hooks = hooks or RuntimeHooks()
         self.config, self.backend, self.recorder, self.profile = config, backend, recorder, profile
@@ -66,16 +67,22 @@ class ExecutionCoordinator:
         self.decodes = [p.instance_id for p in config.topology.placements if p.role == "decode"]
         self.queues = {key: deque() for key in self.instances}
         self.busy = {key: False for key in self.instances}
-        capacity = int(config.topology.gpu_memory_gib * 2**30 * (1 - config.reservations.capacity_safety_fraction)) - profile.weights_bytes_per_gpu
-        if capacity < 0:
+        usable = int(config.topology.gpu_memory_gib * 2**30 * (1 - config.reservations.capacity_safety_fraction))
+        weights = {gpu: profile.weights_for_phase(p.role) for p in config.topology.placements for gpu in p.gpu_ids}
+        capacities = {"gpu-{}".format(gpu): usable-weights.get(gpu, profile.weights_bytes_per_gpu)
+                      for gpu in range(config.topology.num_gpus)}
+        if min(capacities.values()) < 0:
             raise ValueError("model weights exceed usable GPU capacity")
-        self.ledger = CapacityLedger({"gpu-{}".format(gpu): capacity for gpu in range(config.topology.num_gpus)})
+        self.ledger = CapacityLedger(capacities)
         self.prefix_cache = (PrefixCache(config.prefix_cache, self.ledger,
             hashlib.sha256(profile.path.read_bytes()).hexdigest(), self.emit) if config.prefix_cache.enabled else None)
         self.requests = {}
         self.transfer_counter = 0
-        for index, item in enumerate(requests):
-            row = RequestRecord(item, p=self.prefills[index % len(self.prefills)], d=self.decodes[index % len(self.decodes)],
+        binding_by_request = {b.request_id: b for b in (
+            bindings if bindings is not None else plan_bindings(requests, config.topology, config.binding))}
+        for item in requests:
+            binding = binding_by_request[item['request_id']]
+            row = RequestRecord(item, p=binding.prefill_instance_id, d=binding.decode_instance_id,
                        generated=0, state="not_arrived")
             p, d = self.instances[row["p"]], self.instances[row["d"]]
             if len(p.gpu_ids) != len(d.gpu_ids):

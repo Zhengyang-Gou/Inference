@@ -21,7 +21,7 @@ P/D 保持分离，Prefill 默认单请求 FIFO，也可开启 [token 分块轮�
 ]}
 ```
 
-这里是字段示意，不是实测数值。`tokens` 表示单序列上下文长度，`compute_seconds` 是整个
+这里是字段示意，使用示意数值。`tokens` 表示单序列上下文长度，`compute_seconds` 是整个
 batch 的计算时间，`collective_bytes` 是一次集合通信的整个 batch 消息大小。
 `collectives_per_step` 在每个 batch 执行一次，不能再乘成员数。
 `batches` 必须包含与原 `points` 完全相同的 batch=1 曲线，并按批量递增。
@@ -31,7 +31,7 @@ batch 的计算时间，`collective_bytes` 是一次集合通信的整个 batch 
 批次计算完成后仍逐次等待 ns-3 中真实完成的 AllReduce，再返回该轮 token。
 KV 按请求分别预留、增长和释放；模型尚未额外核算 batch 激活/临时工作区显存。
 
-公开 Vidur 数据生成器现支持按实测 batch 选 attention 算子，并按 batch token 数选线性层和
+公开 Vidur 数据生成器现支持按已有 batch 样本选 attention 算子，并按 batch token 数选线性层和
 embedding 算子，仍是 A100 上匹配形状的算子组合估算，不是实际部署的端到端吞吐测量。
 原有低上下文锚定、缺少最终词表投影等估算限制保留在 profile provenance 中。
 

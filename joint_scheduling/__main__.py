@@ -70,13 +70,15 @@ def main(argv=None):
     public.add_argument("--prefill-chunk-tokens", type=int, default=0)
     public.add_argument("--target-model", choices=("meta-llama/Meta-Llama-3-70B", "meta-llama/Llama-3.1-70B-Instruct"), default="meta-llama/Llama-3.1-70B-Instruct")
     public.add_argument("--output", type=Path, required=True)
-    moe = commands.add_parser("build-moe-profile", help="从 H800 DeepSeek 公开采样或显式 AIOB 数据构建注明估算来源的 MoE profile")
+    moe = commands.add_parser("build-moe-profile", help="从 H800 DeepSeek 公开离线数据或 AIOB 文件构建 MoE 仿真代价 profile")
     moe.add_argument("--model-config", type=Path, required=True)
     moe.add_argument("--prefill-trace", type=Path)
     moe.add_argument("--decode-trace", type=Path)
     moe.add_argument("--aiob-manifest", type=Path)
     moe.add_argument("--tp", type=int, default=4)
     moe.add_argument("--ep", type=int, default=8)
+    moe.add_argument("--prefill-ep", type=int, help="Prefill EP size; overrides --ep for this phase")
+    moe.add_argument("--decode-ep", type=int, help="Decode EP size; overrides --ep for this phase")
     moe.add_argument("--max-context", type=int, default=16384)
     moe.add_argument("--prefill-chunk-tokens", type=int, default=512)
     moe.add_argument("--prefill-batch-token-budget", type=int, default=2048)
@@ -102,7 +104,8 @@ def main(argv=None):
             anchors = (load_aiob_anchors(args.aiob_manifest) if args.aiob_manifest else
                        extract_public_anchors(args.prefill_trace,args.decode_trace))
             profile,audit = build_moe_profile(args.model_config,anchors,args.tp,args.ep,args.max_context,
-                args.prefill_chunk_tokens,args.prefill_batch_token_budget,args.decode_batch_size)
+                args.prefill_chunk_tokens,args.prefill_batch_token_budget,args.decode_batch_size,
+                prefill_ep_size=args.prefill_ep,decode_ep_size=args.decode_ep)
             audit_path = args.output.with_suffix(".audit.json")
             if args.output.exists() or audit_path.exists():
                 raise ValueError("profile or audit output already exists")

@@ -14,7 +14,6 @@ limitations under the License.
 import numpy as np
 import matplotlib.pyplot as plt
 from log_analyzer.ds_comm_log_analyzer import parse_ds_comm_log
-from utils.benchmark_logger import BenchLogger
 from typing import Dict, List
 from log_analyzer.utils import convert_size_to_msg
 

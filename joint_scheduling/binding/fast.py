@@ -179,7 +179,7 @@ class FastPlanPredictor:
         covered = lo >= points[0]['tokens'] and hi <= points[-1]['tokens']
         if not covered:
             return 0., {}, False
-        # Max at endpoints and intervening calibrated knots; no per-token loop.
+        # Max at endpoints and intervening declared profile knots; no per-token loop.
         samples = [self.profile.lookup('decode', t, len(self.placements[d].gpu_ids))
                    for t in {lo, hi} | {p['tokens'] for p in points if lo < p['tokens'] < hi}]
         work = {}

@@ -34,9 +34,9 @@ embedding_seconds 仅加在每个块的第一层。当前 chunked profile 明确
 完整工作负载的每个块在运行前检查覆盖，不能用旧单请求 profile 自动估计块时延。
 
 公开 Vidur 导出器新增 `--prefill-chunk-tokens 512`。它用 batch=1、is_prefill=True 下不同
-query chunk 和 kv_cache_size 的实测 attention 算子组合，线性层和 embedding 只处理新 token。
-短于最小带历史上下文测量的块，attention 锚定到最小实测 query（当前 A100 数据是64），
-线性层仍按新 token 数取样。该保守估算和来源均写入 provenance；不能当作完整引擎端到端实测。
+query chunk 和 kv_cache_size 的离线 attention 样本 算子组合，线性层和 embedding 只处理新 token。
+短于最小带历史上下文测量的块，attention 锚定到最小样本 query（当前 A100 数据是64），
+线性层仍按新 token 数取样。该保守估算和来源均写入 provenance；作为显式的分块计算成本假设。
 
 ```bash
 ./scripts/simai-python -m joint_scheduling.backend.public_profile \

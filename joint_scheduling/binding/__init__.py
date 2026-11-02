@@ -6,7 +6,8 @@ from typing import Mapping, Optional, Protocol, Sequence, Tuple
 
 @dataclass(frozen=True)
 class BindingConfig:
-    policy: str = field(default="joint_lexicographic", metadata={"choices": ("joint_lexicographic", "round_robin")})
+    policy: str = field(default="joint_lexicographic", metadata={"choices": ("joint_lexicographic", "round_robin", "balanced_random")})
+    seed: int = field(default=7, metadata={"min": 0, "lt": 2147483647})
     window_ms: float = field(default=1.0, metadata={"gt": 0})
     early_trigger_margin_ms: float = field(default=0.5, metadata={"min": 0})
     max_wait_ms: float = field(default=10.0, metadata={"gt": 0})

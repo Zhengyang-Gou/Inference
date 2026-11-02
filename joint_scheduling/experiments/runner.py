@@ -20,6 +20,8 @@ from ..workload import write_workload
 from ..backend.runtime import CONTROLLED_KV_MODES
 from ..prefix_cache import PrefixCacheConfig
 from ..binding import BindingConfig
+from ..binding.static import binding_plan_document
+from ..backend.runtime import load_workload
 
 
 CONTROL_SWEEPS = {"kv_scheduler.max_concurrent_transfers", "kv_scheduler.max_inflight_bytes",
@@ -39,7 +41,7 @@ METRICS = ("arrived_count", "completed_count", "failed_count", "incomplete_count
            "prefix_hit_tokens", "prefix_saved_kv_transfer_bytes", "prefix_resident_bytes",
            "binding_candidate_scores", "binding_budget_exhaustions", "binding_round_p50_us",
            "binding_round_p95_us", "binding_round_p99_us", "binding_inclusive_p99_us")
-COLUMNS = ("run_id", "case_id", "seed", "workload_seed", "status", "parameters", "output_dir",
+COLUMNS = ("run_id", "case_id", "seed", "workload_seed", "status", "parameters", "output_dir", "binding_plan_sha256",
            "error", "wall_seconds", "experiment_type", "source_tree_sha256", "backend_fingerprint",
            "workload_sha256", "profile_sha256") + METRICS
 
@@ -266,6 +268,7 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
     if plan["generator_spec"] is not None:
         _write(inputs / "workload_spec.json", plan["generator_spec"])
     rows, stopped = [], False
+    shared_binding_plan = None
     with (output / "runs.jsonl").open("x", encoding="utf-8") as journal:
         for planned in plan["runs"]:
             row = dict(planned, output_dir="runs/" + planned["run_id"], experiment_type='end_to_end',
@@ -291,7 +294,15 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
                     raw["runtime"]["workload_path"] = str(case_dir / "workload.json")
                     _write(case_dir / "config.json", raw)
                     config = load_config(case_dir / "config.json")
-                    result = run_baseline(config, case_dir / "run", make_plots=make_plots, source_snapshot=source_snapshot)
+                    audited_binding = plan.get('comparison_audit', {}).get('static_binding')
+                    if audited_binding and shared_binding_plan is None:
+                        ordered_requests, _ = load_workload(inputs/'workload.json')
+                        shared_binding_plan = binding_plan_document(ordered_requests, config.topology, config.binding)
+                        if shared_binding_plan['bindings_sha256'] != audited_binding['bindings_sha256']:
+                            raise ValueError('binding plan changed after comparison preflight')
+                        _write(inputs/'binding_plan.json', shared_binding_plan)
+                    result = run_baseline(config, case_dir / "run", make_plots=make_plots,
+                        source_snapshot=source_snapshot, binding_plan=shared_binding_plan)
                     identity=read_json(case_dir/'run/reproducibility.json')
                     row['source_tree_sha256']=identity['source']['source_tree_sha256']
                     row['backend_fingerprint']=identity['backend']['fingerprint']
@@ -306,6 +317,8 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
                             row["binding_round_"+q+"_us"] = timing["round_us"][q+"_us"]
                         row["binding_inclusive_p99_us"] = timing["inclusive_us"]["p99_us"]
                     row["workload_sha256"] = hashlib.sha256((case_dir / "run/workload.json").read_bytes()).hexdigest()
+                    if 'static_binding' in result.summary:
+                        row['binding_plan_sha256'] = result.summary['static_binding']['bindings_sha256']
                     row["profile_sha256"] = hashlib.sha256((case_dir / "run/compute_profile.json").read_bytes()).hexdigest()
                     row["measurement"] = result.summary["measurement"]
                     row["effective_baseline"] = result.summary["run"]["metadata"]["effective_baseline"]
@@ -331,7 +344,7 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
               "total_runs": len(rows), "successful_runs": sum(row["status"] == "completed" for row in rows),
               "failed_runs": sum(row["status"] == "failed" for row in rows),
               "skipped_runs": sum(row["status"] == "skipped" for row in rows), "cases": _aggregate(rows),
-              "semantics": {"engine": "per-run effective_baseline records round-robin/joint binding, FIFO/chunked/packed Prefill, continuous Decode batching and explicit KV mode",
+              "semantics": {"engine": "per-run effective_baseline records round-robin/balanced-random/joint binding, FIFO/chunked/packed Prefill, continuous Decode batching and explicit KV mode",
                 "aggregation": "unweighted mean and sample standard deviation across successful seeds per case",
                 "null_metrics": "no valid samples; never replaced with zero", "failures": "excluded from metric means but explicitly counted",
                 "request_counts": "arrived/failed/incomplete use arrival cohort; completed uses completion window",

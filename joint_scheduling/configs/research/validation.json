@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "base_config": "base.json",
-  "profile": "../../profiles/deepseek_v3_h800_tp4_ep8_estimated.json",
+  "profile": "../../profiles/deepseek_v3_h800_tp1_ep32_ep128_estimated.json",
   "workload": "../../../data/azure/conv_first_second_validation.json",
   "seeds": [
     7
@@ -39,7 +39,7 @@
       "kv_scheduler.collective_protection_enabled"
     ],
     "fixed": {
-      "binding.policy": "round_robin",
+      "binding.policy": "balanced_random",
       "binding.window_enabled": false,
       "binding.prediction_enabled": false,
       "binding.joint_selection_enabled": false,
@@ -55,10 +55,22 @@
       "feedback.observation_delay_us": 100,
       "evaluation.default_ttft_slo_seconds": 1.0,
       "evaluation.default_itl_slo_seconds": 0.1,
-      "runtime.network_priority_enabled": false
+      "runtime.network_priority_enabled": false,
+      "binding.seed": 7,
+      "topology.nic_model": "per_gpu",
+      "topology.nic_bandwidth_gbps": 3200,
+      "topology.uplink_bandwidth_gbps": 1600,
+      "topology.intra_node_model": "gpu_ports",
+      "topology.intra_node_bandwidth_gbps": 1280,
+      "topology.intra_node_latency_us": 0.5,
+      "expert_parallel.rank_unit": "gpu",
+      "topology.num_leaves": 10,
+      "topology.num_spines": 4,
+      "topology.nodes_per_leaf": 2,
+      "topology.gpus_per_node": 8
     },
     "input_sha256": {
-      "profile": "e108d6a2e50f4e623c4893ac776df70a06b021c7c56a989bf13d434723e0008d",
+      "profile": "59e28f3221c73230a7b4dd7028762b48193e76578f3af43b30e92adce5155438",
       "workload": "5a5d1eaf06ce49fcc54c811130390421ba0d2a4cb14426c3fa36c1966fed8125"
     }
   },

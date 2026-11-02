@@ -12,6 +12,7 @@ from . import Binding
 from .predictor import WholePlanPredictor
 from .window import BindingWindow
 from .fast import FastPlanPredictor, IncrementalJointPolicy
+from .static import endpoint_policy
 
 
 class BindingRuntime:
@@ -331,7 +332,7 @@ class BindingRuntime:
             if horizon >= 3 and len(times) >= horizon and prediction.later_max_itl_seconds is not None:
                 actual = max(b-a for a, b in zip(times[1:horizon-1], times[2:horizon]))
                 errors["later_max_itl_seconds"].append(abs(prediction.later_max_itl_seconds-actual))
-        report = dict(endpoint_selection="joint_lexicographic" if self.joint_enabled else "round_robin", joint_optimization=self.joint_enabled,
+        report = dict(endpoint_selection=endpoint_policy(self.config.binding), joint_optimization=self.joint_enabled,
             window=self.binding_window.snapshot() if self.binding_window else None,
             prediction_calls=self.prediction_call_count, predicted_candidates=len(self.prediction_records),
             prediction_errors={key: dict(samples=len(values), mean_absolute_error_seconds=sum(values)/len(values) if values else None,

@@ -18,6 +18,7 @@ from ..config import load_config
 from ..backend.runner import run_baseline
 from ..backend.execution import RuntimeHooks
 from ..backend.client import Ns3Backend
+from ..backend.compute_profile import profile_kind
 from .provenance import freeze_source, record_run, write_json, sha256
 
 def quantile(values,q):
@@ -31,8 +32,9 @@ def stats(values):
 
 class Probe:
     def __init__(self, config):
+        self.topology=config.topology
         self.gpus_per_node=config.topology.gpus_per_node
-        # row: start_ns, ack_ns, source_host, destination_host, bytes, kind,
+        # row: start_ns, ack_ns, source_endpoint, destination_endpoint, bytes, kind,
         #      priority, stage_index, request_id
         self.flows=[];self.active={};self.local_active={};self.stages=[];self.stage_ids={};self.calls={}
         self.counts=defaultdict(lambda:[0,0]);self.endpoint_overlap=defaultdict(float)
@@ -69,6 +71,8 @@ class Probe:
             if source==dest:
                 if stage>=0:self.local_active[details['transfer_id']]=stage
                 return
+            source=self.topology.network_endpoint(details['source_gpu_id'])
+            dest=self.topology.network_endpoint(details['destination_gpu_id'])
             if kind=='collective':assert stage>=0,'TP must stay node-local'
             self.active[details['transfer_id']]=len(self.flows)
             self.flows.append([now,-1,source,dest,details['size_bytes'],kind,details['priority'],stage,details['request_id']])
@@ -115,7 +119,7 @@ def baseline(out,config,source_snapshot):
     assert not probe.active and not probe.local_active,'baseline stopped with unfinished flow'
     assert all(s['ack_ns']>=s['start_ns'] for s in probe.stages)
     with (out/'flows.csv').open('w',newline='') as f:
-        w=csv.writer(f);w.writerow(['start_ns','ack_ns','source_host','destination_host','payload_bytes','kind','priority','stage_index','request_id']);w.writerows(probe.flows)
+        w=csv.writer(f);w.writerow(['start_ns','ack_ns','source_endpoint','destination_endpoint','payload_bytes','kind','priority','stage_index','request_id']);w.writerows(probe.flows)
     (out/'stages.json').write_text(json.dumps(probe.stages,separators=(',',':'))+'\n')
     pairs=defaultdict(set)
     for r in probe.flows:pairs[r[2],r[3]].add(r[5])
@@ -127,9 +131,7 @@ def baseline(out,config,source_snapshot):
         any_endpoint_outstanding_overlap_seconds=probe.global_overlap_ns/1e9,
         ports=probe.ports,arrival_cohort=result.summary['arrival_cohort'],pressure=result.summary['pressure'],
         workload_provenance=workload['provenance'],profile_sha256=hashlib.sha256(profile.read_bytes()).hexdigest(),
-        model_status=json.loads(profile.read_text())['provenance'].get('calibration_status',
-            'synthetic_profile' if json.loads(profile.read_text())['provenance']['synthetic']
-            else 'source_declared_measurement_not_independently_verified'),
+        model_status=profile_kind(json.loads(profile.read_text())['provenance']),
         experiment_type='end_to_end',
         endpoint_pairs_separate_by_traffic_class=True)
     (out/'baseline_summary.json').write_text(json.dumps(summary,indent=2)+'\n')
@@ -219,7 +221,7 @@ def analyze(out,config,probe,baseline_summary,replays):
         limits=['Finite frozen trace diagnostic; no sustained-load capacity claim.',
                 'Outstanding overlap includes pacing/ACK wait; 1ms mixed-byte samples do not resolve individual packet service.',
                 'Counterfactual latency changes are transport effects at frozen starts, not end-to-end request or SLO gains.',
-                'Model calibration status is inherited from the frozen profile, never upgraded by replay.'])
+                'Profile estimation type and modeling assumptions are inherited from the frozen simulation input.'])
     (out/'comparison.json').write_text(json.dumps(report,indent=2)+'\n')
     print('ANALYSIS COMPLETE',json.dumps(dict(replay_error_ns=max_error,classes=classes,stages=stage_groups),ensure_ascii=False),flush=True)
     return report

@@ -62,7 +62,7 @@ class PublicProfileTests(unittest.TestCase):
         self.assertEqual(audit["parameter_count"],70553706496)
         self.assertTrue(raw["network_communication_excluded"])
         self.assertTrue(raw["provenance"]["synthetic"])
-        self.assertFalse(audit["whole_model_measured"])
+        self.assertEqual(audit["status"],"estimated_operator_proxy")
         with self.assertRaises(ValueError):
             profile.lookup("decode",65,4)
 

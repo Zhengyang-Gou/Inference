@@ -1,4 +1,8 @@
-# P/D 联合选择、绑定窗口与有限预测
+# P/D 静态路由、联合选择、绑定窗口与有限预测
+
+主研究使用 `policy="balanced_random"`、`seed=7`：P 按 `(arrival_seconds, request_id)` 顺序轮询；D 每轮从原始实例列表重新打乱，完整一轮中每个 D 恰好一次，末轮可不完整。绑定只由请求顺序、实例布局与独立绑定种子确定，不读取长度、EOS、运行状态或网络种子。请求到达时提交并保持到结束；该模式要求关闭绑定窗口和联合选择，兼容 EP 和逐层 KV。
+
+端到端匹配实验预先生成一份 `inputs/binding_plan.json`，包含请求端点、Leaf、计数和 `bindings_sha256`；所有策略/网络 seed 复用，运行前核对完整内容。每个运行单独保存同表并把文件哈希加入 `reproducibility.json`，`summary.json` 的 `static_binding` 保存统计。原 `round_robin` 的轮询行为保留，其局部性取决于两池大小与布局，不保证同 Leaf。
 
 `fast.py` 实现候选剪枝＋增量贪心，`runtime.py` 接入实际 backend 派发与整批资源预留。`window.py` 使用 ns-3 唯一时间轴。`predictor.py` 中的 `WholePlanPredictor` 用于离线验证或显式抽样诊断：整请求配置保留流体网络影子重放，分块/合批配置复用 `execution.py` 的有界执行模型；在线候选评分不会调用 `WholePlanPredictor`。
 
@@ -58,7 +62,7 @@
 
 活动批次从延迟可见的层/计算段进度保守续算。缓存只查询该快照，命中初始化计算游标，P/D 独立；不预热未来缓存，不读取精确 EOS。每个请求只报告 `prediction_decode_steps` 限制内的 token；较快到达预测范围末端的请求仍作为竞争者保留到可见输出上限，其后上下文冻结在预测范围末端，避免提前移除未知 EOS 请求或做范围外推。此处理仍是有限范围近似。
 
-该路径按 chunk 聚合计算及各层 ring 工作，在 chunk 结束处估计 KV 就绪，网络使用有向 ECMP 资源的保守排队预留，未重放层间重叠、RDMA 或 KV 门控。已完成 chunk、活动共享批次及历史 token 不重复计费。快照缺少覆盖、事件/仿真时间上限不足或工作预算耗尽时不把不完整预测当成达标；联合选择保留已评分成功的结果，其余暂缓。完整诊断在分块/合批配置下复用该执行模型，并明确输出 `model=bounded_chunk_batch_resource_forecast`。此路径成本随 chunk/批次增多，原有 50 μs 目标仍待独立实测。KV 等待计入 handoff，不将整份 KV 时间重复加入 TTFT。
+该路径按 chunk 聚合计算及各层 ring 工作，在 chunk 结束处估计 KV 就绪，网络使用有向 ECMP 资源的保守排队预留，未重放层间重叠、RDMA 或 KV 门控。已完成 chunk、活动共享批次及历史 token 不重复计费。快照缺少覆盖、事件/仿真时间上限不足或工作预算耗尽时不把不完整预测当成达标；联合选择保留已评分成功的结果，其余暂缓。完整诊断在分块/合批配置下复用该执行模型，并明确输出 `model=bounded_chunk_batch_resource_forecast`。此路径成本随 chunk/批次增多，原有 50 μs 目标仍待独立CPU 墙钟诊断。KV 等待计入 handoff，不将整份 KV 时间重复加入 TTFT。
 
 候选分数按以下顺序比较：
 
@@ -80,7 +84,7 @@
 
 网络模型用共享有向链路的保守字节负债近似，包含采样队列和背景流量；Prefill/Decode 集合通信工作与 KV 竞争。它不复刻 RDMA/DCQCN、不逐块重放 KV 令牌/动态在途额度或集合通信保护窗口，也不精确重放层间传输重叠。D 负载包含已绑定但尚未就绪的请求，可能高估竞争；正在执行步骤只使用采样就绪层和历史 token 的摘要。完整预测器更细致，仍不是 ns-3 的替代品。
 
-## 诊断、实测与仿真开销
+## 诊断、CPU 墙钟诊断与仿真开销
 
 `observation/binding_summary.json` 保存候选评分次数、预算耗尽次数、预留失败数、绑定等待、有限范围声明和窗口统计。`binding_selection` 记录每轮确定性工作量、快照时间及实际提交计划。
 
@@ -91,7 +95,7 @@
 - `inclusive_us`：上述两者之和，防止把延迟快照的构造成本移出计时；回调内采样不会重复计入。
 - `state_processing_us`、`selection_us`、`reservation_us` 和单次快照的 P50/P95/P99，以及原始逐轮记录。
 
-这些计时不进入事件轨迹、分数、预算或仿真时钟。仿真派发等待只使用显式 `decision_overhead_us`；示例 5 μs 是配置假设，绝非实测值。初始目标为 1 ms 窗口、整轮 P99 ≤50 μs，**没有达成保证**。历史验证报告和实验输出已清理；整轮控制成本、均匀/异构负载收益和开销敏感性待重新验证。
+这些计时不进入事件轨迹、分数、预算或仿真时钟。仿真派发等待只使用显式 `decision_overhead_us`；示例 5 μs 是配置假设，绝非CPU 墙钟诊断值。初始目标为 1 ms 窗口、整轮 P99 ≤50 μs，**没有达成保证**。历史验证报告和实验输出已清理；整轮控制成本、均匀/异构负载收益和开销敏感性待重新验证。
 
 联合模式下，完整诊断要求 `prediction_enabled=true` 且 `prediction_sample_every>0`；默认零抽样，不阻塞在线选择。显式抽样会在候选选择之后同步运行一次完整预测并计入该轮墙钟，适合调试，不应计入默认在线性能。轮询模式保留原 `prediction_enabled` 诊断行为。完整预测器仍可直接用于离线 `WholePlanPredictor.predict(plan, state)`。
 
@@ -105,4 +109,4 @@
 ./joint_scheduling/check.sh
 ```
 
-两种对照均固定 workload/profile/seed/功能开关，扫描轮询/联合 × 0/5/50/200/1000/5000 μs 声明开销 × seed 7/19；全部数据明确标为 synthetic。benchmark 使用实际 ns-3 runner 测量冷状态 1/8/16 请求窗口，保留完整原始运行目录；它不代表热队列或真实 GPU 吞吐。原有 `binding_smoke.json` 和 `binding_comparison_example.json` 继续验证轮询窗口和完整预测诊断。
+两种对照均固定 workload/profile/seed/功能开关，扫描轮询/联合 × 0/5/50/200/1000/5000 μs 声明开销 × seed 7/19；全部数据明确标为 synthetic。benchmark 使用实际 ns-3 runner 测量冷状态 1/8/16 请求窗口，保留完整原始运行目录；它不代表热队列或仿真请求吞吐。原有 `binding_smoke.json` 和 `binding_comparison_example.json` 继续验证轮询窗口和完整预测诊断。

@@ -1,6 +1,6 @@
 # Inference 的指标统计与离线绘图
 
-本模块可独立使用，不需要 GPU 或 ns-3。统计与 CSV/JSON 导出仅使用 Python 标准库；绘图需要 `requirements-plot.txt` 中的 Matplotlib。`backend/runner.py` 的真实 ns-3 简单基线已在返回 token 和请求结束时调用 recorder；其他执行器也可沿用相同接口。
+本模块可独立使用，不需要 GPU 或 ns-3。统计与 CSV/JSON 导出仅使用 Python 标准库；绘图需要 `requirements-plot.txt` 中的 Matplotlib。`backend/runner.py` 的ns-3 仿真 简单基线已在返回 token 和请求结束时调用 recorder；其他执行器也可沿用相同接口。
 
 ## 文件职责
 
@@ -117,6 +117,6 @@ result/
 
 没有 Matplotlib 时只跳过绘图测试，统计、导出和 CLI 测试仍会运行。
 
-真实网络基线的依赖来源与完整性由根目录 `third_party/manifest.json`、`third_party/ns3/SOURCE_MANIFEST.json` 及后端内容锁记录。评估模块只消费明确记录的事件与配置，不从上游 Git 仓库读取指标；保留这些清单可追溯运行所用网络源码。
+分组网络仿真基线的依赖来源与完整性由根目录 `third_party/manifest.json`、`third_party/ns3/SOURCE_MANIFEST.json` 及后端内容锁记录。评估模块只消费明确记录的事件与配置，不从上游 Git 仓库读取指标；保留这些清单可追溯运行所用网络源码。
 
 持续加压时，`summarize_pressure` 以 [start,end) 统计到达/完成/token，并在两端事件发生前取积压，验证“积压变化 = 到达 − 完成 − 失败”。到达 cohort 包括未完成请求：已观察到的 TTFT/ITL 超限和截止时仍在延迟的返回可判定失败，其他未完成结果保持未知，不推断为成功。`summarize_pressure_states` 对事件保持的队列和在途量积分，避免按高频事件条数求均值引入偏差。有限窗口的队列增长和达标率只能用于扫描负载范围，不能证明无限时长稳定性。

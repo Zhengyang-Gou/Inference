@@ -15,11 +15,6 @@ from collections import deque
 import dataclasses
 from enum import Enum
 
-try:
-    import torch
-except ImportError as e:
-    torch = None
-    print("Failed to import 'torch'.")
 import math
 import re
 from collections import OrderedDict
@@ -185,8 +180,7 @@ if __name__ == "__main__":
     parser.add_argument("config_file", nargs="?", help="Path to JSON config file")
     
     # Add arguments that has default value
-    parser.add_argument("--aiob_enable", action="store_true", default=False, help="Enable AIOB")
-    parser.add_argument("--aiob_forward_loops", type=int, default=1, help="Number of AIOB forward loops")
+    parser.add_argument("--cost-file", default="", help="Existing offline compute-cost data file")
     parser.add_argument("--seq_length", type=int, default=1, help="Sequence length")
     parser.add_argument("--micro_batch", type=int, default=1, help="Micro batch size")
     parser.add_argument("--world_size", type=int, default=1, help="World size")
@@ -223,32 +217,9 @@ if __name__ == "__main__":
         os.makedirs(result_dir)
     filename = f"vidur-{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-bs{args.micro_batch}-seq{args.seq_length}-{phase}"
     
-    if args.aiob_enable:
-        if "Qwen3-Moe" in model_name:
-            import workload_generator.mocked_model.inference.AiobQwen3Moe as AiobQwen3Moe
-            aiob_model = AiobQwen3Moe.Qwen3MoeModel(args)
-            aiob_output_filepath = aiob_model()
-        elif "Qwen3-Next" in model_name:
-            import workload_generator.mocked_model.inference.AiobQwen3Next as AiobQwen3Next
-            aiob_model = AiobQwen3Next.Qwen3NextModel(args)
-            aiob_output_filepath = aiob_model()
-        elif "DeepSeek" in model_name:
-            import workload_generator.mocked_model.inference.AiobDeepSeek as AiobDeepSeek
-            aiob_model = AiobDeepSeek.DeepSeekModel(args)
-            aiob_output_filepath = aiob_model()
-        else:
-            print(f"Invalid model name: {model_name}")
-            sys.exit(1)
-
-    else:
-        aiob_dir = "results/aiob_outputs"
-        aiob_output_filename = f"{args.model_name}-world_size{args.world_size}-tp{args.tensor_model_parallel_size}-pp{args.pipeline_model_parallel}-ep{args.expert_model_parallel_size}-bpg{args.micro_batch}-seq{args.seq_length}-{phase}.txt"
-        aiob_output_filepath = os.path.join(aiob_dir,aiob_output_filename)
-        if not os.path.exists(aiob_output_filepath):
-            print(f"aiob not enabled, and {aiob_output_filepath} not found. Using default compute time.")
-            aiob_output_filepath = ""
-        else:
-            print(f"aiob not enabled, using existing file {aiob_output_filepath}.")
+    aiob_output_filepath = args.cost_file
+    if aiob_output_filepath and not os.path.isfile(aiob_output_filepath):
+        parser.error("offline cost file does not exist: " + aiob_output_filepath)
     compute_cache = extract_inference_averages(aiob_output_filepath,args)
     print("compute_cache = {")
     for key, value in compute_cache.items():

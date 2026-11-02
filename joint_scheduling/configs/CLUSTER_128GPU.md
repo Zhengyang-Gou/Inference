@@ -1,11 +1,12 @@
 # 128 GPU 固定拓扑基准
 
 新增 `cluster_128gpu_tp4_ep8_8gpu_per_node.json`：16 台 × 8 卡、P/D 各 64 卡、节点内 TP4，EP8 每组跨 4 台服务器，P/D 各两个模型组。
+该 EP 模板及主研究已采用每 GPU 400 Gbps NIC（节点合计 3.2 Tbps）、每 Leaf 上联 6.4 Tbps 逻辑聚合容量、每 GPU 节点内发送/接收端口 160 GB/s。
 它供“跨节点 EP 与 KV 竞争、TP 节点内”的实验使用；不沿用 dense Llama 计算参数，需要 MoE 专家 profile，当前使用轮询并拒绝 EP 联合预测。详见 [EP 配置与边界](../backend/EXPERT_PARALLEL.md)。以下两份为原 dense TP 方案的对照。
 
 本基准固定物理拓扑、P/D 资源分配与 TP，供后续冻结计算 profile、负载、批处理参数和 SLO。
 当前仅完成拓扑定义；配置保留空的 profile/workload 路径，不自动使用 synthetic 数据代替真实研究输入。
-默认轮询绑定用于校准基线，联合选择等算法开关在对照实验中显式设置。
+默认轮询绑定用于构建仿真承载率基线，联合选择等算法开关在对照实验中显式设置。
 
 ## 固定配置
 
@@ -29,9 +30,9 @@
 | 网络链路时延 | 1 μs | 1 μs |
 | 共享本地 FIFO 带宽/时延 | 1600 Gbps / 0.5 μs | 1600 Gbps / 0.5 μs |
 
-上述带宽、时延和每 GPU 80 GiB 容量是显式仿真假设，不是实测设备规格。
+上述带宽、时延和每 GPU 80 GiB 容量是显式仿真假设，作为仿真模型输入。
 计算数据优先保持现有受支持的 Meta-Llama-3-70B FP16、A100、TP4 组合；尚未在这两份配置中绑定该数据。
-设备标称 80 GB 与配置单位 GiB 不自动等价，需要在冻结目标硬件时校准。
+本实验统一使用 GiB 表示容量。
 当前节点内单共享 FIFO 不复刻 NVLink/NVSwitch；节点 NIC 为一个聚合端点，不模拟多个独立网卡或 rail。
 
 ## 部署映射
@@ -52,7 +53,7 @@ Leaf `l` 管理 GPU `16l` 到 `16l+15`。
 ## 配比与 TP 的选择理由
 
 P:D=1:1 是便于策略对照的初始分配，不是最优配比结论。
-后续按同一负载、SLO、组批规则和匹配 profile 校准各阶段承载率；再考虑 1:3、1:1、3:1 等资源分配消融。
+后续按同一负载、SLO、组批规则和匹配 profile 通过仿真评估各阶段承载率；再考虑 1:3、1:1、3:1 等资源分配消融。
 不能按输入/输出 token 数之比直接确定 P/D GPU 数之比。
 
 TP4 保持现有性能数据组合和两侧等 TP 的 KV 分片映射。当前后端不支持 P/D 不同 TP 的 KV 重分片。
@@ -64,12 +65,11 @@ TP2、TP8 都需要独立匹配时延数据和容量分析，不能用固定倍�
 这两份配置固定每 GPU 聚合 NIC 带宽及 Leaf 上下行容量比例。
 如果把 8 卡节点仍设为单节点 200 Gbps，网络注入能力/GPU 会降低为 25 Gbps，同时改变通信布局和网络资源，结论需分别解释。
 每条对照运行仍应冻结 profile、请求长度配对、SLO、缓存、Prefill/Decode 批处理与声明调度开销。
-观测计算/执行忙碌、队列增长、集合通信时延和达标完成吞吐，不用配置或有限回放宣称生产容量。
+观测计算/执行忙碌、队列增长、集合通信时延和达标完成吞吐，不用配置或有限回放宣称稳态承载率。
 
 验证可使用 `inference --config ... validate` 和 `export-topology --format simai`。
 实际仿真还必须提供覆盖完整输入/Decode 上下文与批量范围的 profile 及负载。
 
 参考：
 
-- NVIDIA HGX A100 的 4/8 GPU、NVLink/NVSwitch 和网卡配置：[官方说明](https://developer.nvidia.com/blog/introducing-hgx-a100-most-powerful-accelerated-server-platform-for-ai-hpc/)。本基准没有复刻整机规格。
 - P/D 资源和并行度随负载及 SLO 联合选择：[DistServe](https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin)。1:1 不构成该负载的最优分配。

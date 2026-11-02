@@ -58,14 +58,16 @@ struct PortStats {
 };
 std::map<std::pair<uint32_t, uint32_t>, PortStats> portStats;
 struct LocalJob { uint64_t id, start, serviceEnd, end, bytes; std::string kind; };
-std::map<uint32_t, std::deque<LocalJob>> localJobs;
+std::map<std::string, std::deque<LocalJob>> localJobs;
 struct LocalTotals { uint64_t tx = 0, kv = 0, collective = 0, jobs = 0; };
-std::map<uint32_t, LocalTotals> localTotals;
-std::map<uint32_t, uint64_t> localRates;
+std::map<std::string, LocalTotals> localTotals;
+std::map<std::string, uint64_t> localRates;
+std::map<std::string, uint32_t> localNodes;
+std::map<std::string, uint64_t> localPortAvailable;
 
-void RetireLocalJobs(uint32_t host, uint64_t now) {
-  auto& jobs = localJobs[host];
-  auto& totals = localTotals[host];
+void RetireLocalJobs(const std::string& key, uint64_t now) {
+  auto& jobs = localJobs[key];
+  auto& totals = localTotals[key];
   while (!jobs.empty() && jobs.front().end <= now && !activeIds.count(jobs.front().id)) {
     const auto& job = jobs.front();
     totals.tx += job.bytes;
@@ -125,8 +127,8 @@ void PrintStats() {
     }
     if (!first) std::cout << ',';
     first = false;
-    std::cout << "{\"resource_id\":\"local:" << entry.first << "\",\"node_id\":" << entry.first
-      << ",\"peer_id\":" << entry.first << ",\"capacity_bps\":" << localRates.at(entry.first)
+    std::cout << "{\"resource_id\":\"" << entry.first << "\",\"node_id\":" << localNodes.at(entry.first)
+      << ",\"peer_id\":" << localNodes.at(entry.first) << ",\"capacity_bps\":" << localRates.at(entry.first)
       << ",\"tx_bytes\":" << tx << ",\"kv_bytes\":" << kv << ",\"collective_bytes\":" << collective
       << ",\"other_bytes\":" << tx-kv-collective << ",\"queue_bytes\":" << queued << ",\"pfc_pause_count\":0}";
   }
@@ -293,7 +295,7 @@ void LoadTopology(const std::string& file) {
   if (baseRtt > std::numeric_limits<uint32_t>::max()) throw std::runtime_error("path RTT exceeds the pinned backend range");
   for (uint32_t id = 0; id < count; ++id) {
     if (id < hostCount) {
-      if (graph[id].size() != 1) throw std::runtime_error("each server must have exactly one shared network uplink");
+      if (graph[id].size() != 1) throw std::runtime_error("each NIC endpoint must have exactly one network uplink");
       auto hw = CreateObject<RdmaHw>();
       hw->SetAttribute("GPUsPerServer", UintegerValue(1));
       hw->SetAttribute("CcMode", UintegerValue(ccMode));
@@ -332,7 +334,7 @@ void LoadTopology(const std::string& file) {
 int main(int argc, char** argv) {
   try {
     if (argc == 2 && std::string(argv[1]) == "--protocol-version") {
-      std::cout << "JSB_PROTOCOL 3" << std::endl;
+      std::cout << "JSB_PROTOCOL 4" << std::endl;
       return 0;
     }
     if (argc != 7) throw std::runtime_error("usage: driver topology seed cc_mode packet_bytes buffer_bytes priority");
@@ -350,7 +352,7 @@ int main(int argc, char** argv) {
     Config::SetDefault("ns3::QbbNetDevice::PauseTime", UintegerValue(5));
     IntHeader::mode = IntHeader::NONE;
     LoadTopology(argv[1]);
-    std::cout << "JSB READY 3" << std::endl;
+    std::cout << "JSB READY 4" << std::endl;
     std::string line;
     while (std::getline(std::cin, line)) {
       std::istringstream command(line);
@@ -387,10 +389,39 @@ int main(int argc, char** argv) {
         auto service = static_cast<uint64_t>(std::ceil(static_cast<long double>(bytes) * 8000000000.0L / rate));
         auto start = std::max(now, localAvailable[host]);
         auto end = start + service + latency;
-        RetireLocalJobs(host, now);
-        localJobs[host].push_back({id, start, start+service, end, bytes, kind});
-        localRates[host] = rate;
+        auto key = std::string("local:") + std::to_string(host);
+        RetireLocalJobs(key, now);
+        localJobs[key].push_back({id, start, start+service, end, bytes, kind});
+        localRates[key] = rate;
+        localNodes[key] = host;
         localAvailable[host] = end;
+        Simulator::Schedule(NanoSeconds(end - now), &TimerComplete, id);
+        std::cout << "JSB OK" << std::endl;
+      } else if (verb == "LOCAL_PORTS") {
+        uint64_t id, bytes, rate, latency;
+        uint32_t host, src, dst;
+        std::string kind;
+        if (!(command >> id >> host >> src >> dst >> bytes >> rate >> latency >> kind) ||
+            (kind != "kv" && kind != "collective") || !bytes || !rate || activeIds.count(id))
+          throw std::runtime_error("invalid LOCAL_PORTS command");
+        activeIds.insert(id);
+        auto now = static_cast<uint64_t>(Simulator::Now().GetNanoSeconds());
+        auto tx = std::string("local:gpu-") + std::to_string(src) + ":tx";
+        auto rx = std::string("local:gpu-") + std::to_string(dst) + ":rx";
+        auto service = static_cast<uint64_t>(std::ceil(static_cast<long double>(bytes) * 8000000000.0L / rate));
+        auto start = std::max(now, std::max(localPortAvailable[tx], localPortAvailable[rx]));
+        auto serviceEnd = start + service;
+        auto end = serviceEnd + latency;
+        // A nonblocking local fabric with full-duplex GPU injection/ejection
+        // ports. Disjoint pairs and opposite directions can run concurrently.
+        // Propagation does not hold either port after serialization finishes.
+        for (const auto& key : {tx, rx}) {
+          RetireLocalJobs(key, now);
+          localJobs[key].push_back({id, start, serviceEnd, end, bytes, kind});
+          localRates[key] = rate;
+          localNodes[key] = host;
+          localPortAvailable[key] = serviceEnd;
+        }
         Simulator::Schedule(NanoSeconds(end - now), &TimerComplete, id);
         std::cout << "JSB OK" << std::endl;
       } else if (verb == "STATS") {

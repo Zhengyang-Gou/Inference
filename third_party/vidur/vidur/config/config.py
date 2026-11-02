@@ -731,14 +731,7 @@ class BaseExecutionTimePredictorConfig(BasePolyConfig):
     )
     aicb_force_bs1: bool = field(
         default=False,
-        metadata={"help": "AICB fallback switch: force bs=1 for CSV generation. "
-                  "Default OFF. "
-                  "Known limitation: DeepSeek-V3-671B prefill AICB profiling fails on "
-                  "H20 (SM90) when tp>=4, due to FlashMLA flash_mla_sparse_fwd kernel's "
-                  "h_q alignment requirement (B_H=64). This does not affect decode or "
-                  "other models. The simulator will automatically fall back when CSV is "
-                  "unavailable. Set to True only if you encounter CUDA errors during "
-                  "AICB profiling."},
+        metadata={"help": "Use an existing batch-one offline cost table as a simulation proxy."},
     )
 
 

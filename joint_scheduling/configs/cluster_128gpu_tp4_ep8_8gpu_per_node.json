@@ -5,8 +5,8 @@
     "nodes_per_leaf": 2,
     "gpus_per_node": 8,
     "gpu_memory_gib": 80.0,
-    "nic_bandwidth_gbps": 800,
-    "uplink_bandwidth_gbps": 400,
+    "nic_bandwidth_gbps": 3200,
+    "uplink_bandwidth_gbps": 1600,
     "link_latency_us": 1.0,
     "routing": "ecmp",
     "placements": [
@@ -331,8 +331,10 @@
         ]
       }
     ],
-    "intra_node_bandwidth_gbps": 1600,
-    "intra_node_latency_us": 0.5
+    "intra_node_bandwidth_gbps": 1280,
+    "intra_node_latency_us": 0.5,
+    "nic_model": "per_gpu",
+    "intra_node_model": "gpu_ports"
   },
   "binding": {
     "policy": "round_robin",

@@ -180,5 +180,5 @@ class PrefillBatchingMixin:
             timing='packed_total_query_linear_plus_sum_independent_attention',
             coalescing_tick_ns=1,active_batches_at_end={key:batch['details'] for key,batch in self.active_prefill_batches.items()},
             pending_scheduling_ticks=sorted(self.pending_prefill_ticks),
-            utilization_interpretation='Modeled compute/busy/communication durations; not measured GPU utilization. Active cut-off batches are listed and excluded from completed aggregates.')
+            utilization_interpretation='Simulation compute/busy/communication durations. Active cut-off batches are listed separately and excluded from completed aggregates.')
         (self.observer.output.parent/'prefill_batch_summary.json').write_text(json.dumps(value,indent=2)+'\n')
