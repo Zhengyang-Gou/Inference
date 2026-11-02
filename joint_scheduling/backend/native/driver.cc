@@ -11,9 +11,12 @@
 #include "ns3/qbb-helper.h"
 #include "ns3/qbb-channel.h"
 #include "ns3/int-header.h"
+#include "ns3/custom-header.h"
+#include "ns3/broadcom-egress-queue.h"
 #include <algorithm>
 #include <cstdint>
 #include <cmath>
+#include <deque>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -40,10 +43,117 @@ uint64_t baseRtt = 100000;
 uint32_t packetBytes = 1000;
 uint32_t ccMode = 1;
 uint32_t bufferBytes = 16 * 1024 * 1024;
+bool priorityEnabled = false;
 std::map<std::pair<uint32_t, uint32_t>, uint32_t> portCursor;
 std::map<std::pair<uint32_t, uint32_t>, std::map<uint16_t, uint64_t>> portAvailable;
 std::map<uint32_t, uint64_t> localAvailable;
 std::map<uint64_t, std::tuple<uint32_t, uint32_t, uint16_t>> flowEndpoints;
+using FlowKey = std::tuple<uint32_t, uint32_t, uint16_t, uint16_t>;
+std::map<FlowKey, std::string> flowKinds;
+struct PortStats {
+  Ptr<QbbNetDevice> device;
+  uint32_t node, peer, port;
+  uint64_t rate, tx = 0, kv = 0, collective = 0, pfc = 0;
+  uint64_t priorityBytes[4] = {};
+};
+std::map<std::pair<uint32_t, uint32_t>, PortStats> portStats;
+struct LocalJob { uint64_t id, start, serviceEnd, end, bytes; std::string kind; };
+std::map<uint32_t, std::deque<LocalJob>> localJobs;
+struct LocalTotals { uint64_t tx = 0, kv = 0, collective = 0, jobs = 0; };
+std::map<uint32_t, LocalTotals> localTotals;
+std::map<uint32_t, uint64_t> localRates;
+
+void RetireLocalJobs(uint32_t host, uint64_t now) {
+  auto& jobs = localJobs[host];
+  auto& totals = localTotals[host];
+  while (!jobs.empty() && jobs.front().end <= now && !activeIds.count(jobs.front().id)) {
+    const auto& job = jobs.front();
+    totals.tx += job.bytes;
+    if (job.kind == "kv") totals.kv += job.bytes;
+    else if (job.kind == "collective") totals.collective += job.bytes;
+    ++totals.jobs;
+    jobs.pop_front();
+  }
+}
+
+void PacketSent(uint32_t node, uint32_t port, Ptr<const Packet> packet) {
+  auto& stats = portStats.at({node, port});
+  stats.tx += packet->GetSize();
+  CustomHeader header(CustomHeader::L2_Header | CustomHeader::L3_Header | CustomHeader::L4_Header);
+  packet->PeekHeader(header);
+  if (header.l3Prot == 0x11) {
+    auto found = flowKinds.find({header.sip, header.dip, header.udp.sport, header.udp.dport});
+    if (found != flowKinds.end()) {
+      if (header.udp.pg >= 1 && header.udp.pg <= 4)
+        stats.priorityBytes[header.udp.pg-1] += packet->GetSize();
+      if (found->second == "kv") stats.kv += packet->GetSize();
+      else if (found->second == "collective") stats.collective += packet->GetSize();
+    }
+  }
+}
+void PfcObserved(uint32_t node, uint32_t port, uint32_t type) {
+  if (type == 1) ++portStats.at({node, port}).pfc;
+}
+
+void PrintStats() {
+  auto now = static_cast<uint64_t>(Simulator::Now().GetNanoSeconds());
+  std::cout << "JSB STATS {\"time_ns\":" << now << ",\"resources\":[";
+  bool first = true;
+  for (const auto& entry : portStats) {
+    const auto& p = entry.second;
+    if (!first) std::cout << ',';
+    first = false;
+    auto queue = p.device->GetQueue();
+    std::cout << "{\"resource_id\":\"" << p.node << ':' << p.port << "\",\"node_id\":" << p.node
+      << ",\"peer_id\":" << p.peer << ",\"capacity_bps\":" << p.rate
+      << ",\"tx_bytes\":" << p.tx << ",\"kv_bytes\":" << p.kv << ",\"collective_bytes\":" << p.collective
+      << ",\"data_priority_bytes\":[" << p.priorityBytes[0] << ',' << p.priorityBytes[1] << ',' << p.priorityBytes[2] << ',' << p.priorityBytes[3] << ']'
+      << ",\"other_bytes\":" << p.tx - p.kv - p.collective
+      << ",\"queue_bytes\":" << (queue ? queue->GetNBytesTotal() : 0)
+      << ",\"pfc_pause_count\":" << p.pfc << '}';
+  }
+  for (const auto& entry : localJobs) {
+    RetireLocalJobs(entry.first, now);
+    const auto& totals = localTotals.at(entry.first);
+    uint64_t tx = totals.tx, kv = totals.kv, collective = totals.collective, queued = 0;
+    for (const auto& job : entry.second) {
+      uint64_t sent = now >= job.serviceEnd ? job.bytes : now <= job.start ? 0 :
+        static_cast<uint64_t>(static_cast<long double>(job.bytes) * (now-job.start) / (job.serviceEnd-job.start));
+      tx += sent; queued += job.bytes - sent;
+      if (job.kind == "kv") kv += sent;
+      else if (job.kind == "collective") collective += sent;
+    }
+    if (!first) std::cout << ',';
+    first = false;
+    std::cout << "{\"resource_id\":\"local:" << entry.first << "\",\"node_id\":" << entry.first
+      << ",\"peer_id\":" << entry.first << ",\"capacity_bps\":" << localRates.at(entry.first)
+      << ",\"tx_bytes\":" << tx << ",\"kv_bytes\":" << kv << ",\"collective_bytes\":" << collective
+      << ",\"other_bytes\":" << tx-kv-collective << ",\"queue_bytes\":" << queued << ",\"pfc_pause_count\":0}";
+  }
+  std::map<uint64_t, std::pair<uint64_t, uint64_t>> flows;
+  for (uint32_t host = 0; host < hostCount; ++host) {
+    for (const auto& item : nodes[host]->GetObject<RdmaDriver>()->m_rdma->m_qpMap) {
+      auto qp = item.second;
+      flows[qp->m_tag] = {std::min(qp->snd_una, qp->m_size), qp->m_size};
+    }
+  }
+  for (const auto& entry : localJobs)
+    for (const auto& job : entry.second)
+      if (activeIds.count(job.id)) flows[job.id] = {0, job.bytes};
+  std::cout << "],\"flows\":[";
+  first = true;
+  for (const auto& entry : flows) {
+    if (!first) std::cout << ',';
+    first = false;
+    std::cout << "{\"id\":" << entry.first << ",\"acked_bytes\":" << entry.second.first
+      << ",\"size_bytes\":" << entry.second.second << '}';
+  }
+  uint64_t retainedLocal = 0, retiredLocal = 0;
+  for (const auto& entry : localJobs) retainedLocal += entry.second.size();
+  for (const auto& entry : localTotals) retiredLocal += entry.second.jobs;
+  std::cout << "],\"diagnostics\":{\"retained_local_jobs\":" << retainedLocal
+    << ",\"retired_local_jobs\":" << retiredLocal << "}}" << std::endl;
+}
 
 void NoOp() {}
 void StopAtBarrier() { Simulator::Stop(); }
@@ -159,11 +269,19 @@ void LoadTopology(const std::string& file) {
       auto dev = DynamicCast<QbbNetDevice>(devices.Get(side));
       auto ipv4 = nodes[current]->GetObject<Ipv4>();
       int interface = ipv4->AddInterface(dev);
-      if (current < hostCount)
-        ipv4->AddAddress(interface, Ipv4InterfaceAddress(addresses[current], Ipv4Mask(0xff000000)));
+      // QbbNetDevice::SendPfc reads the sending interface's IPv4 address,
+      // including on switches. Host-only addressing aborts when a congested
+      // switch first emits PFC. Switch control addresses are link-local in
+      // purpose (PFC broadcasts have TTL=1), separate from RDMA host routes.
+      Ipv4Address portAddress = current < hostCount ? addresses[current]
+          : Ipv4Address(0x0a000001 + current * 256);
+      ipv4->AddAddress(interface, Ipv4InterfaceAddress(portAddress, Ipv4Mask(0xff000000)));
       ipv4->SetUp(interface);
       auto ns = DynamicCast<QbbChannel>(dev->GetChannel())->GetDelay().GetNanoSeconds();
       auto bps = dev->GetDataRate().GetBitRate();
+      portStats[{current, dev->GetIfIndex()}] = {dev, current, peer, dev->GetIfIndex(), bps};
+      dev->TraceConnectWithoutContext("PhyTxBegin", MakeBoundCallback(&PacketSent, current, dev->GetIfIndex()));
+      dev->TraceConnectWithoutContext("QbbPfc", MakeBoundCallback(&PfcObserved, current, dev->GetIfIndex()));
       graph[current].push_back({peer, dev->GetIfIndex(), bps, static_cast<uint64_t>(ns)});
       maxDelay = std::max(maxDelay, static_cast<uint64_t>(ns));
       minRate = std::min(minRate, bps);
@@ -214,13 +332,17 @@ void LoadTopology(const std::string& file) {
 int main(int argc, char** argv) {
   try {
     if (argc == 2 && std::string(argv[1]) == "--protocol-version") {
-      std::cout << "JSB_PROTOCOL 1" << std::endl;
+      std::cout << "JSB_PROTOCOL 3" << std::endl;
       return 0;
     }
-    if (argc != 6) throw std::runtime_error("usage: driver topology seed cc_mode packet_bytes buffer_bytes");
+    if (argc != 7) throw std::runtime_error("usage: driver topology seed cc_mode packet_bytes buffer_bytes priority");
     Time::SetResolution(Time::NS);
     RngSeedManager::SetSeed(std::stoul(argv[2]));
     ccMode = std::stoul(argv[3]); packetBytes = std::stoul(argv[4]); bufferBytes = std::stoul(argv[5]);
+    if (std::string(argv[6]) != "0" && std::string(argv[6]) != "1") throw std::runtime_error("invalid priority mode");
+    priorityEnabled = std::string(argv[6]) == "1";
+    BEgressQueue::strictPriority = priorityEnabled;
+    RdmaEgressQueue::strictPriority = priorityEnabled;
     if ((ccMode != 0 && ccMode != 1) || packetBytes < 64 || bufferBytes < 1048576)
       throw std::runtime_error("invalid backend parameters");
     Config::SetDefault("ns3::QbbNetDevice::QcnEnabled", BooleanValue(true));
@@ -228,7 +350,7 @@ int main(int argc, char** argv) {
     Config::SetDefault("ns3::QbbNetDevice::PauseTime", UintegerValue(5));
     IntHeader::mode = IntHeader::NONE;
     LoadTopology(argv[1]);
-    std::cout << "JSB READY 1" << std::endl;
+    std::cout << "JSB READY 3" << std::endl;
     std::string line;
     while (std::getline(std::cin, line)) {
       std::istringstream command(line);
@@ -236,13 +358,15 @@ int main(int argc, char** argv) {
       if (verb == "CLOSE") break;
       if (verb == "SEND") {
         uint64_t id, bytes;
-        uint32_t src, dst;
-        if (!(command >> id >> src >> dst >> bytes) || src >= hostCount || dst >= hostCount || src == dst || bytes == 0 || bytes > 0xffffffffULL || activeIds.count(id))
+        uint32_t src, dst, priority;
+        std::string kind;
+        if (!(command >> id >> src >> dst >> bytes >> kind >> priority) || priority > 3 || (kind != "kv" && kind != "collective") || src >= hostCount || dst >= hostCount || src == dst || bytes == 0 || bytes > 0xffffffffULL || activeIds.count(id))
           throw std::runtime_error("invalid SEND command");
         auto port = AllocatePort(src, dst);
         flowEndpoints[id] = std::make_tuple(src, dst, port);
+        flowKinds[{addresses[src].Get(), addresses[dst].Get(), port, port}] = kind;
         activeIds.insert(id);
-        nodes[src]->GetObject<RdmaDriver>()->AddQueuePair(src, dst, id, bytes, 3,
+        nodes[src]->GetObject<RdmaDriver>()->AddQueuePair(src, dst, id, bytes, priorityEnabled ? priority+1 : 3,
             addresses[src], addresses[dst], port, port, 0, baseRtt,
             MakeBoundCallback(&FlowComplete, id), MakeCallback(&NoOp));
         std::cout << "JSB OK" << std::endl;
@@ -255,15 +379,22 @@ int main(int argc, char** argv) {
       } else if (verb == "LOCAL") {
         uint64_t id, bytes, rate, latency;
         uint32_t host;
-        if (!(command >> id >> host >> bytes >> rate >> latency) || host >= hostCount || !bytes || !rate || activeIds.count(id))
+        std::string kind;
+        if (!(command >> id >> host >> bytes >> rate >> latency >> kind) || (kind != "kv" && kind != "collective") || host >= hostCount || !bytes || !rate || activeIds.count(id))
           throw std::runtime_error("invalid LOCAL command");
         activeIds.insert(id);
         auto now = static_cast<uint64_t>(Simulator::Now().GetNanoSeconds());
         auto service = static_cast<uint64_t>(std::ceil(static_cast<long double>(bytes) * 8000000000.0L / rate));
-        auto end = std::max(now, localAvailable[host]) + service + latency;
+        auto start = std::max(now, localAvailable[host]);
+        auto end = start + service + latency;
+        RetireLocalJobs(host, now);
+        localJobs[host].push_back({id, start, start+service, end, bytes, kind});
+        localRates[host] = rate;
         localAvailable[host] = end;
         Simulator::Schedule(NanoSeconds(end - now), &TimerComplete, id);
         std::cout << "JSB OK" << std::endl;
+      } else if (verb == "STATS") {
+        PrintStats();
       } else if (verb == "ADVANCE") {
         int64_t deadline;
         if (!(command >> deadline) || deadline < Simulator::Now().GetNanoSeconds())
@@ -271,7 +402,9 @@ int main(int argc, char** argv) {
         completed.clear();
         auto barrier = Simulator::Schedule(NanoSeconds(deadline - Simulator::Now().GetNanoSeconds()), &StopAtBarrier);
         Simulator::Run();
-        Simulator::Cancel(barrier);
+        // Cancel only marks a future event; millions of interrupted advances
+        // would keep those barriers until the far-away observation deadline.
+        Simulator::Remove(barrier);
         std::cout << "JSB TIME " << Simulator::Now().GetNanoSeconds() << " " << completed.size();
         for (auto id : completed) std::cout << " " << id;
         std::cout << std::endl;

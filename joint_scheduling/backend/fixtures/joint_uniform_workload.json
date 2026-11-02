@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Deterministic joint binding validation: uniform; fixed visible caps, EOS is simulator-only."
+  },
+  "requests": [
+    {
+      "request_id": "r0",
+      "arrival_seconds": 0.0,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r1",
+      "arrival_seconds": 0.004,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r2",
+      "arrival_seconds": 0.01,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r3",
+      "arrival_seconds": 0.0113,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r4",
+      "arrival_seconds": 0.0126,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r5",
+      "arrival_seconds": 0.0139,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r6",
+      "arrival_seconds": 0.0152,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r7",
+      "arrival_seconds": 0.0165,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r8",
+      "arrival_seconds": 0.0178,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r9",
+      "arrival_seconds": 0.0191,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r10",
+      "arrival_seconds": 0.0204,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r11",
+      "arrival_seconds": 0.0217,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r12",
+      "arrival_seconds": 0.023,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r13",
+      "arrival_seconds": 0.0243,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r14",
+      "arrival_seconds": 0.0256,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r15",
+      "arrival_seconds": 0.0269,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r16",
+      "arrival_seconds": 0.0282,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r17",
+      "arrival_seconds": 0.0295,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r18",
+      "arrival_seconds": 0.0308,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r19",
+      "arrival_seconds": 0.0321,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r20",
+      "arrival_seconds": 0.0334,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r21",
+      "arrival_seconds": 0.0347,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r22",
+      "arrival_seconds": 0.036,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r23",
+      "arrival_seconds": 0.0373,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r24",
+      "arrival_seconds": 0.0386,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r25",
+      "arrival_seconds": 0.0399,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    }
+  ]
+}

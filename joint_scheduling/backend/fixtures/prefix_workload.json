@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Same ordered block IDs declare identical tokens under the same profile/model; P and D reuse are tested independently."
+  },
+  "requests": [
+    {
+      "request_id": "prefix-0",
+      "arrival_seconds": 0,
+      "input_tokens": 128,
+      "output_tokens": 3,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "prefix-1",
+      "arrival_seconds": 0.02,
+      "input_tokens": 128,
+      "output_tokens": 3,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "prefix-2",
+      "arrival_seconds": 0.04,
+      "input_tokens": 192,
+      "output_tokens": 3,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "prefix-3",
+      "arrival_seconds": 0.06,
+      "input_tokens": 192,
+      "output_tokens": 3,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        },
+        {
+          "id": "document-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "prefix-4",
+      "arrival_seconds": 0.08,
+      "input_tokens": 192,
+      "output_tokens": 3,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        },
+        {
+          "id": "document-v1",
+          "tokens": 64
+        }
+      ]
+    }
+  ]
+}

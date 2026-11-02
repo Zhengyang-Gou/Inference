@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source": "Frozen stage 1/2 reference; golden deterministic outputs before component migration.",
+  "cases": {
+    "dense": {
+      "config": "configs/composed_execution_smoke.json",
+      "sha256": {
+        "compute_profile.json": "8ba2d18855dc8e8e6a31bab3cd0c2b2eeae90d57d2c0486c77402e820f520b16",
+        "workload.json": "f1eaf32051a7a7e9a8db922008713b540be276f42c0877896c543fb3fcc9d82a",
+        "result/tokens.csv": "a503d99bd147e4480e73167bf530f22fb7ace1f450789c2590e2173874d69fb9",
+        "result/requests.csv": "0a92685f393c814903d641b1fdfd96e1149d2ee51a45d2e1425c06bf7970ffec",
+        "result/timeseries.csv": "4d989f6d6c4a731648e68f33cae53812b884f4e59a0a2bfd0691e58b803b43ec",
+        "final_resources.json": "bedf12c4de79e0776338dd04a9dc26387e358439f53c963c73245b8107e4f226",
+        "prefill_batch_summary.json": "c80c75ff5022cfd2d06cbdbaeb8ceee678abb257d4e40f11d7b4ecd5023bcfa7",
+        "prefill_chunk_summary.json": "f24e446dcee59140534e3eb2b4af2bf1547558e654ce1dd3d34b76f2ecba3532",
+        "decode_batch_summary.json": "0f53dbfefe93468aeb2014553424ca86435929415ef7b04646f81a58f01e95f5"
+      }
+    },
+    "moe": {
+      "config": "configs/ep_mlu_smoke.json",
+      "sha256": {
+        "compute_profile.json": "2a1490b8185ec807ced41d300e88d0ee14b873c647e35d214cac39a48a1f047f",
+        "workload.json": "c31c74b6373cf9f98e3a81f7208669f8ec36b110ee3777de2dce87d95901ac9a",
+        "result/tokens.csv": "ba09d368ffdd8d793e2916b7c3c56e26d43cb5c09f5aaed412eb4f356be33df2",
+        "result/requests.csv": "fa011157c4b9253369b5c5299458dc5a296c70798d251fb97e7d8beb9af8f85e",
+        "result/timeseries.csv": "5543479548a3d1d1083f910a0e175d11b3018f65d890dc71d680d764dc0b77cd",
+        "final_resources.json": "8803284a2cccbd55819dc3eb9e47c12280c4d94c27c057915d9015f0ea41f3e6",
+        "prefill_batch_summary.json": "5cbbad07a1e6a9cfb03259678dd682cd4c999c7678ad223731257bdb1ce83d17",
+        "prefill_chunk_summary.json": "45992d92fea91d5b69e6abe8bd503d172878ace494cee497effb638a14d433d3",
+        "decode_batch_summary.json": "6a90a238ac518d484feaa86607ec0228dced632ae2233ee468905540b523d490",
+        "expert_parallel_summary.json": "fe83164450d94f68ca438bddb3ab8a5a6ebc3ab5cee405cd291afb2495ae1a03"
+      }
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "topology": {
+    "num_leaves": 2,
+    "num_spines": 2,
+    "nodes_per_leaf": 2,
+    "gpus_per_node": 2,
+    "gpu_memory_gib": 80.0,
+    "nic_bandwidth_gbps": 2,
+    "uplink_bandwidth_gbps": 4,
+    "link_latency_us": 1.0,
+    "intra_node_bandwidth_gbps": 1600.0,
+    "intra_node_latency_us": 0.5,
+    "routing": "ecmp",
+    "placements": [
+      {
+        "instance_id": "p0",
+        "role": "prefill",
+        "gpu_ids": [
+          0,
+          1
+        ]
+      },
+      {
+        "instance_id": "d0",
+        "role": "decode",
+        "gpu_ids": [
+          2,
+          3
+        ]
+      },
+      {
+        "instance_id": "p1",
+        "role": "prefill",
+        "gpu_ids": [
+          4,
+          5
+        ]
+      },
+      {
+        "instance_id": "d1",
+        "role": "decode",
+        "gpu_ids": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "binding": {
+    "policy": "round_robin",
+    "window_ms": 1.0,
+    "early_trigger_margin_ms": 0.5,
+    "max_wait_ms": 10.0,
+    "joint_selection_enabled": false,
+    "candidate_count": 4,
+    "max_requests_per_round": 16,
+    "max_pending_scan": 64,
+    "max_pair_checks": 64,
+    "max_score_work": 16384,
+    "max_state_requests": 256,
+    "max_state_objects": 4096,
+    "starvation_ms": 10.0,
+    "wall_clock_diagnostics": true,
+    "prediction_sample_every": 1,
+    "window_enabled": false,
+    "prediction_enabled": false,
+    "decision_overhead_us": 5,
+    "prediction_decode_steps": 8,
+    "prediction_max_events": 100000,
+    "prediction_time_limit_seconds": 10.0
+  },
+  "kv_scheduler": {
+    "policy": "slo_mlu",
+    "max_block_bytes": 4096,
+    "max_concurrent_transfers": 8,
+    "max_inflight_bytes": 8388608,
+    "safety_margin_fraction": 0.1,
+    "control_interval_us": 50.0,
+    "collective_guard_us": 20.0,
+    "max_resource_inflight_bytes": 65536,
+    "queue_target_bytes": 65536,
+    "collective_reserve_fraction": 0.7,
+    "pause_on_collective": false,
+    "slo_priority_enabled": true,
+    "collective_protection_enabled": true,
+    "inflight_budget_mode": "adaptive",
+    "collective_max_blocking_us": 50.0,
+    "completion_feedback_alpha": 0.3,
+    "decode_admission_limit": 0,
+    "mlu_medium_threshold": 0.125,
+    "mlu_urgent_threshold": 0.5,
+    "mlu_deadline_guard_us": 50,
+    "mlu_best_effort_fraction": 0.02
+  },
+  "feedback": {
+    "time_authority": "ns3",
+    "network_backend": "ns3_alibabacloud",
+    "compute_backend": "profiling",
+    "compute_profile_path": "../backend/fixtures/ep_compute_profile.json",
+    "compute_profile_excludes_communication": true,
+    "observation_delay_us": 100,
+    "scheduling_overhead_us": 10,
+    "network_observation_enabled": true,
+    "state_observation_enabled": true,
+    "network_observation_interval_us": 500,
+    "network_ewma_alpha": 0.3
+  },
+  "reservations": {
+    "reserve_max_output_tokens": 1024,
+    "capacity_safety_fraction": 0.05,
+    "shared_prefix_accounting": "physical_object",
+    "source_release": "after_dependencies"
+  },
+  "evaluation": {
+    "window_start_seconds": 0,
+    "window_end_seconds": 1,
+    "time_bin_seconds": 0.01,
+    "default_ttft_slo_seconds": 0.02,
+    "default_itl_slo_seconds": 0.005,
+    "output_dir": "../artifacts/evaluation",
+    "plot_dpi": 160,
+    "percentiles": [
+      0.5,
+      0.95,
+      0.99
+    ],
+    "plot_formats": [
+      "png",
+      "pdf"
+    ],
+    "charts": [
+      "latency_cdf",
+      "latency_percentiles",
+      "slo_throughput",
+      "throughput_timeseries"
+    ]
+  },
+  "runtime": {
+    "seed": 7,
+    "workload_path": "../backend/fixtures/ep_workload.json",
+    "time_limit_seconds": 1,
+    "congestion_control": "dcqcn",
+    "packet_payload_bytes": 1000,
+    "switch_buffer_bytes": 16777216,
+    "rpc_timeout_seconds": 60.0,
+    "prefill_batch_size": 3,
+    "prefill_batch_token_budget": 6,
+    "prefill_chunk_tokens": 4,
+    "decode_batch_size": 4,
+    "kv_transfer_mode": "layer_ready_slo",
+    "network_priority_enabled": true
+  },
+  "prefix_cache": {
+    "enabled": false,
+    "prefill_reuse_enabled": true,
+    "decode_reuse_enabled": true,
+    "max_bytes_per_instance": 67108864,
+    "eviction_enabled": true
+  },
+  "recording": {
+    "mode": "debug"
+  },
+  "expert_parallel": {
+    "enabled": true,
+    "groups": [
+      [
+        "p0",
+        "p1"
+      ],
+      [
+        "d0",
+        "d1"
+      ]
+    ]
+  }
+}

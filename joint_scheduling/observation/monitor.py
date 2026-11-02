@@ -7,6 +7,8 @@ import math
 from collections import deque
 from pathlib import Path
 
+from ..evaluation.pressure import PressureStateAccumulator
+
 
 CSV_FIELDS = ("time_seconds", "visible_at_seconds", "arrived_count", "completed_count", "failed_count",
               "incomplete_count", "prefill_queue_length", "decode_queue_length", "compute_busy_instances",
@@ -30,17 +32,19 @@ class StateObserver:
     including local messages; they are not remaining wire bytes or NIC counters.
     """
 
-    def __init__(self, output, clock, observation_delay_us=0.0):
+    def __init__(self, output, clock, observation_delay_us=0.0, detailed=True, measurement_window=None):
         if (type(observation_delay_us) not in (int, float) or not math.isfinite(observation_delay_us)
                 or not 0 <= observation_delay_us * 1000 < 2**63):
             raise ValueError("observation delay must fit the nonnegative nanosecond clock")
         self.output, self.clock = Path(output), clock
         self.output.mkdir(parents=True, exist_ok=False)
         self.delay_ns = round(observation_delay_us * 1000)
-        self._trace = (self.output / "state.jsonl").open("x", encoding="utf-8")
-        self._csv_handle = (self.output / "state.csv").open("x", encoding="utf-8", newline="")
-        self._csv = csv.DictWriter(self._csv_handle, fieldnames=CSV_FIELDS)
-        self._csv.writeheader()
+        self._trace = (self.output / "state.jsonl").open("x", encoding="utf-8") if detailed else None
+        self._csv_handle = (self.output / "state.csv").open("x", encoding="utf-8", newline="") if detailed else None
+        self._csv = csv.DictWriter(self._csv_handle, fieldnames=CSV_FIELDS) if detailed else None
+        if self._csv:
+            self._csv.writeheader()
+        self.measurement = PressureStateAccumulator(*measurement_window) if measurement_window is not None else None
         self.pending, self.visible, self.previous = deque(), None, None
         self.sequence = 0
         self.active = {}
@@ -125,7 +129,8 @@ class StateObserver:
             "requests": request_counts, "instances": instances, "resources": resources,
             "communication": communication, "active_transfers": sorted(self.active.values(), key=lambda item: item["transfer_id"])})
         self.sequence += 1
-        self._trace.write(json.dumps(snapshot, ensure_ascii=False, allow_nan=False) + "\n")
+        if self._trace:
+            self._trace.write(json.dumps(snapshot, ensure_ascii=False, allow_nan=False) + "\n")
         row = {"time_seconds": time, "visible_at_seconds": snapshot["visible_at_seconds"], **request_counts}
         row.update(prefill_queue_length=sum(s["queue_length"] for s in instances.values() if s["role"] == "prefill"),
                    decode_queue_length=sum(s["queue_length"] for s in instances.values() if s["role"] == "decode"),
@@ -136,7 +141,10 @@ class StateObserver:
                 row[kind + "_inflight_" + key] = communication[kind]["inflight_" + key]
         for key in ("occupied_bytes", "reserved_bytes", "available_bytes"):
             row[key] = sum(state[key] for state in resources.values())
-        self._csv.writerow(row)
+        if self._csv:
+            self._csv.writerow(row)
+        if self.measurement:
+            self.measurement.add(row)
         self.previous = snapshot
         self.pending.append((round(time * 1e9) + self.delay_ns, snapshot))
         self._release(round(time * 1e9))
@@ -160,23 +168,58 @@ class StateObserver:
                     "inflight_bytes": "whole logical messages awaiting ACK completion; includes local traffic",
                     "queue_wait": "completed queue waits per prefill request or decode token step; pending waits remain in state",
                     "network_telemetry": "application transfers only; no per-link occupancy or measured NIC utilization"}}
+        if self.measurement:
+            report["measurement_window"] = dict(start_seconds=self.measurement.start, end_seconds=self.measurement.end,
+                                               **self.measurement.finish())
         _json(self.output / "summary.json", report)
-        _json(self.output / "observed_state.json", {"queried_at_seconds": time, "state": self.latest_observed()})
+        if self._trace:
+            _json(self.output / "observed_state.json", {"queried_at_seconds": time, "state": self.latest_observed()})
         if summaries:
             with (self.output / "instances.csv").open("x", encoding="utf-8", newline="") as handle:
                 writer = csv.DictWriter(handle, fieldnames=["instance_id"] + list(next(iter(summaries.values()))))
                 writer.writeheader()
                 writer.writerows(dict(instance_id=key, **value) for key, value in sorted(summaries.items()))
-        self._trace.flush()
-        self._csv_handle.flush()
+        for handle in (self._trace, self._csv_handle):
+            if handle:
+                handle.flush()
         return report
 
     def close(self):
-        self._trace.close()
-        self._csv_handle.close()
+        for handle in (self._trace, self._csv_handle):
+            if handle:
+                handle.close()
 
     def __enter__(self):
         return self
 
     def __exit__(self, *exc):
         self.close()
+
+
+class DisabledStateObserver:
+    """Keep the output location for independent telemetry, without state logs."""
+
+    def __init__(self, output, clock, observation_delay_us=0.0, detailed=True, measurement_window=None):
+        self.output = Path(output)
+        self.output.mkdir(parents=True, exist_ok=False)
+
+    def capture(self, *args, **kwargs):
+        pass
+
+    def queue_started(self, *args):
+        pass
+
+    def transfer_started(self, *args):
+        pass
+
+    def transfer_completed(self, *args):
+        pass
+
+    def finish(self):
+        return None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        pass

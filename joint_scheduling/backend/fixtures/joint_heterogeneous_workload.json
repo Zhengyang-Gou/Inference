@@ -1,0 +1,399 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Deterministic joint binding validation: heterogeneous; fixed visible caps, EOS is simulator-only."
+  },
+  "requests": [
+    {
+      "request_id": "r0",
+      "arrival_seconds": 0.0,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r1",
+      "arrival_seconds": 0.004,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r2",
+      "arrival_seconds": 0.01,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r3",
+      "arrival_seconds": 0.01015,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r4",
+      "arrival_seconds": 0.0103,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r5",
+      "arrival_seconds": 0.01045,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r6",
+      "arrival_seconds": 0.0106,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r7",
+      "arrival_seconds": 0.01075,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r8",
+      "arrival_seconds": 0.018,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r9",
+      "arrival_seconds": 0.01815,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r10",
+      "arrival_seconds": 0.0183,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r11",
+      "arrival_seconds": 0.01845,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r12",
+      "arrival_seconds": 0.0186,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r13",
+      "arrival_seconds": 0.01875,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r14",
+      "arrival_seconds": 0.026,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r15",
+      "arrival_seconds": 0.02615,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r16",
+      "arrival_seconds": 0.0263,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r17",
+      "arrival_seconds": 0.02645,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r18",
+      "arrival_seconds": 0.0266,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r19",
+      "arrival_seconds": 0.02675,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r20",
+      "arrival_seconds": 0.034,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r21",
+      "arrival_seconds": 0.03415,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r22",
+      "arrival_seconds": 0.0343,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r23",
+      "arrival_seconds": 0.03445,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r24",
+      "arrival_seconds": 0.0346,
+      "input_tokens": 512,
+      "output_tokens": 16,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.016,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "r25",
+      "arrival_seconds": 0.03475,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "max_output_tokens": 32,
+      "ttft_slo_seconds": 0.0045,
+      "itl_slo_seconds": 0.004,
+      "prefix_blocks": [
+        {
+          "id": "system",
+          "tokens": 64
+        }
+      ]
+    }
+  ]
+}

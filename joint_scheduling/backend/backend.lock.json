@@ -1,5 +1,5 @@
 {
-  "protocol_version": 1,
+  "protocol_version": 3,
   "ns3_repository": "https://github.com/aliyun/ns-3-alibabacloud",
   "ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
   "cmake_version": "3.31.10",

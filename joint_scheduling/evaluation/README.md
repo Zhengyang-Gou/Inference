@@ -8,6 +8,7 @@
 | --- | --- |
 | `recorder.py` | 按仿真时间写入原始 JSONL 请求、token 及辅助事件 |
 | `metrics.py` | 校验事件生命周期，计算请求指标、分位数、SLO 与吞吐 |
+| `pressure.py` | 持续负载下的积压、token 吞吐、队列积分及未完成请求的 SLO 上下界 |
 | `export.py` | 导出可离线复核的完整结果目录 |
 | `plots.py` | 只读导出数据，生成单次实验或多策略比较图 |
 | `config.py` | `evaluation` 配置段与参数检查 |
@@ -87,6 +88,10 @@ with TraceRecorder("new_events.jsonl", strategy="joint", seed=7,
 
 ## 导出内容
 
+`run-baseline` 默认保留必要请求事件及每个 token 返回时间；高频辅助事件只在 `recording.mode="debug"` 时保留。两种模式使用同一套 SLO 和吞吐统计，规则见 [实验记录规则](../RECORDING.md)。
+
+下面是独立 `evaluate` 的自包含导出。`run-baseline` 的 `result/` 不再复制 `events.jsonl`，其 summary 中 `raw_trace_file` 指向运行根目录的 `../events.jsonl`。默认运行还在 summary 的 `pressure` 中保存积压、token 吞吐和含未完成请求的 SLO 上下界。
+
 ```text
 result/
 ├── events.jsonl           # 原始轨迹，包含辅助事件和 run 元信息
@@ -113,3 +118,5 @@ result/
 没有 Matplotlib 时只跳过绘图测试，统计、导出和 CLI 测试仍会运行。
 
 真实网络基线的依赖来源与完整性由根目录 `third_party/manifest.json`、`third_party/ns3/SOURCE_MANIFEST.json` 及后端内容锁记录。评估模块只消费明确记录的事件与配置，不从上游 Git 仓库读取指标；保留这些清单可追溯运行所用网络源码。
+
+持续加压时，`summarize_pressure` 以 [start,end) 统计到达/完成/token，并在两端事件发生前取积压，验证“积压变化 = 到达 − 完成 − 失败”。到达 cohort 包括未完成请求：已观察到的 TTFT/ITL 超限和截止时仍在延迟的返回可判定失败，其他未完成结果保持未知，不推断为成功。`summarize_pressure_states` 对事件保持的队列和在途量积分，避免按高频事件条数求均值引入偏差。有限窗口的队列增长和达标率只能用于扫描负载范围，不能证明无限时长稳定性。

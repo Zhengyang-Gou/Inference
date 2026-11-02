@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Cold warm-up followed by partial and full prefix reuse plus a short request."
+  },
+  "requests": [
+    {
+      "request_id": "warm",
+      "arrival_seconds": 0,
+      "input_tokens": 9,
+      "output_tokens": 3,
+      "max_output_tokens": 4,
+      "prefix_blocks": [
+        {
+          "id": "odd",
+          "tokens": 3
+        },
+        {
+          "id": "tail",
+          "tokens": 2
+        }
+      ],
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "reuse",
+      "arrival_seconds": 0.2,
+      "input_tokens": 9,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "prefix_blocks": [
+        {
+          "id": "odd",
+          "tokens": 3
+        },
+        {
+          "id": "tail",
+          "tokens": 2
+        }
+      ],
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "full",
+      "arrival_seconds": 0.2,
+      "input_tokens": 5,
+      "output_tokens": 3,
+      "max_output_tokens": 4,
+      "prefix_blocks": [
+        {
+          "id": "odd",
+          "tokens": 3
+        },
+        {
+          "id": "tail",
+          "tokens": 2
+        }
+      ],
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "short",
+      "arrival_seconds": 0.201,
+      "input_tokens": 2,
+      "output_tokens": 2,
+      "max_output_tokens": 4,
+      "prefix_blocks": [],
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    }
+  ]
+}

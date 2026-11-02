@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "base_config": "sustained_pressure_base.json",
+  "workload_spec": "sustained_pressure_workload.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "sweep": {
+    "runtime.kv_transfer_mode": [
+      "layer_ready_immediate",
+      "layer_ready_fifo",
+      "layer_ready_slo"
+    ],
+    "topology.nic_bandwidth_gbps": [
+      40,
+      200
+    ],
+    "workload.arrival.rate_rps": [
+      25,
+      75,
+      150,
+      300
+    ]
+  }
+}

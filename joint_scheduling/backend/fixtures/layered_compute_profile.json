@@ -1,0 +1,137 @@
+{
+  "schema_version": 2,
+  "provenance": {
+    "synthetic": true,
+    "description": "Explicit four-layer synthetic model for KV timing comparisons; not GPU measurements. All KV modes use identical compute/collective samples."
+  },
+  "network_communication_excluded": true,
+  "kv_bytes_per_token": 32768,
+  "weights_bytes_per_gpu": 1073741824,
+  "phases": {
+    "prefill": {
+      "tp_size": 4,
+      "layers": [
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 2e-05,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00016,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.0006000000000000001,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.0048000000000000004,
+              "collective_bytes": 524288
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 3e-05,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00024,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.0009,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.0072,
+              "collective_bytes": 524288
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 3e-05,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00024,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.0009,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.0072,
+              "collective_bytes": 524288
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 2e-05,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00016,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.0006000000000000001,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.0048000000000000004,
+              "collective_bytes": 524288
+            }
+          ]
+        }
+      ]
+    },
+    "decode": {
+      "tp_size": 4,
+      "collectives_per_step": 1,
+      "points": [
+        {
+          "tokens": 1,
+          "compute_seconds": 8e-05,
+          "collective_bytes": 16384
+        },
+        {
+          "tokens": 4096,
+          "compute_seconds": 0.00016,
+          "collective_bytes": 16384
+        }
+      ]
+    }
+  }
+}

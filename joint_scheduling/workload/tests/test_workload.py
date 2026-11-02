@@ -43,6 +43,36 @@ class WorkloadTests(unittest.TestCase):
         self.assertEqual([r["arrival_seconds"] for r in generate_workload(self.spec)["requests"]],
                          [0, 0, 0, 0.01, 0.01, 0.01, 0.02])
 
+    def test_duration_keeps_pressure_until_same_end_across_rates(self):
+        self.spec["arrival"] = {"pattern": "periodic", "duration_seconds": 0.1, "start_seconds": 1, "rate_rps": 100}
+        first = generate_workload(self.spec)["requests"]
+        self.assertEqual(len(first), 10)
+        self.assertEqual(first[0]["arrival_seconds"], 1)
+        self.assertEqual(first[-1]["arrival_seconds"], 1.09)
+        self.spec["arrival"]["rate_rps"] = 200
+        second = generate_workload(self.spec)["requests"]
+        self.assertEqual(len(second), 20)
+        self.assertEqual(second[-1]["arrival_seconds"], 1.095)
+        for left, right in zip(first, second):
+            self.assertEqual({k:v for k,v in left.items() if k != "arrival_seconds"},
+                             {k:v for k,v in right.items() if k != "arrival_seconds"})
+        self.spec["arrival"]["pattern"] = "poisson"
+        a = generate_workload(self.spec)
+        self.assertEqual(a, generate_workload(self.spec))
+        self.assertTrue(all(1 <= r["arrival_seconds"] < 1.1 for r in a["requests"]))
+
+    def test_duration_rejects_ambiguous_invalid_and_unbounded_inputs(self):
+        for arrival in ({"pattern":"periodic","count":1,"duration_seconds":1,"rate_rps":10},
+                        {"pattern":"periodic","rate_rps":10},
+                        {"pattern":"periodic","duration_seconds":0,"rate_rps":10},
+                        {"pattern":"poisson","duration_seconds":float('inf'),"rate_rps":10},
+                        {"pattern":"burst","duration_seconds":1,"burst_size":2,"burst_interval_seconds":0.1}):
+            with self.subTest(arrival=arrival), self.assertRaises(ValueError):
+                generate_workload(dict(self.spec, arrival=arrival))
+        # An arrival rounded to the duration endpoint is outside the interval.
+        self.spec["arrival"] = {"pattern":"periodic", "duration_seconds":0.000000001, "rate_rps":1e9}
+        self.assertEqual(len(generate_workload(self.spec)["requests"]), 1)
+
     def test_class_lengths_slos_and_native_loader_compatibility(self):
         self.spec["arrival"]["count"] = 100
         rows = generate_workload(self.spec)["requests"]
@@ -62,6 +92,27 @@ class WorkloadTests(unittest.TestCase):
         self.assertEqual(sum(generated["provenance"]["class_counts"].values()), 100)
         with self.assertRaises(FileExistsError):
             write_workload(self.spec, path)
+
+    def test_prefix_blocks_are_preserved_and_invalid_lengths_rejected(self):
+        self.spec["classes"] = [dict(name="shared", weight=1, input_tokens=128, output_tokens=3,
+                                     prefix_blocks=[dict(id="system", tokens=64)])]
+        path = self.output / "prefix.json"
+        generated = write_workload(self.spec, path)
+        loaded, _ = load_workload(path)
+        self.assertEqual(loaded, generated["requests"])
+        self.assertTrue(all(r["prefix_blocks"] == [dict(id="system", tokens=64)] for r in loaded))
+        self.spec["classes"][0]["prefix_blocks"][0]["tokens"] = 129
+        with self.assertRaises(ValueError):
+            write_workload(self.spec, self.output / "bad-prefix.json")
+        self.assertFalse((self.output / "bad-prefix.json").exists())
+
+    def test_declared_output_limit_is_preserved_and_validated(self):
+        self.spec["classes"] = [dict(name="bounded", weight=1, input_tokens=128, output_tokens=3, max_output_tokens=8)]
+        result = generate_workload(self.spec)
+        self.assertTrue(all(r["max_output_tokens"] == 8 for r in result["requests"]))
+        self.spec["classes"][0]["max_output_tokens"] = 2
+        with self.assertRaises(ValueError):
+            generate_workload(self.spec)
 
     def test_invalid_specs_do_not_create_output(self):
         cases = []

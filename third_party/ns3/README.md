@@ -14,3 +14,5 @@
 ```
 
 `SOURCE_MANIFEST.json` 和 `joint_scheduling/backend/backend.lock.json` 校验源码内容。编译发生在 `joint_scheduling/artifacts/backend/` 的隔离副本中。修改源码后必须审查并同步更新清单和内容锁，再跑基线回归。
+
+2026-10-28：联合绑定高开销压力触发了上游 PFC Resume 将优先级作为 QP 索引的空指针错误。`joint_scheduling/backend/build.py` 在隔离副本上应用精确、有指纹校验的恢复发送修补；本目录原始网络源码及 SOURCE_MANIFEST 不变。适配器同时补齐交换机 PFC 控制地址。修补与真实 incast 回归见 backend 说明和 binding 验证报告。

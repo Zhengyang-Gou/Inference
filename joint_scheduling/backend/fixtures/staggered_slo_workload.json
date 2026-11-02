@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Irregular arrivals and mixed per-request TTFT/ITL thresholds for adaptive KV admission; fixed identically across all policies."
+  },
+  "requests": [
+    {
+      "request_id": "r00",
+      "arrival_seconds": 0,
+      "input_tokens": 128,
+      "output_tokens": 1,
+      "itl_slo_seconds": 0.005,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r01",
+      "arrival_seconds": 0.0003,
+      "input_tokens": 256,
+      "output_tokens": 2,
+      "itl_slo_seconds": 0.003,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r02",
+      "arrival_seconds": 0.0008,
+      "input_tokens": 512,
+      "output_tokens": 4,
+      "itl_slo_seconds": 0.004,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r03",
+      "arrival_seconds": 0.0011,
+      "input_tokens": 128,
+      "output_tokens": 8,
+      "itl_slo_seconds": 0.002,
+      "ttft_slo_seconds": 0.008
+    },
+    {
+      "request_id": "r04",
+      "arrival_seconds": 0.0018,
+      "input_tokens": 256,
+      "output_tokens": 4,
+      "itl_slo_seconds": 0.004,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r05",
+      "arrival_seconds": 0.0025,
+      "input_tokens": 512,
+      "output_tokens": 8,
+      "itl_slo_seconds": 0.003,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r06",
+      "arrival_seconds": 0.0031,
+      "input_tokens": 128,
+      "output_tokens": 2,
+      "itl_slo_seconds": 0.002,
+      "ttft_slo_seconds": 0.008
+    },
+    {
+      "request_id": "r07",
+      "arrival_seconds": 0.0042,
+      "input_tokens": 256,
+      "output_tokens": 1,
+      "itl_slo_seconds": 0.005,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r08",
+      "arrival_seconds": 0.005,
+      "input_tokens": 512,
+      "output_tokens": 8,
+      "itl_slo_seconds": 0.004,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r09",
+      "arrival_seconds": 0.0063,
+      "input_tokens": 128,
+      "output_tokens": 4,
+      "itl_slo_seconds": 0.002,
+      "ttft_slo_seconds": 0.008
+    },
+    {
+      "request_id": "r10",
+      "arrival_seconds": 0.0077,
+      "input_tokens": 256,
+      "output_tokens": 8,
+      "itl_slo_seconds": 0.003,
+      "ttft_slo_seconds": 0.02
+    },
+    {
+      "request_id": "r11",
+      "arrival_seconds": 0.009,
+      "input_tokens": 512,
+      "output_tokens": 2,
+      "itl_slo_seconds": 0.004,
+      "ttft_slo_seconds": 0.02
+    }
+  ]
+}

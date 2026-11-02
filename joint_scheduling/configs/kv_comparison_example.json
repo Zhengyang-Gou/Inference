@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "base_config": "layered_smoke.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "sweep": {
+    "runtime.kv_transfer_mode": [
+      "whole_ready_immediate",
+      "whole_ready_chunked",
+      "layer_ready_immediate"
+    ],
+    "topology.nic_bandwidth_gbps": [
+      10,
+      40,
+      200
+    ]
+  }
+}

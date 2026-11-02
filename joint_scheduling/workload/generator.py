@@ -70,12 +70,18 @@ def generate_workload(spec, seed=None):
     if "description" in spec and not isinstance(spec["description"], str):
         raise ValueError("description must be a string")
     arrival = spec["arrival"]
-    _keys(arrival, {"pattern", "count"},
-          {"start_seconds", "rate_rps", "burst_size", "burst_interval_seconds", "spread_seconds"}, "arrival")
-    count = number(arrival["count"], "arrival.count", integral=True)
-    if count > 1000000:
+    _keys(arrival, {"pattern"},
+          {"count", "duration_seconds", "start_seconds", "rate_rps", "burst_size", "burst_interval_seconds", "spread_seconds"}, "arrival")
+    if ("count" in arrival) == ("duration_seconds" in arrival):
+        raise ValueError("arrival requires exactly one of count or duration_seconds")
+    count = number(arrival["count"], "arrival.count", integral=True) if "count" in arrival else None
+    if count is not None and count > 1000000:
         raise ValueError("arrival.count exceeds 1,000,000 requests")
     start = number(arrival.get("start_seconds", 0.0), "arrival.start_seconds")
+    duration = number(arrival["duration_seconds"], "arrival.duration_seconds", positive=True) if count is None else None
+    end = start+duration if duration is not None else None
+    if end is not None and (not math.isfinite(end) or end*1e9 >= 2**63):
+        raise ValueError("arrival duration exceeds the supported simulation clock")
     pattern = arrival["pattern"]
     times, arrival_rng = [], random.Random("{}:arrivals".format(seed))
     if pattern in ("periodic", "poisson"):
@@ -83,13 +89,24 @@ def generate_workload(spec, seed=None):
             raise ValueError("burst fields require the burst arrival pattern")
         rate = number(arrival.get("rate_rps"), "arrival.rate_rps", positive=True)
         time = start
-        for index in range(count):
+        index = 0
+        while count is None or index < count:
             if pattern == "periodic":
                 time = start + index / rate
             else:
                 time += arrival_rng.expovariate(rate)
+            # Duration workloads feed every policy for the same simulated
+            # interval. Keep the interval half-open after nanosecond rounding,
+            # matching the native clock and evaluation window boundaries.
+            if end is not None and round(time, 9) >= end:
+                break
+            if index >= 1000000:
+                raise ValueError("arrival duration exceeds 1,000,000 requests")
             times.append(time)
+            index += 1
     elif pattern == "burst":
+        if count is None:
+            raise ValueError("burst requires count; duration_seconds supports periodic/poisson")
         if "rate_rps" in arrival:
             raise ValueError("burst uses burst_size/interval instead of rate_rps")
         size = number(arrival.get("burst_size"), "arrival.burst_size", positive=True, integral=True)
@@ -110,7 +127,7 @@ def generate_workload(spec, seed=None):
     samplers, names, class_weights = [], set(), []
     for item in classes:
         _keys(item, {"name", "weight", "input_tokens", "output_tokens"},
-              {"ttft_slo_seconds", "itl_slo_seconds"}, "request class")
+              {"ttft_slo_seconds", "itl_slo_seconds", "prefix_blocks", "max_output_tokens"}, "request class")
         name = item["name"]
         if not isinstance(name, str) or not name.strip() or name in names:
             raise ValueError("request class names must be nonempty and unique")
@@ -121,6 +138,8 @@ def generate_workload(spec, seed=None):
         for key in ("ttft_slo_seconds", "itl_slo_seconds"):
             if key in item:
                 number(item[key], key, positive=True)
+        if "max_output_tokens" in item:
+            number(item["max_output_tokens"], "max_output_tokens", positive=True, integral=True)
     _weights(class_weights, "class weights")
     rng, requests, counts = random.Random("{}:requests".format(seed)), [], Counter()
     for index, time in enumerate(times):
@@ -132,12 +151,19 @@ def generate_workload(spec, seed=None):
         for key in ("ttft_slo_seconds", "itl_slo_seconds"):
             if key in item:
                 row[key] = item[key]
+        if "prefix_blocks" in item:
+            row["prefix_blocks"] = copy.deepcopy(item["prefix_blocks"])
+        if "max_output_tokens" in item:
+            row["max_output_tokens"] = item["max_output_tokens"]
         requests.append(row)
         counts[item["name"]] += 1
-    return {"schema_version": 1, "provenance": {
+    result = {"schema_version": 1, "provenance": {
         "synthetic": True, "description": spec.get("description", "Generated synthetic request workload"),
         "generator": "inference-workload-v1", "seed": seed, "generator_spec": spec,
         "class_counts": dict(sorted(counts.items()))}, "requests": requests}
+    from ..backend.runtime import validate_requests
+    validate_requests(result)
+    return result
 
 
 def write_workload(spec, output, seed=None):

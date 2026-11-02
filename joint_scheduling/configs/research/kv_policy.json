@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "base_config": "base.json",
+  "profile": "../../profiles/deepseek_v3_h800_tp4_ep8_estimated.json",
+  "workload": "../../../data/azure/conv_original.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "cases": [
+    {
+      "id": "immediate",
+      "overrides": {
+        "runtime.kv_transfer_mode": "layer_ready_immediate",
+        "kv_scheduler.policy": "slo_slack",
+        "kv_scheduler.slo_priority_enabled": false,
+        "kv_scheduler.collective_protection_enabled": false
+      }
+    },
+    {
+      "id": "fifo",
+      "overrides": {
+        "runtime.kv_transfer_mode": "layer_ready_fifo",
+        "kv_scheduler.policy": "slo_slack",
+        "kv_scheduler.slo_priority_enabled": false,
+        "kv_scheduler.collective_protection_enabled": false
+      }
+    },
+    {
+      "id": "mlu",
+      "overrides": {}
+    }
+  ],
+  "comparison": {
+    "purpose": "kv_policy",
+    "allowed_changes": [
+      "runtime.kv_transfer_mode",
+      "kv_scheduler.policy",
+      "kv_scheduler.slo_priority_enabled",
+      "kv_scheduler.collective_protection_enabled"
+    ],
+    "fixed": {
+      "binding.policy": "round_robin",
+      "binding.window_enabled": false,
+      "binding.prediction_enabled": false,
+      "binding.joint_selection_enabled": false,
+      "prefix_cache.enabled": false,
+      "expert_parallel.enabled": true,
+      "runtime.prefill_chunk_tokens": 512,
+      "runtime.prefill_batch_token_budget": 2048,
+      "runtime.prefill_batch_size": 16,
+      "runtime.decode_batch_size": 64,
+      "runtime.packet_payload_bytes": 8000,
+      "feedback.network_observation_enabled": true,
+      "feedback.network_observation_interval_us": 1000,
+      "feedback.observation_delay_us": 100,
+      "evaluation.default_ttft_slo_seconds": 1.0,
+      "evaluation.default_itl_slo_seconds": 0.1,
+      "runtime.network_priority_enabled": false
+    },
+    "input_sha256": {
+      "profile": "e108d6a2e50f4e623c4893ac776df70a06b021c7c56a989bf13d434723e0008d",
+      "workload": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346"
+    }
+  },
+  "experiment_type": "end_to_end"
+}

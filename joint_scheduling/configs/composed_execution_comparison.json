@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "base_config": "composed_execution_smoke.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "sweep": {
+    "binding.joint_selection_enabled": [
+      false,
+      true
+    ],
+    "runtime.decode_batch_size": [
+      1,
+      4
+    ]
+  }
+}

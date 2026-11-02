@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Six source batches exercise cross-node EP, local TP, P/D KV and shared expert compute lanes."
+  },
+  "requests": [
+    {
+      "request_id": "ep-0",
+      "arrival_seconds": 0,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "ep-1",
+      "arrival_seconds": 0,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "ep-2",
+      "arrival_seconds": 0,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "ep-3",
+      "arrival_seconds": 0,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "ep-4",
+      "arrival_seconds": 0.2,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    },
+    {
+      "request_id": "ep-5",
+      "arrival_seconds": 0.2,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1,
+      "itl_slo_seconds": 0.2
+    }
+  ]
+}

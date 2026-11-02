@@ -56,16 +56,36 @@
   },
   "binding": {
     "policy": "joint_lexicographic",
+    "window_enabled": false,
+    "prediction_enabled": false,
+    "decision_overhead_us": 0.0,
+    "prediction_decode_steps": 8,
+    "prediction_max_events": 100000,
+    "prediction_time_limit_seconds": 10.0,
     "window_ms": 1.0,
     "early_trigger_margin_ms": 0.5,
-    "max_wait_ms": 10.0
+    "max_wait_ms": 10.0,
+    "joint_selection_enabled": false,
+    "candidate_count": 4,
+    "max_requests_per_round": 16,
+    "max_pending_scan": 64,
+    "max_pair_checks": 64,
+    "max_score_work": 16384,
+    "max_state_requests": 256,
+    "max_state_objects": 4096,
+    "starvation_ms": 10,
+    "wall_clock_diagnostics": true,
+    "prediction_sample_every": 0
   },
   "kv_scheduler": {
     "policy": "slo_slack",
     "max_block_bytes": 1048576,
     "max_concurrent_transfers": 8,
     "max_inflight_bytes": 8388608,
-    "safety_margin_fraction": 0.1
+    "safety_margin_fraction": 0.1,
+    "slo_priority_enabled": true,
+    "collective_protection_enabled": true,
+    "inflight_budget_mode": "adaptive"
   },
   "feedback": {
     "time_authority": "ns3",
@@ -74,7 +94,9 @@
     "compute_profile_path": "",
     "compute_profile_excludes_communication": true,
     "observation_delay_us": 10.0,
-    "scheduling_overhead_us": 10.0
+    "scheduling_overhead_us": 10.0,
+    "network_observation_enabled": false,
+    "state_observation_enabled": true
   },
   "reservations": {
     "reserve_max_output_tokens": 1024,
@@ -106,6 +128,16 @@
       "throughput_timeseries"
     ]
   },
+  "prefix_cache": {
+    "enabled": false,
+    "prefill_reuse_enabled": true,
+    "decode_reuse_enabled": true,
+    "max_bytes_per_instance": 67108864,
+    "eviction_enabled": true
+  },
+  "recording": {
+    "mode": "essential"
+  },
   "runtime": {
     "seed": 7,
     "workload_path": "",
@@ -113,6 +145,7 @@
     "congestion_control": "dcqcn",
     "packet_payload_bytes": 1000,
     "switch_buffer_bytes": 16777216,
-    "rpc_timeout_seconds": 60.0
+    "rpc_timeout_seconds": 60.0,
+    "kv_transfer_mode": "whole_ready_immediate"
   }
 }

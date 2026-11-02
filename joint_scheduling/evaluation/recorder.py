@@ -4,6 +4,8 @@ import json
 import math
 from pathlib import Path
 
+from ..recording import ESSENTIAL_AUXILIARY_EVENTS
+
 
 LIFECYCLE_EVENTS = {"run_metadata", "request_arrived", "token_returned", "request_completed", "request_failed", "run_end"}
 
@@ -15,7 +17,7 @@ class TraceRecorder:
     time. Closing a file does not invent a completed observation interval.
     """
 
-    def __init__(self, path, strategy, seed=0, metadata=None):
+    def __init__(self, path, strategy, seed=0, metadata=None, detailed=True):
         if not isinstance(strategy, str) or not strategy.strip():
             raise ValueError("strategy must be a non-empty string")
         if type(seed) is not int:
@@ -29,6 +31,8 @@ class TraceRecorder:
         self._file = self.path.open("x", encoding="utf-8")
         self._last_time = 0.0
         self._finished = False
+        self.detailed = detailed
+        self.recorded_counts, self.omitted_counts = {}, {}
         self._write("run_metadata", 0.0, payload)
 
     def _write(self, kind, at_seconds, payload):
@@ -38,11 +42,19 @@ class TraceRecorder:
             raise ValueError("event times must be finite, nonnegative and nondecreasing")
         if {"event", "time_seconds"} & set(payload):
             raise ValueError("payload must not override event or time_seconds")
-        event = dict(payload, event=kind, time_seconds=float(at_seconds))
-        line = json.dumps(event, ensure_ascii=False, allow_nan=False)
-        self._file.write(line + "\n")
-        self._file.flush()
+        if self.wants_event(kind):
+            event = dict(payload, event=kind, time_seconds=float(at_seconds))
+            line = json.dumps(event, ensure_ascii=False, allow_nan=False)
+            self._file.write(line + "\n")
+            self._file.flush()
+            counts = self.recorded_counts
+        else:
+            counts = self.omitted_counts
+        counts[kind] = counts.get(kind, 0) + 1
         self._last_time = at_seconds
+
+    def wants_event(self, kind):
+        return self.detailed or kind in LIFECYCLE_EVENTS or kind in ESSENTIAL_AUXILIARY_EVENTS
 
     def request_arrived(self, request_id, at_seconds, ttft_slo_seconds=None,
                         itl_slo_seconds=None, expected_output_tokens=None):

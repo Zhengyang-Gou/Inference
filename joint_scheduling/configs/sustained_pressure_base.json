@@ -1,0 +1,129 @@
+{
+  "topology": {
+    "num_leaves": 2,
+    "num_spines": 2,
+    "nodes_per_leaf": 4,
+    "gpus_per_node": 2,
+    "gpu_memory_gib": 80.0,
+    "nic_bandwidth_gbps": 200.0,
+    "uplink_bandwidth_gbps": 400.0,
+    "link_latency_us": 1.0,
+    "routing": "ecmp",
+    "placements": [
+      {
+        "instance_id": "p0",
+        "role": "prefill",
+        "gpu_ids": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "instance_id": "d0",
+        "role": "decode",
+        "gpu_ids": [
+          12,
+          13,
+          14,
+          15
+        ]
+      },
+      {
+        "instance_id": "p1",
+        "role": "prefill",
+        "gpu_ids": [
+          8,
+          9,
+          10,
+          11
+        ]
+      },
+      {
+        "instance_id": "d1",
+        "role": "decode",
+        "gpu_ids": [
+          4,
+          5,
+          6,
+          7
+        ]
+      }
+    ],
+    "intra_node_bandwidth_gbps": 1600.0,
+    "intra_node_latency_us": 0.5
+  },
+  "binding": {
+    "policy": "round_robin",
+    "window_ms": 1.0,
+    "early_trigger_margin_ms": 0.5,
+    "max_wait_ms": 10.0
+  },
+  "kv_scheduler": {
+    "policy": "slo_slack",
+    "max_block_bytes": 65536,
+    "max_concurrent_transfers": 128,
+    "max_inflight_bytes": 8388608,
+    "safety_margin_fraction": 0.1,
+    "max_resource_inflight_bytes": 1048576,
+    "collective_guard_us": 10,
+    "control_interval_us": 25,
+    "queue_target_bytes": 65536,
+    "inflight_budget_mode": "adaptive",
+    "collective_max_blocking_us": 50,
+    "completion_feedback_alpha": 0.3
+  },
+  "feedback": {
+    "time_authority": "ns3",
+    "network_backend": "ns3_alibabacloud",
+    "compute_backend": "profiling",
+    "compute_profile_path": "../backend/fixtures/layered_compute_profile.json",
+    "compute_profile_excludes_communication": true,
+    "observation_delay_us": 10,
+    "scheduling_overhead_us": 5,
+    "network_observation_enabled": true,
+    "network_observation_interval_us": 50,
+    "network_ewma_alpha": 0.3
+  },
+  "reservations": {
+    "reserve_max_output_tokens": 1024,
+    "capacity_safety_fraction": 0.05,
+    "shared_prefix_accounting": "physical_object",
+    "source_release": "after_dependencies"
+  },
+  "evaluation": {
+    "window_start_seconds": 0.2,
+    "window_end_seconds": 0.9,
+    "time_bin_seconds": 0.05,
+    "default_ttft_slo_seconds": 0.02,
+    "default_itl_slo_seconds": 0.005,
+    "percentiles": [
+      0.5,
+      0.95,
+      0.99
+    ],
+    "output_dir": "../artifacts/evaluation",
+    "plot_formats": [
+      "png",
+      "pdf"
+    ],
+    "plot_dpi": 160,
+    "charts": [
+      "latency_cdf",
+      "latency_percentiles",
+      "slo_throughput",
+      "throughput_timeseries"
+    ]
+  },
+  "runtime": {
+    "seed": 7,
+    "workload_path": "../backend/fixtures/staggered_slo_workload.json",
+    "time_limit_seconds": 1.0,
+    "congestion_control": "dcqcn",
+    "packet_payload_bytes": 1000,
+    "switch_buffer_bytes": 16777216,
+    "rpc_timeout_seconds": 60.0,
+    "kv_transfer_mode": "layer_ready_slo"
+  }
+}

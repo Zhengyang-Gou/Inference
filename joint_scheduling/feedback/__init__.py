@@ -13,6 +13,10 @@ class FeedbackConfig:
     compute_profile_excludes_communication: bool = True
     observation_delay_us: float = field(default=10.0, metadata={"min": 0})
     scheduling_overhead_us: float = field(default=10.0, metadata={"min": 0})
+    network_observation_enabled: bool = False
+    state_observation_enabled: bool = True
+    network_observation_interval_us: float = field(default=100.0, metadata={"min": 0.001})
+    network_ewma_alpha: float = field(default=0.3, metadata={"gt": 0})
 
 
 @dataclass(frozen=True)
@@ -22,6 +26,7 @@ class NetworkTransfer:
     source_gpu_id: int
     destination_gpu_id: int
     size_bytes: int
+    priority: int = 2  # 0 urgent KV, 1 collective, 2 normal KV, 3 loose KV.
 
 
 @dataclass(frozen=True)
@@ -42,6 +47,13 @@ class SimulationClock(Protocol):
 
 
 class NetworkBackend(Protocol):
+    def network_snapshot(self) -> object:
+        """Read current classified counters, queues and ACK progress without advancing time.
+
+        Online consumers must apply observation delay before using this snapshot.
+        """
+        ...
+
     def submit(self, transfer: NetworkTransfer,
                on_progress: Callable[[TransferProgress], None]) -> None:
         """Submit KV/collective traffic to the same network resources.

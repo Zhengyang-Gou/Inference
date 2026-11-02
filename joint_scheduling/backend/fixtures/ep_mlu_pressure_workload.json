@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "40 rps over 0.6 seconds, mixed lengths and explicit TTFT/ITL SLOs; stress validation only."
+  },
+  "requests": [
+    {
+      "request_id": "mlu-000",
+      "arrival_seconds": 0.0,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-001",
+      "arrival_seconds": 0.025,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-002",
+      "arrival_seconds": 0.05,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-003",
+      "arrival_seconds": 0.075,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-004",
+      "arrival_seconds": 0.1,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-005",
+      "arrival_seconds": 0.125,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-006",
+      "arrival_seconds": 0.15,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-007",
+      "arrival_seconds": 0.175,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-008",
+      "arrival_seconds": 0.2,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-009",
+      "arrival_seconds": 0.225,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-010",
+      "arrival_seconds": 0.25,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-011",
+      "arrival_seconds": 0.275,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-012",
+      "arrival_seconds": 0.3,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-013",
+      "arrival_seconds": 0.325,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-014",
+      "arrival_seconds": 0.35,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-015",
+      "arrival_seconds": 0.375,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-016",
+      "arrival_seconds": 0.4,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-017",
+      "arrival_seconds": 0.425,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-018",
+      "arrival_seconds": 0.45,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-019",
+      "arrival_seconds": 0.475,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-020",
+      "arrival_seconds": 0.5,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    },
+    {
+      "request_id": "mlu-021",
+      "arrival_seconds": 0.525,
+      "input_tokens": 8,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.3,
+      "itl_slo_seconds": 0.03
+    },
+    {
+      "request_id": "mlu-022",
+      "arrival_seconds": 0.55,
+      "input_tokens": 12,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 0.6,
+      "itl_slo_seconds": 0.06
+    },
+    {
+      "request_id": "mlu-023",
+      "arrival_seconds": 0.575,
+      "input_tokens": 16,
+      "output_tokens": 4,
+      "max_output_tokens": 4,
+      "ttft_slo_seconds": 1.2,
+      "itl_slo_seconds": 0.15
+    }
+  ]
+}

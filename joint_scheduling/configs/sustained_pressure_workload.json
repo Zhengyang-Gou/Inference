@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "seed": 7,
+  "description": "Synthetic sustained pressure for one second; periodic open-loop arrivals, preset 64/128/256 outputs, same SLOs across all policies and load levels. No measured GPU profile.",
+  "arrival": {
+    "pattern": "periodic",
+    "duration_seconds": 1.0,
+    "rate_rps": 25
+  },
+  "classes": [
+    {
+      "name": "short_urgent",
+      "weight": 0.5,
+      "input_tokens": 128,
+      "output_tokens": 64,
+      "ttft_slo_seconds": 0.008,
+      "itl_slo_seconds": 0.002
+    },
+    {
+      "name": "medium",
+      "weight": 0.35,
+      "input_tokens": 512,
+      "output_tokens": 128,
+      "ttft_slo_seconds": 0.02,
+      "itl_slo_seconds": 0.003
+    },
+    {
+      "name": "long",
+      "weight": 0.15,
+      "input_tokens": 1024,
+      "output_tokens": 256,
+      "ttft_slo_seconds": 0.02,
+      "itl_slo_seconds": 0.004
+    }
+  ]
+}

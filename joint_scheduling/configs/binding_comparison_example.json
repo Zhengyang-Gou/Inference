@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "base_config": "binding_smoke.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "sweep": {
+    "binding.window_enabled": [
+      false,
+      true
+    ],
+    "binding.prediction_enabled": [
+      false,
+      true
+    ]
+  }
+}

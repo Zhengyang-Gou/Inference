@@ -53,8 +53,19 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual(json.loads(process.stdout)["total_runs"], 4)
         self.assertFalse(output.exists())
 
+    @unittest.skipUnless(ready(), "build ns-3 for binding window ablations")
+    def test_binding_window_and_prediction_sweeps_remain_round_robin(self):
+        self.spec = dict(schema_version=1, base_config=str(PACKAGE / "configs/binding_smoke.json"), seeds=[7],
+                         sweep={"binding.window_enabled": [False, True], "binding.prediction_enabled": [True]})
+        report = run_suite(self.save(), self.root / "binding-suite")
+        self.assertEqual(report["successful_runs"], 2)
+        rows = [json.loads(line) for line in (self.root / "binding-suite/runs.jsonl").read_text().splitlines()]
+        for row in rows:
+            self.assertEqual(row["effective_baseline"]["endpoint_selection"], "round_robin")
+            self.assertFalse(row["effective_baseline"]["joint_binding_optimization"])
+
     def test_rejects_inactive_policy_sweeps_and_invalid_matrix(self):
-        for sweep in ({"binding.policy": ["round_robin"]}, {"feedback.scheduling_overhead_us": [0, 10]},
+        for sweep in ({"binding.nonexistent": ["round_robin"]}, {"feedback.scheduling_overhead_us": [0, 10]},
                       {"topology.nic_bandwidth_gbps": []}, {"topology.nic_bandwidth_gbps": [100, 100]}):
             self.spec["sweep"] = sweep
             with self.subTest(sweep=sweep), self.assertRaises(ValueError):
@@ -75,6 +86,19 @@ class ExperimentTests(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             run_suite(self.path, self.root / "failed")
 
+    @unittest.skipUnless(ready(), "build ns-3 for prefix feature ablations")
+    def test_prefix_feature_sweeps_and_cache_metrics(self):
+        self.spec = dict(schema_version=1, base_config=str(PACKAGE / "configs/prefix_cache_smoke.json"),
+                         seeds=[7], sweep={"prefix_cache.enabled": [False, True],
+                                          "feedback.state_observation_enabled": [False]})
+        report = run_suite(self.save(), self.root / "prefix-suite")
+        self.assertEqual(report["successful_runs"], 2)
+        cold, warm = report["cases"]
+        self.assertEqual(cold["metrics"]["prefix_hit_tokens"]["mean"], 0)
+        self.assertGreater(warm["metrics"]["prefix_hit_tokens"]["mean"], 0)
+        self.assertGreater(warm["metrics"]["prefix_saved_kv_transfer_bytes"]["mean"], 0)
+        self.assertGreater(warm["metrics"]["prefix_resident_bytes"]["mean"], 0)
+
     @unittest.skipUnless(ready(), "build ns-3 to run experiment matrices")
     def test_real_matrix_pairing_paths_and_aggregate_samples(self):
         report = run_suite(self.path, self.root / "success")
@@ -86,7 +110,9 @@ class ExperimentTests(unittest.TestCase):
             self.assertEqual(paired[0]["workload_sha256"], paired[1]["workload_sha256"])
         for row in rows:
             self.assertEqual(row["completed_count"], 3)
-            self.assertTrue((self.root / "success" / row["output_dir"] / "run/observation/state.csv").is_file())
+            observation = self.root / "success" / row["output_dir"] / "run/observation"
+            self.assertTrue((observation / "summary.json").is_file())
+            self.assertFalse((observation / "state.csv").exists())
             self.assertEqual(row["effective_baseline"]["endpoint_selection"], "round_robin")
         for group in report["cases"]:
             self.assertEqual(group["metrics"]["completion_throughput_rps"]["samples"], 2)

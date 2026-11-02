@@ -1,8 +1,12 @@
 # Inference 的 P/D 联合绑定与 KV 调度模块
 
-这里集中维护 Inference 自有的五个基础模块、独立 evaluation 模块、统一配置和后续接入接口，使用 Python 3.8+ 标准库即可运行配置与统计工具。本目录直接位于 Inference 仓库根目录；第三方源码位于根目录的 `third_party/`，不是 Git 子模块。
+这里集中维护 Inference 自有的调度、前缀缓存、执行后端、观测和评估模块，以及统一配置和后续接入接口，项目环境使用 Python 3.12。本目录直接位于 Inference 仓库根目录；第三方源码位于根目录的 `third_party/`，不是 Git 子模块。
 
-**已实现拓扑后端导出、物理对象容量账本、真实 ns-3 时钟/网络适配器、简单请求基线及 evaluation 的统计与绘图。联合优化、逐层 KV 和 SLO 门控尚未实现。`run-baseline` 使用显式轮询/FIFO 规则，不复刻完整 Vidur/Sarathi 批处理；计算数据需要提供并校准。**
+推荐从 [研究系统说明](RESEARCH_SYSTEM.md) 和 [研究配置](configs/research/README.md) 开始。`backend/execution/` 按职责组合运行时；旧命令和 `backend.runtime` 的计算 profile 导入保持兼容。
+
+**已实现拓扑后端导出、物理对象容量账本、真实 ns-3 时钟/网络适配器、简单请求基线及 evaluation 的统计与绘图。已实现 schema 2 逐层 KV 就绪与分块立即传输、动态网络观测、集合通信保护和 SLO 门控。`run-baseline` 支持候选剪枝＋增量贪心或轮询绑定，可与前缀缓存、FIFO/Chunked/合批 Prefill 和 Decode 连续批处理组合；预测采用有界近似，不复刻完整 Vidur/Sarathi 批处理；计算数据需要提供并校准。**
+
+实验性 [EP 接入](backend/EXPERT_PARALLEL.md) 可使跨节点 collective 使用 EP dispatch/combine、TP 保持节点内，支持共享专家计算队列和五种 KV 模式；当前仅轮询绑定，EP 联合选择与绑定预测会明确拒绝。
 
 ## 目录
 
@@ -12,12 +16,13 @@ joint_scheduling/
 ├── observation/           # 事件驱动状态、延迟可见性与时间积分统计
 ├── experiments/           # 参数矩阵、多 seed 执行与失败隔离
 ├── configs/
-│   └── default.json        # 六个模块共用的实验配置
+│   └── default.json        # 各模块共用的实验配置与功能开关
 ├── topology/              # 物理拓扑、P/D 到 GPU 的映射、检查用拓扑导出
 ├── binding/               # 窗口式联合绑定配置、整体方案预测与策略接口
 ├── kv_scheduler/          # 层就绪 KV 块、启动许可与调度接口
 ├── feedback/              # 统一时钟、网络提交和依赖完成接口
 ├── reservations/          # 物理对象级预留与生命周期接口
+├── prefix_cache/          # 前缀身份、P/D 复用与有界 LRU 缓存
 ├── evaluation/            # 事件记录、统计、CSV/JSON 导出、离线绘图
 ├── backend/               # 固定版本构建、ns-3 适配器、简单基线与回归
 ├── bootstrap.sh           # 创建或更新 Conda 环境 simai
@@ -52,14 +57,16 @@ joint_scheduling/
 | 配置段 | 修改内容 |
 | --- | --- |
 | `topology` | Leaf/Spine 数量、节点与 GPU 数量、带宽时延，以及实例到 GPU 的部署映射 |
-| `binding` | 绑定策略名称、常规窗口、临近 TTFT 截止的提前触发余量、最大等待时间 |
+| `binding` | 窗口/预测开关、常规窗口、提前触发、最大等待、决策开销与有限预测范围、联合选择开关、候选与工作预算 |
 | `kv_scheduler` | KV 策略名称、块大小上限、并发、在途字节额度及网络安全余量 |
 | `feedback` | 时间权威、网络与计算后端、计算性能数据路径、观测延迟与调度开销 |
 | `reservations` | 默认最大输出预留、安全余量、共享前缀计数与源端释放规则 |
+| `prefix_cache` | 缓存总开关、P/D 独立复用、每实例缓存预算与 LRU 淘汰开关 |
 | `evaluation` | 测量窗口、时间桶、默认 SLO、分位数、输出位置、图表与格式 |
-| `runtime` | 基线入口的种子、负载、终止时间、拥塞控制、MTU、缓存和 RPC 超时 |
+| `runtime` | 基线入口的种子、负载、KV 传输模式、终止时间、拥塞控制、MTU、缓存和 RPC 超时 |
+| `expert_parallel` | 可选实验性 EP 开关及同角色 TP 实例分组，默认关闭，需额外 EP profile |
 
-配置校验会拒绝未知字段、重复 JSON 键、非有限数值、重复 GPU 部署、缺少 P/D 任一角色，以及明显矛盾的跨模块额度。未填写字段使用默认值；五个基础配置段和部署列表必须存在，evaluation/runtime 可省略以兼容已有配置。
+配置校验会拒绝未知字段、重复 JSON 键、非有限数值、重复 GPU 部署、缺少 P/D 任一角色，以及明显矛盾的跨模块额度。未填写字段使用默认值；五个基础配置段和部署列表必须存在，evaluation/runtime/prefix_cache 可省略以兼容已有配置。功能开关总表见根目录 README；前缀缓存默认关闭，详细格式见 [前缀缓存说明](prefix_cache/README.md)。
 
 计算性能数据路径相对于配置文件所在目录解析，也可使用绝对路径。空路径允许检查目录与配置结构；`validate` 不检查性能文件内容，`run-baseline` 会加载并校验其格式、采样范围及 TP。真实研究应提供匹配目标硬件和模型的数据。
 
@@ -94,7 +101,7 @@ joint_scheduling/
 ./joint_scheduling/check.sh
 ```
 
-示例计算数据明确标记为 synthetic，真实网络基线能够验证反馈和统计，但其数值不代表真实模型性能。下一步可以在同一后端中增加更精细请求执行器、逐层 KV 或联合策略。模型边界、输入格式与版本维护步骤见 backend/README.md。
+示例计算数据明确标记为 synthetic，真实网络基线能够验证反馈和统计，但其数值不代表真实模型性能。现已支持显式逐层 Prefill 与 KV 分块立即传输，也支持动态带宽额度、集合通信保护与 SLO 门控；可在同一后端继续研究联合绑定。模型边界、输入格式与版本维护步骤见 backend/README.md。
 
 ## 统计与绘图
 
@@ -106,7 +113,7 @@ joint_scheduling/
 
 绘图需要在对应 Python 环境安装 `joint_scheduling/evaluation/requirements-plot.txt`。demo 是明确标记的合成数据，不是策略效果实验。精确指标口径、未完成请求处理、接口与多策略比较见 `evaluation/README.md`。
 
-第三方组件的来源和版本记录在根目录 `third_party/manifest.json`。当前网络后端使用 `third_party/ns3/SOURCE_MANIFEST.json` 与 `backend/backend.lock.json` 校验 vendored 源码 SHA256，再在隔离副本中构建；无需初始化子模块或保留上游 Git 元数据。`third_party/vidur`、`aicb`、`simccl` 和 `astra_sim` 是保留的第三方组件，尚未接入当前请求基线。优化策略尚未实现，仅修改策略名称不会使其生效。反馈接口见 feedback/README.md。
+第三方组件的来源和版本记录在根目录 `third_party/manifest.json`。当前网络后端使用 `third_party/ns3/SOURCE_MANIFEST.json` 与 `backend/backend.lock.json` 校验 vendored 源码 SHA256，再在隔离副本中构建；无需初始化子模块或保留上游 Git 元数据。`third_party/vidur`、`aicb`、`simccl` 和 `astra_sim` 是保留的第三方组件，尚未接入当前请求基线。绑定窗口和整体方案预测已接入，有界联合优化已接入，见 [绑定模块说明](binding/README.md)。已实现的 KV 策略由 runtime.kv_transfer_mode 显式选择，SLO 算法见 kv_scheduler/README.md。反馈接口见 feedback/README.md。
 
 ## 实验基础功能
 

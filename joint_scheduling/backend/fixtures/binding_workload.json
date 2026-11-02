@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "synthetic": true,
+    "description": "Binding windows and advisory whole-plan predictions; declared output caps are observable, exact EOS is simulator-only."
+  },
+  "requests": [
+    {
+      "request_id": "binding-0",
+      "arrival_seconds": 0,
+      "input_tokens": 128,
+      "output_tokens": 3,
+      "max_output_tokens": 3,
+      "ttft_slo_seconds": 0.02,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "binding-1",
+      "arrival_seconds": 0.0002,
+      "input_tokens": 128,
+      "output_tokens": 3,
+      "max_output_tokens": 3,
+      "ttft_slo_seconds": 0.02,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "binding-2",
+      "arrival_seconds": 0.00045,
+      "input_tokens": 128,
+      "output_tokens": 3,
+      "max_output_tokens": 3,
+      "ttft_slo_seconds": 0.0003,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "binding-3",
+      "arrival_seconds": 0.0031,
+      "input_tokens": 128,
+      "output_tokens": 3,
+      "max_output_tokens": 3,
+      "ttft_slo_seconds": 0.02,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "binding-4",
+      "arrival_seconds": 0.02,
+      "input_tokens": 192,
+      "output_tokens": 3,
+      "max_output_tokens": 3,
+      "ttft_slo_seconds": 0.02,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    },
+    {
+      "request_id": "binding-5",
+      "arrival_seconds": 0.04,
+      "input_tokens": 192,
+      "output_tokens": 3,
+      "max_output_tokens": 3,
+      "ttft_slo_seconds": 0.02,
+      "prefix_blocks": [
+        {
+          "id": "system-v1",
+          "tokens": 64
+        }
+      ]
+    }
+  ]
+}

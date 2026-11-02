@@ -80,6 +80,7 @@ class NetworkTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.config = load_config(PACKAGE / "configs" / "baseline_smoke.json")
+        self.config = replace(self.config, recording=replace(self.config.recording, mode="debug"))
 
     def test_actual_network_clock_and_completion(self):
         from joint_scheduling.backend.client import Ns3Backend
@@ -103,6 +104,18 @@ class NetworkTests(unittest.TestCase):
                 backend.call_at(0, lambda: None)
             with self.assertRaises(BackendError):
                 backend.send_hosts(-1, 0, 100, lambda: None)
+
+    def test_congested_switch_emits_pfc_without_missing_ipv4_address(self):
+        from joint_scheduling.backend.client import Ns3Backend
+        topo = replace(self.config.topology, nic_bandwidth_gbps=10, uplink_bandwidth_gbps=20)
+        done = []
+        with Ns3Backend(topo, self.root/'pfc', switch_buffer_bytes=1048576) as backend:
+            for source in (0, 1, 3, 4, 5, 6):
+                backend.send_hosts(source, 2, 2*1024*1024, lambda: done.append(True))
+            backend.run_until(.2)
+            self.assertEqual(len(done), 6)
+            ports = backend.network_snapshot()['resources']
+            self.assertGreater(sum(p['pfc_pause_count'] for p in ports if p['node_id'] >= topo.num_nodes), 0)
 
     def test_entry_point_preserves_caller_relative_paths(self):
         command = [str(PACKAGE / "jsim"), "--config", str(PACKAGE / "configs" / "baseline_smoke.json"),

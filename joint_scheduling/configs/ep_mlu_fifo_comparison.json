@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "base_config": "ep_mlu_pressure.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "sweep": {
+    "kv_scheduler.policy": [
+      "slo_slack"
+    ],
+    "kv_scheduler.slo_priority_enabled": [
+      false
+    ],
+    "runtime.network_priority_enabled": [
+      false
+    ]
+  }
+}

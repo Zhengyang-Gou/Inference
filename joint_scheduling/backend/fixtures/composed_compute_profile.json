@@ -1,0 +1,188 @@
+{
+  "schema_version": 2,
+  "provenance": {
+    "synthetic": true,
+    "description": "Tiny two-layer integration fixture for prefix reuse, chunk/packed Prefill, continuous Decode and joint binding; not measured GPU performance."
+  },
+  "network_communication_excluded": true,
+  "model": "synthetic-composed-execution",
+  "weights_bytes_per_gpu": 0,
+  "kv_bytes_per_token": 8,
+  "phases": {
+    "prefill": {
+      "tp_size": 2,
+      "layers": [
+        {
+          "kv_bytes_per_token": 3,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 5e-05,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 5e-05,
+              "collective_bytes": 128
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 5,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 5e-05,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 5e-05,
+              "collective_bytes": 128
+            }
+          ]
+        }
+      ],
+      "chunked": {
+        "collectives_per_layer": 1,
+        "groups": [
+          {
+            "chunk_tokens": 1,
+            "points": [
+              {
+                "cached_tokens": 0,
+                "compute_seconds": 0.0051,
+                "embedding_seconds": 0.0001,
+                "collective_bytes": 16,
+                "attention_seconds": 0.0001
+              },
+              {
+                "cached_tokens": 64,
+                "compute_seconds": 0.0179,
+                "embedding_seconds": 0.0001,
+                "collective_bytes": 16,
+                "attention_seconds": 0.0129
+              }
+            ]
+          },
+          {
+            "chunk_tokens": 4,
+            "points": [
+              {
+                "cached_tokens": 0,
+                "compute_seconds": 0.009600000000000001,
+                "embedding_seconds": 0.0004,
+                "collective_bytes": 64,
+                "attention_seconds": 0.0016
+              },
+              {
+                "cached_tokens": 64,
+                "compute_seconds": 0.022400000000000003,
+                "embedding_seconds": 0.0004,
+                "collective_bytes": 64,
+                "attention_seconds": 0.014400000000000001
+              }
+            ]
+          }
+        ],
+        "linear_points": [
+          {
+            "tokens": 1,
+            "compute_seconds": 0.005,
+            "embedding_seconds": 0.0001,
+            "collective_bytes": 16
+          },
+          {
+            "tokens": 2,
+            "compute_seconds": 0.006,
+            "embedding_seconds": 0.0002,
+            "collective_bytes": 32
+          },
+          {
+            "tokens": 4,
+            "compute_seconds": 0.008,
+            "embedding_seconds": 0.0004,
+            "collective_bytes": 64
+          },
+          {
+            "tokens": 8,
+            "compute_seconds": 0.012,
+            "embedding_seconds": 0.0008,
+            "collective_bytes": 128
+          },
+          {
+            "tokens": 16,
+            "compute_seconds": 0.02,
+            "embedding_seconds": 0.0016,
+            "collective_bytes": 256
+          }
+        ]
+      }
+    },
+    "decode": {
+      "tp_size": 2,
+      "collectives_per_step": 2,
+      "points": [
+        {
+          "tokens": 1,
+          "compute_seconds": 0.02,
+          "collective_bytes": 128
+        },
+        {
+          "tokens": 64,
+          "compute_seconds": 0.02,
+          "collective_bytes": 128
+        }
+      ],
+      "batches": [
+        {
+          "batch_size": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.02,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.02,
+              "collective_bytes": 128
+            }
+          ]
+        },
+        {
+          "batch_size": 2,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.023,
+              "collective_bytes": 256
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.023,
+              "collective_bytes": 256
+            }
+          ]
+        },
+        {
+          "batch_size": 4,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.029,
+              "collective_bytes": 512
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.029,
+              "collective_bytes": 512
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

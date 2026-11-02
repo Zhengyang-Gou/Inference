@@ -76,6 +76,7 @@ class ObservationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             directory = Path(directory)
             config = load_config(PACKAGE / "configs/baseline_smoke.json")
+            config = replace(config, recording=replace(config.recording, mode="debug"))
             workload = {"schema_version": 1, "provenance": {"synthetic": True}, "requests": [
                 {"request_id": "now", "arrival_seconds": 0.001, "input_tokens": 128, "output_tokens": 3},
                 {"request_id": "future", "arrival_seconds": 1, "input_tokens": 128, "output_tokens": 3}]}
@@ -105,6 +106,7 @@ class ObservationTests(unittest.TestCase):
     def test_cutoff_preserves_unfinished_state(self):
         with tempfile.TemporaryDirectory() as directory:
             config = load_config(PACKAGE / "configs/baseline_smoke.json")
+            config = replace(config, recording=replace(config.recording, mode="debug"))
             config = replace(config, runtime=replace(config.runtime, time_limit_seconds=0.00001),
                              evaluation=replace(config.evaluation, window_end_seconds=0.00001, time_bin_seconds=0.00001))
             run_baseline(config, Path(directory) / "run")

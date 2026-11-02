@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "base_config": "dynamic_window_smoke.json",
+  "seeds": [
+    7
+  ],
+  "sweep": {
+    "runtime.kv_transfer_mode": [
+      "layer_ready_slo"
+    ],
+    "topology.nic_bandwidth_gbps": [
+      10,
+      40,
+      200
+    ],
+    "kv_scheduler.inflight_budget_mode": [
+      "fixed",
+      "adaptive"
+    ]
+  }
+}

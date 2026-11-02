@@ -103,7 +103,7 @@ def source_state():
     digest.update(json.dumps({"lock": LOCK, "source_sha256": state["source_sha256"],
                               "compiler": compiler_version, "cmake": cmake_version,
                               "platform": platform.platform(), "repo": str(REPO)}, sort_keys=True).encode())
-    for path in sorted(Path(__file__).parent.glob("native/*")) + [Path(__file__)]:
+    for path in sorted(Path(__file__).parent.glob("native/*")) + [Path(__file__), Path(__file__).with_name('priority_patch.py')]:
         digest.update(path.read_bytes())
     state.update(compiler=compiler, compiler_version=compiler_version, cmake=cmake,
                  cmake_version=cmake_version, fingerprint=digest.hexdigest()[:20])
@@ -173,6 +173,19 @@ def build_backend(jobs=2):
     p2p_cmake = p2p_cmake.replace("  SOURCE_FILES\n", "  SOURCE_FILES\n    model/seq-ts-header.cc\n    model/simple-seq-ts-header.cc\n")
     p2p_cmake = p2p_cmake.replace("  HEADER_FILES\n", "  HEADER_FILES\n    model/seq-ts-header.h\n    model/simple-seq-ts-header.h\n")
     (p2p / "CMakeLists.txt").write_text(p2p_cmake)
+    # PFC qIndex is a traffic priority, not a QP array index. The pinned
+    # SimAI Resume dereferences a nonexistent QP on switches (and can index
+    # past a host's QPs). Keep vendored content intact; fingerprint this exact
+    # correction with the adapter and retain the ordinary/NVLS dispatch split.
+    qbb_relative = Path("simulation/src/point-to-point/model/qbb-net-device.cc")
+    qbb_text = (state["source"] / qbb_relative).read_text()
+    old_resume = "\t\tPtr<RdmaQueuePair> lastQp = m_rdmaEQ->GetQp(qIndex);\n\t\tif(lastQp->nvls_enable == 1 && m_node->GetNodeType() == 2) SwitchAsHostSend(); "
+    new_resume = "\t\t// PFC queue priority must never index the RDMA flow array.\n\t\tif (m_node->GetNodeType() == 2 && nvls_enable == 1) SwitchAsHostSend();"
+    if qbb_text.count(old_resume) != 1:
+        raise BackendError("pinned PFC Resume changed; review isolated correction before rebuilding")
+    (source / qbb_relative.relative_to("simulation")).write_text(qbb_text.replace(old_resume, new_resume))
+    from .priority_patch import apply_priority_overlay
+    apply_priority_overlay(source, state['source'])
     shutil.copyfile(Path(__file__).parent / "native" / "driver.cc", source / "scratch" / "joint_scheduling_driver.cc")
     (source / "scratch" / "CMakeLists.txt").write_text(
         'add_executable(joint-scheduling-ns3 joint_scheduling_driver.cc)\n'

@@ -6,6 +6,7 @@ import hashlib
 import itertools
 import json
 import platform
+import re
 import statistics
 import sys
 import time
@@ -16,13 +17,31 @@ from pathlib import Path
 from ..backend.runtime import read_json, number
 from ..config import load_config
 from ..workload import write_workload
+from ..backend.runtime import CONTROLLED_KV_MODES
+from ..prefix_cache import PrefixCacheConfig
+from ..binding import BindingConfig
+
+
+CONTROL_SWEEPS = {"kv_scheduler.max_concurrent_transfers", "kv_scheduler.max_inflight_bytes",
+    "kv_scheduler.policy", "kv_scheduler.mlu_medium_threshold", "kv_scheduler.mlu_urgent_threshold",
+    "kv_scheduler.mlu_deadline_guard_us", "kv_scheduler.mlu_best_effort_fraction",
+    "kv_scheduler.max_resource_inflight_bytes", "kv_scheduler.control_interval_us", "kv_scheduler.collective_guard_us",
+    "kv_scheduler.queue_target_bytes", "kv_scheduler.safety_margin_fraction", "kv_scheduler.collective_reserve_fraction",
+    "kv_scheduler.pause_on_collective", "kv_scheduler.inflight_budget_mode",
+    "kv_scheduler.collective_max_blocking_us", "kv_scheduler.completion_feedback_alpha",
+    "kv_scheduler.slo_priority_enabled", "kv_scheduler.collective_protection_enabled",
+    "feedback.scheduling_overhead_us"}
 
 
 METRICS = ("arrived_count", "completed_count", "failed_count", "incomplete_count", "slo_attainment",
            "completion_throughput_rps", "slo_goodput_rps", "ttft_mean_seconds", "ttft_p95_seconds",
-           "handoff_p95_seconds", "later_itl_p95_seconds", "e2e_p95_seconds")
+           "handoff_p95_seconds", "later_itl_p95_seconds", "e2e_p95_seconds",
+           "prefix_hit_tokens", "prefix_saved_kv_transfer_bytes", "prefix_resident_bytes",
+           "binding_candidate_scores", "binding_budget_exhaustions", "binding_round_p50_us",
+           "binding_round_p95_us", "binding_round_p99_us", "binding_inclusive_p99_us")
 COLUMNS = ("run_id", "case_id", "seed", "workload_seed", "status", "parameters", "output_dir",
-           "error", "wall_seconds", "workload_sha256", "profile_sha256") + METRICS
+           "error", "wall_seconds", "experiment_type", "source_tree_sha256", "backend_fingerprint",
+           "workload_sha256", "profile_sha256") + METRICS
 
 
 def _write(path, data):
@@ -44,11 +63,20 @@ def _resolve(value, parent, label):
 def _allowed(key):
     # Reject inert policy/interface knobs: every accepted sweep affects an
     # implemented part of this baseline or its evaluation/observation output.
-    return (key.startswith("topology.") and key.count(".") == 1
+    return (key in CONTROL_SWEEPS or key.startswith("topology.") and key.count(".") == 1
             or key.startswith("workload.") and len(key.split(".")) >= 2
             or key in {"runtime.time_limit_seconds", "runtime.congestion_control", "runtime.packet_payload_bytes",
                        "runtime.switch_buffer_bytes", "runtime.rpc_timeout_seconds", "feedback.observation_delay_us",
-                       "reservations.capacity_safety_fraction"}
+                       "runtime.prefill_chunk_tokens", "runtime.prefill_batch_token_budget", "runtime.prefill_batch_size",
+                       "runtime.decode_batch_size", "runtime.network_priority_enabled",
+                       "reservations.capacity_safety_fraction", "runtime.kv_transfer_mode", "kv_scheduler.max_block_bytes",
+                       "kv_scheduler.max_concurrent_transfers", "kv_scheduler.max_inflight_bytes",
+                       "kv_scheduler.max_resource_inflight_bytes", "kv_scheduler.control_interval_us",
+                       "kv_scheduler.collective_guard_us", "kv_scheduler.queue_target_bytes", "kv_scheduler.safety_margin_fraction",
+                       "feedback.network_observation_enabled", "feedback.state_observation_enabled",
+                       "feedback.network_observation_interval_us", "feedback.network_ewma_alpha"}
+            or key in {"prefix_cache."+name for name in asdict(PrefixCacheConfig())}
+            or key in {"binding."+name for name in asdict(BindingConfig()) }
             or key.startswith("evaluation.") and key.count(".") == 1 and key != "evaluation.output_dir")
 
 
@@ -65,16 +93,24 @@ def plan_suite(spec_path):
     """Validate suite structure without creating output or starting ns-3."""
     path = Path(spec_path).resolve()
     spec = read_json(path)
-    required, optional = {"schema_version", "base_config", "seeds"}, {"workload_spec", "workload", "profile", "workload_seed", "sweep"}
+    required, optional = {"schema_version", "base_config", "seeds"}, {"workload_spec", "workload", "profile", "workload_seed", "sweep", "cases", "comparison", "common_overrides", "experiment_type"}
     if not isinstance(spec, dict) or not required <= set(spec) or set(spec) - required - optional:
         raise ValueError("invalid experiment spec fields")
     if type(spec["schema_version"]) is not int or spec["schema_version"] != 1:
         raise ValueError("unsupported experiment spec schema")
+    if spec.get('experiment_type','end_to_end') not in ('end_to_end','frozen_network_replay'):
+        raise ValueError('unknown experiment_type')
     base_path = _resolve(spec["base_config"], path.parent, "base_config")
     config = load_config(base_path)
     base = read_json(base_path)
     base.setdefault("runtime", asdict(config.runtime))
     base.setdefault("evaluation", asdict(config.evaluation))
+    base.setdefault("prefix_cache", asdict(config.prefix_cache))
+    base["binding"] = dict(asdict(config.binding), **base["binding"])
+    common=spec.get('common_overrides',{})
+    if not isinstance(common,dict) or any(not isinstance(k,str) or not _allowed(k) or k.startswith('workload.') for k in common):
+        raise ValueError('common_overrides must contain implemented configuration fields')
+    for key,value in common.items():_set(base,key,value)
     profile = _resolve(spec["profile"], path.parent, "profile") if "profile" in spec else str(config.profile_path().resolve())
     if ("profile" not in spec and not config.feedback.compute_profile_path) or not Path(profile).is_file():
         raise ValueError("experiment requires an existing compute profile")
@@ -103,6 +139,8 @@ def plan_suite(spec_path):
         if fixed_seed >= 2147483647 or generator is None:
             raise ValueError("workload_seed requires a generator and a seed below 2147483647")
     sweep = spec.get("sweep", {})
+    if "cases" in spec and "sweep" in spec:
+        raise ValueError("choose named cases or a Cartesian sweep, not both")
     if not isinstance(sweep, dict):
         raise ValueError("sweep must be an object of parameter/value-list pairs")
     for key, values in sweep.items():
@@ -115,22 +153,56 @@ def plan_suite(spec_path):
         signatures = [json.dumps(value, sort_keys=True, allow_nan=False) for value in values]
         if len(set(signatures)) != len(values):
             raise ValueError("duplicate sweep values: {}".format(key))
-    size = len(seeds)
-    for values in sweep.values():
-        size *= len(values)
+    modes = sweep.get("runtime.kv_transfer_mode", [base['runtime'].get('kv_transfer_mode',config.runtime.kv_transfer_mode)])
+    if set(sweep) & CONTROL_SWEEPS and not any(mode in CONTROLLED_KV_MODES for mode in modes):
+        raise ValueError("control parameter sweeps require at least one controlled KV mode")
+    matrix_size=len(seeds)
+    for values in sweep.values():matrix_size*=len(values)
+    if matrix_size>10000:
+        raise ValueError("experiment matrix exceeds 10,000 runs; split the suite")
+    variants=[]
+    if "cases" in spec:
+        cases=spec["cases"]
+        if not isinstance(cases,list) or not cases:
+            raise ValueError("named cases must be a nonempty list")
+        if len(cases)*len(seeds)>10000:
+            raise ValueError("experiment matrix exceeds 10,000 runs; split the suite")
+        seen=set()
+        for case in cases:
+            if not isinstance(case,dict) or set(case)!={"id","overrides"}:
+                raise ValueError("named cases require id and overrides")
+            identifier=case["id"]
+            if not isinstance(identifier,str) or not re.fullmatch(r"[a-z][a-z0-9_-]{0,63}",identifier) or identifier in seen:
+                raise ValueError("case IDs must be unique lowercase names")
+            seen.add(identifier)
+            overrides=case["overrides"]
+            if not isinstance(overrides,dict) or any(not isinstance(k,str) or not _allowed(k) for k in overrides):
+                raise ValueError("named case contains unsupported overrides")
+            if generator is None and any(k.startswith('workload.') for k in overrides):
+                raise ValueError('workload overrides require workload_spec')
+            variants.append((identifier,copy.deepcopy(overrides)))
+    else:
+        keys=sorted(sweep)
+        variants=[("case-{:04d}".format(index),dict(zip(keys,values)))
+                  for index,values in enumerate(itertools.product(*(sweep[key] for key in keys)))]
+    size = len(seeds)*len(variants)
     if size > 10000:
         raise ValueError("experiment matrix exceeds 10,000 runs; split the suite")
-    keys = sorted(sweep)
     runs = []
-    for index, values in enumerate(itertools.product(*(sweep[key] for key in keys))):
-        parameters = dict(zip(keys, values))
+    for case,parameters in variants:
         for seed in seeds:
-            case = "case-{:04d}".format(index)
             runs.append({"run_id": "{}-seed-{}".format(case, seed), "case_id": case, "seed": seed,
                          "workload_seed": fixed_seed if fixed_seed is not None else seed if generator is not None else None,
                          "parameters": parameters})
-    return {"schema_version": 1, "spec_path": str(path), "source_spec": spec, "base_config": base,
-            "profile": profile, "fixed_workload": workload, "generator_spec": generator, "runs": runs}
+    plan={"schema_version": 1, "spec_path": str(path), "source_spec": spec, "base_config": base,
+          "profile": profile, "fixed_workload": workload, "generator_spec": generator, "runs": runs}
+    if "comparison" in spec:
+        from .comparison import audit_comparison
+        plan["comparison_audit"]=audit_comparison(plan,spec["comparison"])
+    if spec.get('experiment_type')=='frozen_network_replay':
+        from .contention import validate_plan
+        validate_plan(plan)
+    return plan
 
 
 def _metrics(summary):
@@ -141,6 +213,10 @@ def _metrics(summary):
     for target, name in (("ttft", "ttft_seconds"), ("handoff", "handoff_seconds"),
                          ("later_itl", "later_max_itl_seconds"), ("e2e", "e2e_seconds")):
         result[target + "_p95_seconds"] = summary["latencies"][name]["quantiles"].get("0.95")
+    cache = summary.get("prefix_cache", {})
+    for column, key in (("prefix_hit_tokens", "hit_tokens"), ("prefix_saved_kv_transfer_bytes", "saved_kv_transfer_bytes"),
+                        ("prefix_resident_bytes", "resident_bytes")):
+        result[column] = cache.get(key, 0)
     return result
 
 
@@ -162,22 +238,38 @@ def _aggregate(rows):
 def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress=None):
     from ..backend.runner import run_baseline
     plan = plan_suite(spec_path)
+    if plan['source_spec'].get('experiment_type')=='frozen_network_replay':
+        from .contention import run_contention
+        return run_contention(plan, output_dir, progress=progress)
+    frozen_profile = Path(plan["profile"]).read_bytes()
+    frozen_workload = Path(plan["fixed_workload"]).read_bytes() if plan["fixed_workload"] is not None else None
+    if 'comparison_audit' in plan:
+        # Audit the exact bytes that will be copied, even if a source file was
+        # changed between planning and freezing the suite inputs.
+        for name, contents in (("profile", frozen_profile), ("workload", frozen_workload)):
+            if hashlib.sha256(contents).hexdigest() != plan['comparison_audit']['input_sha256'][name]:
+                raise ValueError('comparison '+name+' changed before input freeze')
     output = Path(output_dir).resolve()
     output.mkdir(parents=True, exist_ok=False)
     _write(output / "plan.json", plan)
+    if 'comparison_audit' in plan:
+        _write(output / 'comparison_audit.json',plan['comparison_audit'])
     _write(output / "environment.json", {"python": sys.version, "python_executable": sys.executable,
                                         "platform": platform.platform()})
     inputs = output / "inputs"
     inputs.mkdir()
-    (inputs / "compute_profile.json").write_bytes(Path(plan["profile"]).read_bytes())
+    from .provenance import freeze_source
+    source_snapshot = freeze_source(inputs/'source', (output,))
+    (inputs / "compute_profile.json").write_bytes(frozen_profile)
     if plan["fixed_workload"] is not None:
-        (inputs / "workload.json").write_bytes(Path(plan["fixed_workload"]).read_bytes())
+        (inputs / "workload.json").write_bytes(frozen_workload)
     if plan["generator_spec"] is not None:
         _write(inputs / "workload_spec.json", plan["generator_spec"])
     rows, stopped = [], False
     with (output / "runs.jsonl").open("x", encoding="utf-8") as journal:
         for planned in plan["runs"]:
-            row = dict(planned, output_dir="runs/" + planned["run_id"], status="skipped" if stopped else "failed")
+            row = dict(planned, output_dir="runs/" + planned["run_id"], experiment_type='end_to_end',
+                       status="skipped" if stopped else "failed")
             began = time.monotonic()
             if not stopped:
                 case_dir = output / row["output_dir"]
@@ -199,8 +291,20 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
                     raw["runtime"]["workload_path"] = str(case_dir / "workload.json")
                     _write(case_dir / "config.json", raw)
                     config = load_config(case_dir / "config.json")
-                    result = run_baseline(config, case_dir / "run", make_plots=make_plots)
+                    result = run_baseline(config, case_dir / "run", make_plots=make_plots, source_snapshot=source_snapshot)
+                    identity=read_json(case_dir/'run/reproducibility.json')
+                    row['source_tree_sha256']=identity['source']['source_tree_sha256']
+                    row['backend_fingerprint']=identity['backend']['fingerprint']
                     row.update(_metrics(result.summary), status="completed")
+                    binding = result.summary.get("binding", {})
+                    row["binding_candidate_scores"] = binding.get("candidate_scores", 0)
+                    row["binding_budget_exhaustions"] = binding.get("budget_exhaustions", 0)
+                    timing_path = case_dir / "run/observation/binding_timing.json"
+                    if timing_path.is_file():
+                        timing = read_json(timing_path)
+                        for q in ("p50", "p95", "p99"):
+                            row["binding_round_"+q+"_us"] = timing["round_us"][q+"_us"]
+                        row["binding_inclusive_p99_us"] = timing["inclusive_us"]["p99_us"]
                     row["workload_sha256"] = hashlib.sha256((case_dir / "run/workload.json").read_bytes()).hexdigest()
                     row["profile_sha256"] = hashlib.sha256((case_dir / "run/compute_profile.json").read_bytes()).hexdigest()
                     row["measurement"] = result.summary["measurement"]
@@ -223,11 +327,11 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
         writer.writeheader()
         for row in rows:
             writer.writerow(dict(row, parameters=json.dumps(row["parameters"], sort_keys=True)))
-    report = {"schema_version": 1, "status": "completed_with_failures" if any(row["status"] != "completed" for row in rows) else "completed",
+    report = {"schema_version": 1, "experiment_type": "end_to_end", "status": "completed_with_failures" if any(row["status"] != "completed" for row in rows) else "completed",
               "total_runs": len(rows), "successful_runs": sum(row["status"] == "completed" for row in rows),
               "failed_runs": sum(row["status"] == "failed" for row in rows),
               "skipped_runs": sum(row["status"] == "skipped" for row in rows), "cases": _aggregate(rows),
-              "semantics": {"engine": "existing round-robin/FIFO, whole-KV baseline; no joint optimization",
+              "semantics": {"engine": "per-run effective_baseline records round-robin/joint binding, FIFO/chunked/packed Prefill, continuous Decode batching and explicit KV mode",
                 "aggregation": "unweighted mean and sample standard deviation across successful seeds per case",
                 "null_metrics": "no valid samples; never replaced with zero", "failures": "excluded from metric means but explicitly counted",
                 "request_counts": "arrived/failed/incomplete use arrival cohort; completed uses completion window",
@@ -245,4 +349,6 @@ def run_suite(spec_path, output_dir, make_plots=False, fail_fast=False, progress
             for metric, values in group["metrics"].items():
                 row.update({metric + "_" + key: value for key, value in values.items()})
             writer.writerow(row)
+    from .provenance import write_suite_report
+    write_suite_report(output,report)
     return report

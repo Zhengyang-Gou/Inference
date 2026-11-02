@@ -2,6 +2,7 @@
 
 import csv
 import json
+import os
 import shutil
 import tempfile
 from pathlib import Path
@@ -26,8 +27,8 @@ def _csv(path, columns, rows):
         writer.writerows(rows)
 
 
-def export_result(result, output_dir, experiment_config=None):
-    """Write a new directory; preserve raw events, units and configuration."""
+def export_result(result, output_dir, experiment_config=None, copy_trace=True):
+    """Export metrics; a run can reference its single sibling trace instead."""
     output = Path(output_dir).resolve()
     if output.exists():
         raise FileExistsError("result directory already exists: {}".format(output))
@@ -35,14 +36,16 @@ def export_result(result, output_dir, experiment_config=None):
     with tempfile.TemporaryDirectory(prefix=".evaluation-", dir=str(output.parent)) as temporary:
         bundle = Path(temporary) / "bundle"
         bundle.mkdir()
-        summary = dict(result.summary, raw_trace_file="events.jsonl")
+        source = Path(result.summary["source_trace"]).resolve()
+        summary = dict(result.summary, raw_trace_file="events.jsonl" if copy_trace else os.path.relpath(source, output))
         with (bundle / "summary.json").open("w", encoding="utf-8") as handle:
             json.dump(summary, handle, ensure_ascii=False, indent=2, allow_nan=False)
             handle.write("\n")
         _csv(bundle / "requests.csv", REQUEST_COLUMNS, result.requests)
         _csv(bundle / "tokens.csv", TOKEN_COLUMNS, result.tokens)
         _csv(bundle / "timeseries.csv", TIMESERIES_COLUMNS, result.timeseries)
-        shutil.copyfile(result.summary["source_trace"], bundle / "events.jsonl")
+        if copy_trace:
+            shutil.copyfile(source, bundle / "events.jsonl")
         snapshot = experiment_config if experiment_config is not None else {"evaluation": summary["evaluation_config"]}
         with (bundle / "config_snapshot.json").open("w", encoding="utf-8") as handle:
             json.dump(snapshot, handle, ensure_ascii=False, indent=2, allow_nan=False)

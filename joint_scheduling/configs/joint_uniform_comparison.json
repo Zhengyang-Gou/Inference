@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "base_config": "joint_uniform.json",
+  "seeds": [
+    7,
+    19
+  ],
+  "sweep": {
+    "binding.policy": [
+      "round_robin",
+      "joint_lexicographic"
+    ],
+    "binding.decision_overhead_us": [
+      0,
+      5,
+      50,
+      200,
+      1000,
+      5000
+    ]
+  }
+}

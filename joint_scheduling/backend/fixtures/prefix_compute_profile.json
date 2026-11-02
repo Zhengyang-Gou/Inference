@@ -1,0 +1,505 @@
+{
+  "schema_version": 2,
+  "provenance": {
+    "synthetic": true,
+    "description": "Synthetic prefix-aware four-layer samples. Cached context and new query lengths are explicit; includes attention to cached keys. Not GPU measurements."
+  },
+  "network_communication_excluded": true,
+  "kv_bytes_per_token": 32768,
+  "weights_bytes_per_gpu": 1073741824,
+  "phases": {
+    "prefill": {
+      "tp_size": 4,
+      "layers": [
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.00000480008,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.000055527680000000006,
+              "collective_bytes": 8192
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00010771072,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 192,
+              "compute_seconds": 0.00016054912000000002,
+              "collective_bytes": 24576
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.00043457152,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.00462297728,
+              "collective_bytes": 524288
+            }
+          ],
+          "cached_points": [
+            {
+              "cached_tokens": 64,
+              "points": [
+                {
+                  "tokens": 65,
+                  "compute_seconds": 0.000004810320000000001,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00005618304,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.00010902144000000002,
+                  "collective_bytes": 16384
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00038304384,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0045714496,
+                  "collective_bytes": 516096
+                }
+              ]
+            },
+            {
+              "cached_tokens": 127,
+              "points": [
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.0000048204000000000005,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.0000576588,
+                  "collective_bytes": 8320
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.0003316812,
+                  "collective_bytes": 49280
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.004520086959999999,
+                  "collective_bytes": 508032
+                }
+              ]
+            },
+            {
+              "cached_tokens": 128,
+              "points": [
+                {
+                  "tokens": 129,
+                  "compute_seconds": 0.00000482056,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.0000568384,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00033086080000000004,
+                  "collective_bytes": 49152
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0045192665600000004,
+                  "collective_bytes": 507904
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.0000072001200000000004,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.00008329152,
+              "collective_bytes": 8192
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00016156607999999998,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 192,
+              "compute_seconds": 0.00024082368000000003,
+              "collective_bytes": 24576
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.00065185728,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.00693446592,
+              "collective_bytes": 524288
+            }
+          ],
+          "cached_points": [
+            {
+              "cached_tokens": 64,
+              "points": [
+                {
+                  "tokens": 65,
+                  "compute_seconds": 0.00000721548,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00008427455999999998,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.00016353216000000002,
+                  "collective_bytes": 16384
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00057456576,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0068571744,
+                  "collective_bytes": 516096
+                }
+              ]
+            },
+            {
+              "cached_tokens": 127,
+              "points": [
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.0000072306,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.00008648819999999999,
+                  "collective_bytes": 8320
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.0004975218,
+                  "collective_bytes": 49280
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.006780130439999999,
+                  "collective_bytes": 508032
+                }
+              ]
+            },
+            {
+              "cached_tokens": 128,
+              "points": [
+                {
+                  "tokens": 129,
+                  "compute_seconds": 0.00000723084,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.0000852576,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.0004962912,
+                  "collective_bytes": 49152
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00677889984,
+                  "collective_bytes": 507904
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.0000072001200000000004,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.00008329152,
+              "collective_bytes": 8192
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00016156607999999998,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 192,
+              "compute_seconds": 0.00024082368000000003,
+              "collective_bytes": 24576
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.00065185728,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.00693446592,
+              "collective_bytes": 524288
+            }
+          ],
+          "cached_points": [
+            {
+              "cached_tokens": 64,
+              "points": [
+                {
+                  "tokens": 65,
+                  "compute_seconds": 0.00000721548,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00008427455999999998,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.00016353216000000002,
+                  "collective_bytes": 16384
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00057456576,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0068571744,
+                  "collective_bytes": 516096
+                }
+              ]
+            },
+            {
+              "cached_tokens": 127,
+              "points": [
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.0000072306,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.00008648819999999999,
+                  "collective_bytes": 8320
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.0004975218,
+                  "collective_bytes": 49280
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.006780130439999999,
+                  "collective_bytes": 508032
+                }
+              ]
+            },
+            {
+              "cached_tokens": 128,
+              "points": [
+                {
+                  "tokens": 129,
+                  "compute_seconds": 0.00000723084,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.0000852576,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.0004962912,
+                  "collective_bytes": 49152
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00677889984,
+                  "collective_bytes": 507904
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kv_bytes_per_token": 8192,
+          "collectives_per_step": 1,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.00000480008,
+              "collective_bytes": 128
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.000055527680000000006,
+              "collective_bytes": 8192
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00010771072,
+              "collective_bytes": 16384
+            },
+            {
+              "tokens": 192,
+              "compute_seconds": 0.00016054912000000002,
+              "collective_bytes": 24576
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.00043457152,
+              "collective_bytes": 65536
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.00462297728,
+              "collective_bytes": 524288
+            }
+          ],
+          "cached_points": [
+            {
+              "cached_tokens": 64,
+              "points": [
+                {
+                  "tokens": 65,
+                  "compute_seconds": 0.000004810320000000001,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00005618304,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.00010902144000000002,
+                  "collective_bytes": 16384
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00038304384,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0045714496,
+                  "collective_bytes": 516096
+                }
+              ]
+            },
+            {
+              "cached_tokens": 127,
+              "points": [
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.0000048204000000000005,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.0000576588,
+                  "collective_bytes": 8320
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.0003316812,
+                  "collective_bytes": 49280
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.004520086959999999,
+                  "collective_bytes": 508032
+                }
+              ]
+            },
+            {
+              "cached_tokens": 128,
+              "points": [
+                {
+                  "tokens": 129,
+                  "compute_seconds": 0.00000482056,
+                  "collective_bytes": 128
+                },
+                {
+                  "tokens": 192,
+                  "compute_seconds": 0.0000568384,
+                  "collective_bytes": 8192
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00033086080000000004,
+                  "collective_bytes": 49152
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0045192665600000004,
+                  "collective_bytes": 507904
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "decode": {
+      "tp_size": 4,
+      "collectives_per_step": 1,
+      "points": [
+        {
+          "tokens": 1,
+          "compute_seconds": 0.00008,
+          "collective_bytes": 16384
+        },
+        {
+          "tokens": 4096,
+          "compute_seconds": 0.00016,
+          "collective_bytes": 16384
+        }
+      ]
+    }
+  }
+}

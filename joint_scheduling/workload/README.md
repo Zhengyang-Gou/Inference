@@ -1,5 +1,33 @@
 # 请求负载生成
 
+## 公开轨迹导入与规模映射
+
+`import-trace` 支持 Azure 的 `TIMESTAMP,ContextTokens,GeneratedTokens` CSV 和 Mooncake 的毫秒 JSONL。
+保留请求长度配对、来源行与时间顺序；不会启用缓存、推断会话依赖、循环数据或截短长请求。
+
+```bash
+./inference import-trace --trace /absolute/path/AzureLLMInferenceTrace_conv.csv --format azure \
+  --source-url https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv \
+  --target-rps 2 --profile /absolute/path/profile.json --output /absolute/path/replay.json
+```
+
+不提供 `--target-rps` 时使用原相对时间。提供后，以完整轨迹的半开观测区间为基准统一缩放时间；
+最后一个请求仍严格处于结束时间之前。`provenance` 记录原文件 SHA-256、实际到达率、时间缩放倍数、
+长度配对哈希及来源行顺序哈希。加速回放会改变绝对突发时长，不能等同于原时间回放。
+输入本身是合成数据时用 `--source-synthetic` 声明。
+
+`--duration-seconds` 只能显式选取缩放后时间前缀，并报告排除的请求数；超过数据长度会拒绝，
+不会自动循环补足。`--sha256` 验证冻结来源。`--profile` 同时检查 Prefill 和最后一次 Decode 上下文，
+越界时不写文件。请求 SLO 用 `--ttft-slo-seconds` / `--itl-slo-seconds` 明确指定，来源轨迹没有的目标不能当成原始业务承诺。
+
+可用 `joint_scheduling.experiments.capacity.estimate_capacity` 做离线资源需求核算。
+其参考率是计算需求与平均链路载荷给出的乐观起点，`sustainable_capacity_rps` 保留为 `null`；
+必须用基线长时间回放和冻结的 SLO/积压判据另行校准。
+
+`assess-calibration --plan ... --results-root ... --output ...` 只读取已经完成的基线结果，检查输入哈希、部署、
+可选模块、测量长度和种子齐全性；缺失运行保留 pending。只有较低档通过、较高档拒绝且种子齐全时，
+才给出该有限轨迹下的参考区间。它不会启动仿真，也不会把 1 秒结果当成长时间容量结论。
+
 本模块生成供真实基线读取的请求 JSON，不生成 token 返回时间或模拟结果。所有生成负载明确标记为 synthetic；实际模型计算数据仍由独立的 compute profile 提供。
 
 从 Inference 根目录执行：
@@ -15,7 +43,8 @@
 | --- | --- |
 | `seed` | 非负整数，小于 2147483647；CLI 的 `--seed` 可覆盖 |
 | `arrival.pattern` | `periodic`、`poisson` 或 `burst` |
-| `arrival.count` | 精确生成的请求数，可为 0，最多 100 万 |
+| `arrival.count` | 精确生成的请求数，可为 0，最多 100 万；与 duration_seconds 二选一 |
+| `arrival.duration_seconds` | periodic/poisson 在固定时长内持续到达，区间为 [start,start+duration)，最多 100 万请求 |
 | `arrival.start_seconds` | 到达过程起点，默认 0 |
 | `arrival.rate_rps` | periodic/poisson 的到达率，必须为正 |
 | `arrival.burst_size` | 每个突发的请求数；最后一组可不足 |
@@ -29,6 +58,10 @@ periodic 的第一条请求在 start 到达；poisson 的第一条请求在 star
 {"pattern": "burst", "count": 12, "burst_size": 4, "burst_interval_seconds": 0.02, "spread_seconds": 0.001}
 ```
 
+持续加压使用固定时长而非固定请求数，例如 `{"pattern":"periodic","duration_seconds":1.0,"rate_rps":150}`。扫描到达率时，各组持续投喂同样时长，请求数随负载变化；同一 seed 的对应请求仍使用相同长度和 SLO 随机流。时间先按原生时钟取纳秒，再排除右端点。
+
+`sustained_pressure_workload.json` 使用 64/128/256 token 输出，`sustained_pressure_comparison_example.json` 扫描 10/40/200 Gbps、三种 KV 模式、25/75/150/300 请求每秒及两个 seed。每次持续到达 1 秒，预热 0.2 秒，在 [0.2,0.9) 秒测量，末尾仍有请求到达。需同时报告完成吞吐、达标吞吐、token 吞吐和未完成请求的积压，不能将截止时未完成请求从容量判断中隐去。
+
 每个类别需要唯一 `name`、正 `weight`、`input_tokens` 和 `output_tokens`。长度可以是固定正整数，或以下分布：
 
 ```json
@@ -41,6 +74,10 @@ periodic 的第一条请求在 start 到达；poisson 的第一条请求在 star
 
 类别中的 `ttft_slo_seconds`、`itl_slo_seconds` 为可选正数，缺省时采用评估配置。类别允许关联长短请求与不同 SLO；权重表示抽样概率，不保证每个类别的精确数量。
 
+类别还可配置有序 `prefix_blocks`，例如 `[{"id":"system-v1","tokens":64}]`；该类别生成的请求复制同一前缀身份。前缀长度不得超过任何生成请求的输入长度，同 ID 长度必须一致，错误负载不会写入输出。缓存查询和命中发生在运行时，不由生成器预先指定；详细格式见 [前缀缓存说明](../prefix_cache/README.md)。
+
 到达过程与请求类别/长度使用独立随机流。同一 seed 下只改到达率，会保留对应请求的长度和 SLO，便于公平比较。输出记录完整规格、seed 和实际类别数量，到达时间精确到纳秒，结果拒绝覆盖。
 
 文件中的 `output_tokens` 是仿真所需的实际请求长度，不应当作在线调度器预知的真实 EOS。生成器不检查目标模型的采样覆盖范围；执行器会检查输入和 Decode 上下文长度、TP 与 profile 是否匹配。
+
+请求和类别可声明 `max_output_tokens` 作为调用方可见的输出上限，必须覆盖实际模拟的 output_tokens。绑定预测器仅读取上限，缺省使用配置的 reserve_max_output_tokens，不读取精确 EOS；其未来 Decode 范围还受 prediction_decode_steps 限制。

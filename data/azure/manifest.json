@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "description": "Frozen public Azure arrival/paired-token traces; no prompt text or inferred sessions.",
+  "sources": [
+    {
+      "dataset": "conv",
+      "path": "raw/AzureLLMInferenceTrace_conv.csv",
+      "sha256": "2f1e5b666d4e3055fdbba98598ce2ec307767b9064e03e2fa46676dbcc7d0bf8",
+      "request_count": 19366,
+      "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv"
+    },
+    {
+      "dataset": "code",
+      "path": "raw/AzureLLMInferenceTrace_code.csv",
+      "sha256": "54e9a6d2a4bd06ba1e060304b900abbc74cbea53de96506e60fe5bb4f2277fb6",
+      "request_count": 8819,
+      "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_code.csv"
+    }
+  ],
+  "prepared": [
+    {
+      "path": "conv_original.json",
+      "sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+      "request_count": 19366,
+      "duration_seconds": 3501.721937001,
+      "purpose": "full_trace_research_input"
+    },
+    {
+      "path": "conv_first_second_validation.json",
+      "sha256": "5a5d1eaf06ce49fcc54c811130390421ba0d2a4cb14426c3fa36c1966fed8125",
+      "request_count": 1,
+      "duration_seconds": 1.0,
+      "purpose": "integration_validation_only"
+    },
+    {
+      "path": "conv_four_requests_128rps_diagnostic.json",
+      "sha256": "38c2c915449152fe7b11ee2dcc2c6326f5e84398d890a06bc0d59de9f6f04096",
+      "request_count": 4,
+      "duration_seconds": 0.203520696,
+      "purpose": "finite_trace_contention_diagnostic_only"
+    }
+  ]
+}

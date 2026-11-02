@@ -1,5 +1,9 @@
 # 面向请求端到端性能的联合调度框架说明
 
+实现状态：已完成逐层 KV、动态网络观测、共享资源令牌额度、集合通信保护与请求级 SLO 余量优先级；具体启发式算法见 joint_scheduling/kv_scheduler/README.md。联合绑定已实现候选剪枝与增量贪心，下文的优化式描述研究目标，不代表求得全局最优；执行方法和模型边界见 joint_scheduling/backend/README.md。
+
+绑定窗口、前缀缓存感知预测及延迟可见状态已实现，可与 Chunked/合批 Prefill、Decode 连续批处理组合。联合模式在绑定时整批原子预留，轮询模式在 Prefill 准入时预留；有限范围预测及聚合网络近似的边界见 joint_scheduling/binding/README.md。
+
 ## 一 框架简介
 
 这套框架以完整请求的 SLO 达标情况与完成吞吐为目标，P 表示 Prefill 实例，D 表示 Decode 实例，两类决策共享状态、性能预测与请求级目标
