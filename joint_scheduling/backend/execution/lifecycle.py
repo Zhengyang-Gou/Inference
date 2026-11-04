@@ -1,9 +1,46 @@
 """RequestLifecycle: explicit runtime component; scheduling order preserved."""
+from ...binding.static import plan_bindings
+from .requests import RequestRecord
 from .component import RuntimeComponent
 
 
 class RequestLifecycle(RuntimeComponent):
     owned_fields = frozenset(['request_counts', 'requests'])
+
+    def init_request_state(self, requests, bindings=None):
+        self.request_counts = {"arrived_count": 0, "completed_count": 0, "failed_count": 0, "incomplete_count": 0}
+        self.requests = {}
+        binding_by_request = {b.request_id: b for b in (
+            bindings if bindings is not None else plan_bindings(requests, self.config.topology, self.config.binding))}
+        for item in requests:
+            binding = binding_by_request[item['request_id']]
+            row = RequestRecord(item, p=binding.prefill_instance_id, d=binding.decode_instance_id,
+                       generated=0, state="not_arrived")
+            p, d = self.instances[row["p"]], self.instances[row["d"]]
+            if len(p.gpu_ids) != len(d.gpu_ids):
+                raise ValueError("this baseline requires equal P/D TP sizes; KV resharding is not implemented")
+            row["prefill_steps"] = self.profile.prefill_steps(row["input_tokens"], len(p.gpu_ids))
+            row["prefill_chunks"] = (self.profile.prefill_chunks(row["input_tokens"], len(p.gpu_ids), self.config.runtime.prefill_chunk_tokens)
+                                     if self.config.runtime.prefill_chunk_tokens and not self.prefill_batching else ())
+            row["prefill_chunk_index"] = 0
+            row["prefill_computed_tokens"] = 0
+            # Shard each layer independently. Summed per-layer rounding can differ
+            # from rounding the whole request once, so reserve the actual layout.
+            row["kv_rank_bytes"] = [0] * len(p.gpu_ids)
+            for step in row["prefill_steps"]:
+                base, extra = divmod(row["input_tokens"] * step["kv_bytes_per_token"], len(p.gpu_ids))
+                for rank in range(len(p.gpu_ids)):
+                    row["kv_rank_bytes"][rank] += base + int(rank < extra)
+            row.update(prefill_finished=False, kv_received_bytes=0, pending_kv_blocks=[], decode_enqueued=False,
+                       kv_unsent_bytes=row["input_tokens"] * self.profile.kv_bytes_per_token if row["output_tokens"] > 1 else 0,
+                       source_released=False, kv_received_by_gpu={gpu: 0 for gpu in d.gpu_ids}, kv_active_transfers={},
+                       token_times=[], ready_layers=0)
+            if row["output_tokens"] > 1:
+                self.profile.lookup("decode", row["input_tokens"], len(d.gpu_ids))
+                self.profile.lookup("decode", row["input_tokens"] + row["output_tokens"] - 2, len(d.gpu_ids))
+            self.requests[row["request_id"]] = row
+            if self.config.binding.window_enabled:
+                row["p"], row["d"] = None, None
 
     def fail_request(self, row, reason):
         row['state'] = 'failed'

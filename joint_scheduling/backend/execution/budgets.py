@@ -7,6 +7,9 @@ from .component import RuntimeComponent
 class BudgetEstimator(MLUBudgetMixin, RuntimeComponent):
     owned_fields = frozenset(['slo_budget_cache'])
 
+    def init_budget_state(self):
+        self.slo_budget_cache = {}
+
     def collective_seconds(self, ranks, sample):
         work = self.scheduler.resources.ring_work(ranks, sample["collective_bytes"])
         if not work or not sample["collectives_per_step"]:

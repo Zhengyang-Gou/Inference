@@ -12,12 +12,15 @@ import tempfile
 from dataclasses import asdict
 from pathlib import Path
 
-from ..backend.runtime import ComputeProfile,read_json,load_workload
+from ..backend.compute_profile import ComputeProfile
+from ..validation import read_json
+from ..workload.inputs import load_workload
 from ..backend.compute_profile import profile_kind
-from ..backend.expert_parallel import validate_profile
+from ..backend.expert_profile import validate_profile
 from ..config import load_config
 from ..binding.static import binding_plan_document, endpoint_policy, plan_summary
 from ..workload.trace import profile_coverage
+from .parameters import allowed_override as _allowed, set_override as _set
 
 
 def _sha(path):
@@ -48,7 +51,6 @@ def _differences(left,right):
 
 
 def audit_comparison(plan,contract):
-    from .runner import _allowed,_set
     required={'purpose','allowed_changes','fixed','input_sha256'}
     if not isinstance(contract,dict) or set(contract)!=required:
         raise ValueError('comparison requires purpose, allowed_changes, fixed and input_sha256')

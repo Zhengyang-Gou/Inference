@@ -5,6 +5,9 @@ from .component import RuntimeComponent
 class ComputeExecutor(RuntimeComponent):
     owned_fields = frozenset(['compute_active'])
 
+    def init_compute_state(self):
+        self.compute_active = set()
+
     def execute_step(self, row, phase, tokens, complete, sample=None, layer_id=None, batch_details=None):
         instance = self.instances[row["p"] if phase == "prefill" else row["d"]]
         sample = sample if sample is not None else self.profile.lookup(phase, tokens, len(instance.gpu_ids))

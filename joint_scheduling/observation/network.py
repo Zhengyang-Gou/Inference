@@ -6,6 +6,10 @@ from collections import deque
 from ..topology import local_resources
 
 
+_RATE_FIELDS = tuple((kind, kind + '_bytes', kind + '_bytes_per_second')
+                     for kind in ('tx', 'kv', 'collective', 'other'))
+
+
 class NetworkObserver:
     def __init__(self, backend, topology, config, output, record_samples=True, sample_sink=None):
         self.backend, self.topology, self.config = backend, topology, config
@@ -16,29 +20,49 @@ class NetworkObserver:
         self.ewma = {}
         self.peaks = {}
         self.sample_sink = sample_sink
+        self._local_resources = local_resources(topology)
+        self._raw_previous = {}
+        self._zero_rate_ports = set()
         self.initial = self.sample()
 
     def sample(self):
         raw = self.backend.network_snapshot()
         now = raw["time_ns"] / 1e9
-        ports = {row["resource_id"]: dict(row) for row in raw["resources"]}
-        for key, row in local_resources(self.topology).items():
-            ports.setdefault(key, row)
+        raw_ports = {row["resource_id"]: row for row in raw["resources"]}
+        for key, row in self._local_resources.items():
+            raw_ports.setdefault(key, row)
         span = now - self.previous["time_seconds"] if self.previous is not None else 0
-        for key, port in ports.items():
-            old = self.previous["resources"].get(key) if self.previous is not None else None
+        previous = self.previous['resources'] if self.previous is not None else {}
+        alpha = self.config.network_ewma_alpha
+        complement = 1 - alpha
+        ports, raw_previous, zero_rate_ports = {}, {}, set()
+        for key, raw_port in raw_ports.items():
+            old = previous.get(key)
+            if key in self._zero_rate_ports and raw_port == self._raw_previous.get(key):
+                # Unchanged counters with zero EWMA stay exactly zero. Copy the
+                # completed row so retained snapshots never share mutable ports.
+                ports[key] = dict(old)
+                raw_previous[key] = self._raw_previous[key]
+                zero_rate_ports.add(key)
+                continue
+            port = ports[key] = dict(raw_port)
+            raw_previous[key] = dict(raw_port)
             rates = self.ewma.setdefault(key, {})
-            for kind in ("tx", "kv", "collective", "other"):
-                instant = 0 if span <= 0 or old is None else (port[kind + "_bytes"] - old[kind + "_bytes"]) / span
+            for kind, counter, rate_field in _RATE_FIELDS:
+                instant = 0 if span <= 0 or old is None else (port[counter] - old[counter]) / span
                 if instant < 0:
                     raise ValueError("network counter moved backwards")
-                rates[kind] = self.config.network_ewma_alpha * instant + (1-self.config.network_ewma_alpha) * rates.get(kind, instant)
-                port[kind + "_bytes_per_second"] = rates[kind]
+                rates[kind] = alpha * instant + complement * rates.get(kind, instant)
+                port[rate_field] = rates[kind]
             port["utilization"] = port["tx_bytes_per_second"] * 8 / port["capacity_bps"]
             port["pfc_pause_delta"] = port["pfc_pause_count"] - old["pfc_pause_count"] if old else 0
             peak = self.peaks.setdefault(key, dict(queue_bytes=0, utilization=0.0))
             peak["queue_bytes"] = max(peak["queue_bytes"], port["queue_bytes"])
             peak["utilization"] = max(peak["utilization"], port["utilization"])
+            if not any(rates.values()) and port['pfc_pause_delta'] == 0:
+                zero_rate_ports.add(key)
+        self._raw_previous = raw_previous
+        self._zero_rate_ports = zero_rate_ports
         state = dict(sequence=self.sequence, time_seconds=now,
                      visible_at_seconds=now + self.config.observation_delay_us / 1e6,
                      resources=ports, flows=raw["flows"])

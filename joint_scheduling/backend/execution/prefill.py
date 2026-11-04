@@ -7,6 +7,12 @@ from .component import RuntimeComponent
 class PrefillRuntime(PrefillBatchingMixin, RuntimeComponent):
     owned_fields = frozenset(['active_prefill_batches', 'pending_prefill_ticks', 'prefill_admission_sequence', 'prefill_batch_stats', 'prefill_batching', 'prefill_chunk_completed_count', 'prefill_chunk_query_tokens', 'prefill_chunk_started_count'])
 
+    def init_prefill_state(self):
+        self.init_prefill_batching()
+        self.prefill_chunk_started_count = 0
+        self.prefill_chunk_completed_count = 0
+        self.prefill_chunk_query_tokens = 0
+
     def kick_prefill(self, instance):
         if self.prefill_batching:
             self.request_prefill_batch(instance)

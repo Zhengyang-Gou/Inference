@@ -6,6 +6,7 @@ import os
 import selectors
 import subprocess
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 from .build import BackendError, LOCK, require_backend
@@ -14,7 +15,8 @@ from ..feedback import TransferProgress
 
 class Ns3Backend:
     def __init__(self, topology, work_dir, seed=7, congestion_control="dcqcn", packet_bytes=1000,
-                 switch_buffer_bytes=16 * 1024 * 1024, rpc_timeout_seconds=60, network_priority_enabled=False):
+                 switch_buffer_bytes=16 * 1024 * 1024, rpc_timeout_seconds=60, network_priority_enabled=False,
+                 *, submission_batch_size=128):
         from ..topology import export_backend_topology
         if type(seed) is not int or not 0 <= seed < 2147483647:
             raise BackendError("seed must be an integer in [0, 2147483647)")
@@ -26,6 +28,8 @@ class Ns3Backend:
             raise BackendError("switch buffer must be in [1 MiB, 4 GiB)")
         if type(rpc_timeout_seconds) not in (int, float) or not math.isfinite(rpc_timeout_seconds) or rpc_timeout_seconds <= 0:
             raise BackendError("RPC timeout must be positive and finite")
+        if type(submission_batch_size) is not int or not 1 <= submission_batch_size <= 256:
+            raise BackendError('submission_batch_size must be an integer in [1, 256]')
         self.state = require_backend()
         if type(network_priority_enabled) is not bool:
             raise BackendError('network_priority_enabled must be boolean')
@@ -37,6 +41,10 @@ class Ns3Backend:
         self._logical_transfers = set()
         self._part_owners = {}
         self._buffer = b""
+        self.submission_batch_size = submission_batch_size
+        self._batch_depth = 0
+        self._pending_submissions = []
+        self._submission_commands = self._submission_batches = self._barrier_commands = 0
         self.timeout = rpc_timeout_seconds
         self.work_dir = Path(work_dir).resolve()
         self.work_dir.mkdir(parents=True, exist_ok=True)
@@ -91,22 +99,65 @@ class Ns3Backend:
             if len(self._buffer) > 1024 * 1024:
                 raise BackendError("backend response exceeded the protocol size limit")
 
-    def _command(self, text):
+    def _write_commands(self, text):
         if self.process.poll() is not None:
             raise BackendError("backend process is not running")
         try:
-            self.process.stdin.write((text + "\n").encode())
+            data = memoryview((text + "\n").encode())
+            while data:
+                written = self.process.stdin.write(data)
+                if not written:
+                    raise OSError('backend pipe accepted no data')
+                data = data[written:]
         except (BrokenPipeError, OSError) as error:
             raise BackendError("backend pipe closed; see {}".format(self.log_path)) from error
+
+    def _command(self, text):
+        # A query or time advance observes every preceding submission, including
+        # those queued by an enclosing callback's batch scope.
+        self._flush_submissions()
+        self._barrier_commands += 1
+        self._write_commands(text)
         return self._read()
 
     def _register(self, command, callback):
         identifier = self._next_id
         self._next_id += 1
-        if self._command(command.format(id=identifier)) != "OK":
-            raise BackendError("backend rejected command")
         self._callbacks[identifier] = callback
+        self._pending_submissions.append((identifier, command.format(id=identifier)))
+        self._submission_commands += 1
+        if not self._batch_depth or len(self._pending_submissions) >= self.submission_batch_size:
+            self._flush_submissions()
         return identifier
+
+    def _flush_submissions(self):
+        if not self._pending_submissions:
+            return
+        pending, self._pending_submissions = self._pending_submissions, []
+        try:
+            # The bounded batch keeps OK replies below the pipe's capacity.
+            # ns-3 processes the original commands in order without advancing
+            # simulated time. Individual flow IDs and ACK semantics stay intact.
+            self._write_commands('\n'.join(command for _, command in pending))
+            self._submission_batches += 1
+            for _ in pending:
+                if self._read() != 'OK':
+                    raise BackendError('backend rejected command')
+        except Exception:
+            for identifier, _ in pending:
+                self._callbacks.pop(identifier, None)
+            raise
+
+    @contextmanager
+    def submission_batch(self):
+        """Coalesce ordered submissions; queries and advances always flush."""
+        self._batch_depth += 1
+        try:
+            yield self
+        finally:
+            self._batch_depth -= 1
+            if not self._batch_depth:
+                self._flush_submissions()
 
     def now_seconds(self):
         return self.now_ns / 1e9
@@ -236,11 +287,12 @@ class Ns3Backend:
         if now < self.now_ns or now > deadline or len(ids) != count:
             raise BackendError("backend violated clock/completion protocol")
         self.now_ns = now
-        for identifier in ids:
-            callback = self._callbacks.pop(identifier, None)
-            if callback is None:
-                raise BackendError("unknown completion ID from backend")
-            callback()
+        with self.submission_batch():
+            for identifier in ids:
+                callback = self._callbacks.pop(identifier, None)
+                if callback is None:
+                    raise BackendError("unknown completion ID from backend")
+                callback()
         return count
 
     def run_until(self, deadline_seconds):
@@ -254,15 +306,24 @@ class Ns3Backend:
         if hasattr(self, "process"):
             if self.process.poll() is None:
                 try:
+                    self._flush_submissions()
                     self.process.stdin.write(b"CLOSE\n")
                     self.process.wait(timeout=5)
-                except (OSError, subprocess.TimeoutExpired):
+                except (BackendError, OSError, subprocess.TimeoutExpired):
                     self.process.kill(); self.process.wait(timeout=5)
             self.process.stdin.close(); self.process.stdout.close()
         if hasattr(self, "selector"):
             self.selector.close()
         if hasattr(self, "_log"):
             self._log.close()
+        if hasattr(self, 'process'):
+            (self.work_dir / 'backend_rpc_summary.json').write_text(json.dumps(dict(
+                submission_batch_size=self.submission_batch_size,
+                submission_commands=self._submission_commands,
+                submission_batches=self._submission_batches,
+                barrier_commands=self._barrier_commands,
+                synchronous_exchanges=self._submission_batches+self._barrier_commands,
+                time_ns=self.now_ns), indent=2)+'\n')
 
     def __enter__(self):
         return self

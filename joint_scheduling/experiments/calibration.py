@@ -5,7 +5,7 @@ import hashlib
 from collections import defaultdict
 from pathlib import Path
 
-from ..backend.runtime import read_json
+from ..validation import read_json
 
 
 def _same_explicit_fields(expected, actual):

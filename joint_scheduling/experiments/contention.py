@@ -15,9 +15,6 @@ from dataclasses import replace
 from pathlib import Path
 
 from ..config import load_config
-from ..backend.runner import run_baseline
-from ..backend.execution import RuntimeHooks
-from ..backend.client import Ns3Backend
 from ..backend.compute_profile import profile_kind
 from .provenance import freeze_source, record_run, write_json, sha256
 
@@ -110,6 +107,8 @@ class Probe:
         self.previous=state
 
 def baseline(out,config,source_snapshot):
+    from ..backend.runner import run_baseline
+    from ..backend.execution import RuntimeHooks
     profile=config.profile_path()
     workload=json.loads(Path(config.runtime.workload_path).read_text())
     probe=Probe(config)
@@ -140,6 +139,7 @@ def baseline(out,config,source_snapshot):
 
 def replay(out,config,probe,keep):
     """Native network replay at frozen starts; no scheduler or GPU changes."""
+    from ..backend.client import Ns3Backend
     end=array('q',[-1])*len(probe.flows);completed=0;selected=0;next_progress=time.monotonic()+15
     baseline_ack=[r[1] for r in probe.flows]
     # Identify frozen traffic and source; this run never executes GPU/request scheduling.
@@ -233,7 +233,7 @@ def validate_plan(plan):
     if len(plan['runs'])!=1 or plan['generator_spec'] is not None or 'comparison_audit' not in plan:
         raise ValueError('frozen replay requires one audited case/seed and a fixed workload')
     raw=copy.deepcopy(plan['base_config'])
-    from .runner import _set
+    from .parameters import set_override as _set
     for key,value in plan['runs'][0]['parameters'].items():_set(raw,key,value)
     if (not raw.get('expert_parallel',{}).get('enabled') or raw['runtime'].get('network_priority_enabled')
             or not raw['feedback'].get('network_observation_enabled')
@@ -249,7 +249,7 @@ def validate_plan(plan):
         raise ValueError('contention replay needs KV-producing requests')
 
 
-def run_contention(plan, output_dir, progress=None):
+def run_contention(plan, output_dir, progress=None, *, execution=None):
     """One specification runs live baseline, three replays, comparison and report."""
     validate_plan(plan)
     output=Path(output_dir).resolve()
@@ -259,9 +259,11 @@ def run_contention(plan, output_dir, progress=None):
         raise ValueError('contention inputs changed before freezing')
     output.mkdir(parents=True,exist_ok=False);inputs=output/'inputs';inputs.mkdir()
     write_json(output/'plan.json',plan);write_json(output/'comparison_audit.json',plan['comparison_audit'])
+    if execution is not None:
+        write_json(output/'execution.json',execution)
     (inputs/'compute_profile.json').write_bytes(profile);(inputs/'workload.json').write_bytes(workload)
     source=freeze_source(inputs/'source',(output,))
-    raw=copy.deepcopy(plan['base_config']);from .runner import _set
+    raw=copy.deepcopy(plan['base_config']);from .parameters import set_override as _set
     for key,value in plan['runs'][0]['parameters'].items():_set(raw,key,value)
     raw['runtime'].update(seed=plan['runs'][0]['seed'],workload_path=str(inputs/'workload.json'))
     raw['feedback']['compute_profile_path']=str(inputs/'compute_profile.json')
@@ -284,6 +286,8 @@ def run_contention(plan, output_dir, progress=None):
             interpretation='Transport attribution only. Read run/result/summary.json for live request metrics.',
             comparison='comparison.json',live_result='run/result/summary.json')
         report['request_count']=len(json.loads(workload)['requests'])
+        if execution is not None:
+            report['execution'] = execution
         write_json(output/'summary.json',report)
         (output/'report.md').write_text('# EP/KV 竞争诊断\n\n'
             f"端到端阶段：{report['request_count']} 请求，{len(probe.flows)} 条跨节点流。\n\n"

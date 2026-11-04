@@ -1,10 +1,31 @@
 """KVRuntime: explicit runtime component; scheduling order preserved."""
 from dataclasses import asdict
+from ...kv_scheduler.adaptive import AdaptiveKVPolicy, NetworkResources
+from ...kv_scheduler.mlu import MLUKVPolicy
+from ...observation.network import NetworkObserver, StaticNetworkObserver
+from ..settings import CONTROLLED_KV_MODES
 from .component import RuntimeComponent
 
 
 class KVRuntime(RuntimeComponent):
     owned_fields = frozenset(['dispatch_at', 'dispatch_generation', 'kv_mode', 'mlu_enabled', 'network_monitor', 'scheduler'])
+
+    def init_kv_state(self):
+        self.network_monitor, self.scheduler = None, None
+        self.dispatch_generation, self.dispatch_at = 0, None
+        if self.config.feedback.network_observation_enabled or self.kv_mode in CONTROLLED_KV_MODES:
+            self.network_monitor = (NetworkObserver(self.backend, self.config.topology, self.config.feedback, self.observer.output,
+                                                      record_samples=self.config.recording.detailed, sample_sink=self.hooks.network_sample)
+                                    if self.config.feedback.network_observation_enabled else StaticNetworkObserver(self.backend, self.config.topology))
+            if self.kv_mode in CONTROLLED_KV_MODES:
+                resources = NetworkResources(self.config.topology, self.network_monitor.initial["resources"])
+                policy_class = MLUKVPolicy if self.mlu_enabled else AdaptiveKVPolicy
+                self.scheduler = policy_class(self.config.kv_scheduler, resources,
+                    "slo" if self.kv_mode == "layer_ready_slo" and self.config.kv_scheduler.slo_priority_enabled else "fifo",
+                    decision_delay_seconds=self.config.feedback.scheduling_overhead_us/1e6,
+                    **(dict(observation_delay_seconds=self.config.feedback.observation_delay_us/1e6) if self.mlu_enabled else {}))
+            if self.config.feedback.network_observation_enabled:
+                self.schedule_network_sample()
 
     def schedule_network_sample(self):
         at = self.backend.now_seconds() + self.config.feedback.network_observation_interval_us / 1e6

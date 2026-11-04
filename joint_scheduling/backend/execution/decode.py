@@ -6,6 +6,12 @@ from .component import RuntimeComponent
 class DecodeRuntime(RuntimeComponent):
     owned_fields = frozenset(['active_decode_batches', 'decode_batch_completed', 'decode_batch_counter', 'decode_batch_histogram'])
 
+    def init_decode_state(self):
+        self.active_decode_batches = {}
+        self.decode_batch_counter = 0
+        self.decode_batch_completed = 0
+        self.decode_batch_histogram = {}
+
     def maybe_start_decode(self, row):
         expected = row["input_tokens"] * self.profile.kv_bytes_per_token
         if not row["prefill_finished"] or row["kv_received_bytes"] != expected or row["decode_enqueued"]:

@@ -3,6 +3,8 @@
 These adapters retain the original algorithms; they own their private state.
 Cross-component calls use RuntimeComponent instead of a shared inheritance tree.
 """
+from collections import deque
+
 from .component import RuntimeComponent
 from ..expert_parallel import ExpertParallelMixin
 from ...binding.runtime import BindingRuntime
@@ -15,3 +17,11 @@ class BindingController(BindingRuntime, RuntimeComponent):
 
 class InstanceState(RuntimeComponent):
     owned_fields = frozenset(['active_by_instance', 'busy', 'decodes', 'instances', 'prefills', 'queues'])
+
+    def init_instance_state(self):
+        self.instances = {p.instance_id: p for p in self.config.topology.placements}
+        self.prefills = [p.instance_id for p in self.config.topology.placements if p.role == "prefill"]
+        self.decodes = [p.instance_id for p in self.config.topology.placements if p.role == "decode"]
+        self.active_by_instance = {}
+        self.queues = {key: deque() for key in self.instances}
+        self.busy = {key: False for key in self.instances}

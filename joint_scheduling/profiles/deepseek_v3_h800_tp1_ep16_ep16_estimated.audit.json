@@ -1,0 +1,614 @@
+{
+  "status": "estimated_simulation_profile",
+  "modeling_scope": "simulation_compute_costs",
+  "model": "deepseek-ai/DeepSeek-V3",
+  "gpu": "NVIDIA H800",
+  "tp_size": 1,
+  "ep_size": null,
+  "layers": 61,
+  "moe_layers": 58,
+  "routed_experts": 256,
+  "top_k": 8,
+  "routing_policy": {
+    "kind": "balanced_group_limited_periodic",
+    "n_group": 8,
+    "topk_group": 4,
+    "period_tokens": 2240,
+    "experts_per_selected_group": 2,
+    "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing"
+  },
+  "parameter_count": 670919973888,
+  "weights_bytes_per_gpu": 59748544176,
+  "weights_gib_per_gpu": 55.645167991518974,
+  "kv_bytes_per_token_per_gpu": 70272,
+  "kv_bytes_per_token_per_tp_team": 70272,
+  "exported_coverage": {
+    "max_context": 16384,
+    "max_prefill_chunk_tokens": 512,
+    "max_prefill_batch_tokens": 2048,
+    "max_decode_batch_size": 64
+  },
+  "source_anchors": {
+    "schema_version": 1,
+    "model": "deepseek-ai/DeepSeek-V3",
+    "gpu": "NVIDIA H800",
+    "source_kind": "official_H800_CUDA_kernel_anchors",
+    "sources": [
+      {
+        "path": "/home/m0nesy/Documents/Codex/2026-11-01/home-m0nesy-postgraduate-inference/work/moe-profile-sources/prefill.json",
+        "sha256": "1078dd96ba9d28e23ca0a5e50107024850cc7a9722ac4b0a4ca35d960738dc79",
+        "source_url": "https://raw.githubusercontent.com/deepseek-ai/profile-data/449602428a1b023acb8a505d4f34fef536535db6/prefill.json"
+      },
+      {
+        "path": "/home/m0nesy/Documents/Codex/2026-11-01/home-m0nesy-postgraduate-inference/work/moe-profile-sources/decode.json",
+        "sha256": "6dd02bfb01ac2e0881f77003f8d8b20420c48d769df863e709623654e9ebfb62",
+        "source_url": "https://raw.githubusercontent.com/deepseek-ai/profile-data/449602428a1b023acb8a505d4f34fef536535db6/decode.json"
+      }
+    ],
+    "observations": {
+      "prefill": {
+        "tp_size": 1,
+        "expert_timing_tp": 1,
+        "ep_size": 32,
+        "tokens": 8192,
+        "context_tokens": 4096,
+        "expert_assignments": 65536,
+        "active_experts": 8,
+        "roles_seconds": {
+          "attention_projection": 0.0035824999999999997,
+          "attention_core": 0.002777,
+          "dense_mlp": 0.0052474999999999996,
+          "shared_mlp": 0.0007855,
+          "router": 0.000165,
+          "norm": 0.000423,
+          "expert": 0.006161
+        }
+      },
+      "decode": {
+        "tp_size": 1,
+        "expert_timing_tp": 1,
+        "ep_size": 128,
+        "tokens": 64,
+        "context_tokens": 4096,
+        "expert_assignments": 512,
+        "active_experts": 2,
+        "roles_seconds": {
+          "attention_projection": 0.00011999999999999999,
+          "attention_core": 0.000253,
+          "dense_mlp": 0.00022499999999999997,
+          "shared_mlp": 3.1e-05,
+          "router": 1.2e-05,
+          "norm": 9e-06,
+          "expert": 0.000126
+        }
+      }
+    },
+    "extraction": {
+      "prefill": {
+        "selected": [
+          {
+            "role": "norm",
+            "kernel": "_layer_norm_kernel",
+            "count": 367,
+            "median_seconds": 0.00014099999999999998
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<2112u, 7168u, 128u, 128u, 128u, 5u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 122,
+            "median_seconds": 0.000261
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<24576u, 1536u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 122,
+            "median_seconds": 0.0008404999999999999
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void vllm::rotary_embedding_with_kv_cache_kernel<c10::BFloat16, false, false, true, 32>(long const*, c10::BFloat16*, c10::BFloat16*, c10::BFloat16*, c10::BFloat16*, c10::BFloat16*, long const*, float const*, int, int, int, int, int, int, long, long, long, long, long, long, long, long, long)",
+            "count": 122,
+            "median_seconds": 0.00025299999999999997
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void cutlass::device_kernel<dpsk::grouped_gemm::cuda::fp8_ptp128c_outfmt_head::GemmKernel>(dpsk::grouped_gemm::cuda::fp8_ptp128c_outfmt_head::GemmKernel::Params)",
+            "count": 122,
+            "median_seconds": 0.000554
+          },
+          {
+            "role": "attention_core",
+            "kernel": "void flash::compute_attn_ws<Flash_fwd_kernel_traits<192, 128, 128, 12, 2, false, 1, cutlass::bfloat16_t, 128>, true, flash::SingleTileScheduler, flash::SeqLenTraits<true> >(flash::CollectiveMainloopFwd<Flash_fwd_kernel_traits<192, 128, 128, 12, 2, false, 1, cutlass::bfloat16_t, 128>, true, flash::SeqLenTraits<true> >::Params, flash::CollectiveEpilogueFwd<Flash_fwd_kernel_traits<192, 128, 128, 12, 2, false, 1, cutlass::bfloat16_t, 128>, flash::SeqLenTraits<true> >::Params, flash::SingleTileScheduler::Params, flash::SeqLenTraits<true>, flash::SeqLenTraits<true>)",
+            "count": 122,
+            "median_seconds": 0.002777
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 16384u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 122,
+            "median_seconds": 0.001674
+          },
+          {
+            "role": "dense_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<36864u, 7168u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 6,
+            "median_seconds": 0.0033215
+          },
+          {
+            "role": "dense_mlp",
+            "kernel": "void cuda::swiglu_forward_with_weight_and_per_token_cast_to_fp8_with_channels_impl<__nv_bfloat16, false, true, 128>(unsigned char*, __nv_bfloat16 const*, int const*, float const*, int, int, float*, int const*, float, __nv_fp8_interpretation_t)",
+            "count": 6,
+            "median_seconds": 0.000278
+          },
+          {
+            "role": "dense_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 18432u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 6,
+            "median_seconds": 0.001648
+          },
+          {
+            "role": "router",
+            "kernel": "sm90_xmma_gemm_bf16f32_bf16f32_f32_tn_n_tilesize128x256x64_warpgroupsize2x1x1_execute_segment_k_off_kernel__5x_cublas",
+            "count": 116,
+            "median_seconds": 8.9e-05
+          },
+          {
+            "role": "router",
+            "kernel": "void cuda::top2_sum_gate<32, 8, 256, 8, 4>(float const*, float const*, long*, float*, bool const*, int const*, int const*, int, int, int, float, int, int, int, int)",
+            "count": 116,
+            "median_seconds": 7.599999999999999e-05
+          },
+          {
+            "role": "expert",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<4096u, 7168u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)1>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 0.0034929999999999996
+          },
+          {
+            "role": "expert",
+            "kernel": "void cuda::swiglu_forward_with_weight_and_per_token_cast_to_fp8_with_channels_impl<__nv_bfloat16, false, true, 128>(unsigned char*, __nv_bfloat16 const*, int const*, float const*, int, int, float*, int const*, float, __nv_fp8_interpretation_t)",
+            "count": 116,
+            "median_seconds": 0.000319
+          },
+          {
+            "role": "expert",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 2048u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)1>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 0.002349
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<4096u, 7168u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 0.0004385
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void cuda::swiglu_forward_with_weight_and_per_token_cast_to_fp8_with_channels_impl<__nv_bfloat16, false, true, 128>(unsigned char*, __nv_bfloat16 const*, int const*, float const*, int, int, float*, int const*, float, __nv_fp8_interpretation_t)",
+            "count": 116,
+            "median_seconds": 4.1e-05
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 2048u, 128u, 128u, 128u, 5u, 128u, 128u, 2u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 0.000306
+          }
+        ],
+        "excluded_communication_kernels": 602,
+        "excluded_other_kernels": 1464,
+        "source_trace_name": "./dsv3-600B-tp1-ep32-input4096-output1-bs16384-split1-sm24.json",
+        "components": [
+          {
+            "role": "norm",
+            "component": "_layer_norm_kernel",
+            "count": 367,
+            "median_seconds": 0.00014099999999999998
+          },
+          {
+            "role": "attention_projection",
+            "component": "gemm:2112:7168",
+            "count": 122,
+            "median_seconds": 0.000261
+          },
+          {
+            "role": "attention_projection",
+            "component": "gemm:24576:1536",
+            "count": 122,
+            "median_seconds": 0.0008404999999999999
+          },
+          {
+            "role": "attention_projection",
+            "component": "rope_and_kv_save",
+            "count": 122,
+            "median_seconds": 0.00025299999999999997
+          },
+          {
+            "role": "attention_projection",
+            "component": "kv_expansion",
+            "count": 122,
+            "median_seconds": 0.000554
+          },
+          {
+            "role": "attention_core",
+            "component": "attention",
+            "count": 122,
+            "median_seconds": 0.002777
+          },
+          {
+            "role": "attention_projection",
+            "component": "gemm:7168:16384",
+            "count": 122,
+            "median_seconds": 0.001674
+          },
+          {
+            "role": "dense_mlp",
+            "component": "gemm:36864:7168",
+            "count": 6,
+            "median_seconds": 0.0033215
+          },
+          {
+            "role": "dense_mlp",
+            "component": "activation",
+            "count": 6,
+            "median_seconds": 0.000278
+          },
+          {
+            "role": "dense_mlp",
+            "component": "gemm:7168:18432",
+            "count": 6,
+            "median_seconds": 0.001648
+          },
+          {
+            "role": "router",
+            "component": "router_projection",
+            "count": 116,
+            "median_seconds": 8.9e-05
+          },
+          {
+            "role": "router",
+            "component": "topk_gate",
+            "count": 116,
+            "median_seconds": 7.599999999999999e-05
+          },
+          {
+            "role": "expert",
+            "component": "gemm:4096:7168",
+            "count": 116,
+            "median_seconds": 0.0034929999999999996
+          },
+          {
+            "role": "expert",
+            "component": "activation",
+            "count": 116,
+            "median_seconds": 0.000319
+          },
+          {
+            "role": "expert",
+            "component": "gemm:7168:2048",
+            "count": 116,
+            "median_seconds": 0.002349
+          },
+          {
+            "role": "shared_mlp",
+            "component": "gemm:4096:7168",
+            "count": 116,
+            "median_seconds": 0.0004385
+          },
+          {
+            "role": "shared_mlp",
+            "component": "activation",
+            "count": 116,
+            "median_seconds": 4.1e-05
+          },
+          {
+            "role": "shared_mlp",
+            "component": "gemm:7168:2048",
+            "count": 116,
+            "median_seconds": 0.000306
+          }
+        ],
+        "duration_unit": "microseconds",
+        "aggregation": "Median per semantic compute component across alternate launch configurations, then sum component medians; not elapsed wall time. Norm component multiplied by three."
+      },
+      "decode": {
+        "selected": [
+          {
+            "role": "norm",
+            "kernel": "_layer_norm_kernel",
+            "count": 364,
+            "median_seconds": 3e-06
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<2112u, 7168u, 128u, 32u, 128u, 8u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 120,
+            "median_seconds": 1.3e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<24576u, 1536u, 128u, 128u, 128u, 5u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 4,
+            "median_seconds": 2.5499999999999996e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void cutlass::Kernel<cutlass_80_tensorop_bf16_s16816gemm_bf16_128x128_64x3_nn_align8>(cutlass_80_tensorop_bf16_s16816gemm_bf16_128x128_64x3_nn_align8::Params)",
+            "count": 120,
+            "median_seconds": 1.6e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void vllm::rotary_embedding_with_kv_cache_kernel<c10::BFloat16, false, true, false, 32>(long const*, c10::BFloat16*, c10::BFloat16*, c10::BFloat16*, c10::BFloat16*, c10::BFloat16*, long const*, float const*, int, int, int, int, int, int, long, long, long, long, long, long, long, long, long)",
+            "count": 120,
+            "median_seconds": 7e-06
+          },
+          {
+            "role": "attention_core",
+            "kernel": "void flash::flash_fwd_splitkv_mla_kernel<Flash_fwd_kernel_traits_mla<576, 64, 64, 8, cutlass::bfloat16_t, 512, true, 0, cutlass::bfloat16_t, cutlass::bfloat16_t>, true, flash::SharedStorageMLA<Flash_fwd_kernel_traits_mla<576, 64, 64, 8, cutlass::bfloat16_t, 512, true, 0, cutlass::bfloat16_t, cutlass::bfloat16_t> > >(Flash_fwd_mla_params)",
+            "count": 120,
+            "median_seconds": 0.000242
+          },
+          {
+            "role": "attention_core",
+            "kernel": "void flash::flash_fwd_splitkv_mla_combine_kernel<cutlass::bfloat16_t, float, long, 512, 64>(Flash_fwd_mla_params)",
+            "count": 120,
+            "median_seconds": 1.1e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void cutlass::Kernel<cutlass_80_tensorop_bf16_s16816gemm_bf16_128x128_64x3_tn_align8>(cutlass_80_tensorop_bf16_s16816gemm_bf16_128x128_64x3_tn_align8::Params)",
+            "count": 120,
+            "median_seconds": 1.4999999999999999e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 16384u, 128u, 112u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 4,
+            "median_seconds": 5.4999999999999995e-05
+          },
+          {
+            "role": "dense_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<36864u, 7168u, 128u, 112u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 3,
+            "median_seconds": 0.00013199999999999998
+          },
+          {
+            "role": "dense_mlp",
+            "kernel": "void cuda::swiglu_forward_with_weight_and_per_token_cast_to_fp8_with_channels_impl<__nv_bfloat16, false, true, 128>(unsigned char*, __nv_bfloat16 const*, int const*, float const*, int, int, float*, int const*, float, __nv_fp8_interpretation_t)",
+            "count": 3,
+            "median_seconds": 3.2999999999999996e-05
+          },
+          {
+            "role": "dense_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 18432u, 128u, 112u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 3,
+            "median_seconds": 5.9999999999999995e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<24576u, 1536u, 128u, 96u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 1.8999999999999998e-05
+          },
+          {
+            "role": "attention_projection",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 16384u, 128u, 56u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 4.9999999999999996e-05
+          },
+          {
+            "role": "router",
+            "kernel": "void cutlass::Kernel<cutlass_80_tensorop_s16816gemm_bf16_128x64_64x4_tn_align8>(cutlass_80_tensorop_s16816gemm_bf16_128x64_64x4_tn_align8::Params)",
+            "count": 117,
+            "median_seconds": 6e-06
+          },
+          {
+            "role": "router",
+            "kernel": "void cuda::top2_sum_gate<32, 8, 256, 8, 4>(float const*, float const*, long*, float*, bool const*, int const*, int const*, int, int, int, float, int, int, int, int)",
+            "count": 117,
+            "median_seconds": 6e-06
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<4096u, 7168u, 128u, 32u, 128u, 8u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 1.7e-05
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void cuda::swiglu_forward_with_weight_and_per_token_cast_to_fp8_with_channels_impl<__nv_bfloat16, false, true, 128>(unsigned char*, __nv_bfloat16 const*, int const*, float const*, int, int, float*, int const*, float, __nv_fp8_interpretation_t)",
+            "count": 117,
+            "median_seconds": 4e-06
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 2048u, 128u, 56u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 116,
+            "median_seconds": 9.999999999999999e-06
+          },
+          {
+            "role": "expert",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<4096u, 7168u, 128u, 112u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)2>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 118,
+            "median_seconds": 7.9e-05
+          },
+          {
+            "role": "expert",
+            "kernel": "void cuda::batched_swiglu_forward_and_per_token_cast_to_fp8_with_channels_impl<__nv_bfloat16, 128, 512, true, 128>(unsigned char*, __nv_bfloat16 const*, int, int, int, float*, int const*, float, __nv_fp8_interpretation_t)",
+            "count": 118,
+            "median_seconds": 8e-06
+          },
+          {
+            "role": "expert",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 2048u, 128u, 112u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)2>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 118,
+            "median_seconds": 3.9e-05
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<4096u, 7168u, 128u, 64u, 128u, 8u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 1,
+            "median_seconds": 2.1e-05
+          },
+          {
+            "role": "shared_mlp",
+            "kernel": "void dpsk::gemm::fp8_gemm_kernel<7168u, 2048u, 128u, 112u, 128u, 6u, 128u, 128u, 1u, (dpsk::gemm::GemmType)0>(__nv_bfloat16*, float*, int*, unsigned int, unsigned int, unsigned int, unsigned int, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st, CUtensorMap_st)",
+            "count": 1,
+            "median_seconds": 1.1e-05
+          }
+        ],
+        "excluded_communication_kernels": 473,
+        "excluded_other_kernels": 902,
+        "source_trace_name": "./decode-debug-rank0.json",
+        "components": [
+          {
+            "role": "norm",
+            "component": "_layer_norm_kernel",
+            "count": 364,
+            "median_seconds": 3e-06
+          },
+          {
+            "role": "attention_projection",
+            "component": "gemm:2112:7168",
+            "count": 120,
+            "median_seconds": 1.3e-05
+          },
+          {
+            "role": "attention_projection",
+            "component": "gemm:24576:1536",
+            "count": 120,
+            "median_seconds": 1.8999999999999998e-05
+          },
+          {
+            "role": "attention_projection",
+            "component": "q_bmm",
+            "count": 120,
+            "median_seconds": 1.6e-05
+          },
+          {
+            "role": "attention_projection",
+            "component": "rope_and_kv_save",
+            "count": 120,
+            "median_seconds": 7e-06
+          },
+          {
+            "role": "attention_core",
+            "component": "attention",
+            "count": 120,
+            "median_seconds": 0.000242
+          },
+          {
+            "role": "attention_core",
+            "component": "attention_combine",
+            "count": 120,
+            "median_seconds": 1.1e-05
+          },
+          {
+            "role": "attention_projection",
+            "component": "v_bmm",
+            "count": 120,
+            "median_seconds": 1.4999999999999999e-05
+          },
+          {
+            "role": "attention_projection",
+            "component": "gemm:7168:16384",
+            "count": 120,
+            "median_seconds": 4.9999999999999996e-05
+          },
+          {
+            "role": "dense_mlp",
+            "component": "gemm:36864:7168",
+            "count": 3,
+            "median_seconds": 0.00013199999999999998
+          },
+          {
+            "role": "dense_mlp",
+            "component": "activation",
+            "count": 3,
+            "median_seconds": 3.2999999999999996e-05
+          },
+          {
+            "role": "dense_mlp",
+            "component": "gemm:7168:18432",
+            "count": 3,
+            "median_seconds": 5.9999999999999995e-05
+          },
+          {
+            "role": "router",
+            "component": "router_projection",
+            "count": 117,
+            "median_seconds": 6e-06
+          },
+          {
+            "role": "router",
+            "component": "topk_gate",
+            "count": 117,
+            "median_seconds": 6e-06
+          },
+          {
+            "role": "shared_mlp",
+            "component": "gemm:4096:7168",
+            "count": 117,
+            "median_seconds": 1.7e-05
+          },
+          {
+            "role": "shared_mlp",
+            "component": "activation",
+            "count": 117,
+            "median_seconds": 4e-06
+          },
+          {
+            "role": "shared_mlp",
+            "component": "gemm:7168:2048",
+            "count": 117,
+            "median_seconds": 9.999999999999999e-06
+          },
+          {
+            "role": "expert",
+            "component": "gemm:4096:7168",
+            "count": 118,
+            "median_seconds": 7.9e-05
+          },
+          {
+            "role": "expert",
+            "component": "activation",
+            "count": 118,
+            "median_seconds": 8e-06
+          },
+          {
+            "role": "expert",
+            "component": "gemm:7168:2048",
+            "count": 118,
+            "median_seconds": 3.9e-05
+          }
+        ],
+        "duration_unit": "microseconds",
+        "aggregation": "Median per semantic compute component across alternate launch configurations, then sum component medians; not elapsed wall time. Norm component multiplied by three."
+      }
+    },
+    "source_revision": "449602428a1b023acb8a505d4f34fef536535db6"
+  },
+  "limitations": [
+    "Simulation TP/EP, context and batch grids are analytically scaled from source anchors; no statistical error bound is inferred.",
+    "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.",
+    "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
+    "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.",
+    "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
+    "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
+    "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
+    "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget."
+  ],
+  "ep_sizes_by_phase": {
+    "prefill": 16,
+    "decode": 16
+  },
+  "weights_bytes_per_gpu_by_phase": {
+    "prefill": 59748544176,
+    "decode": 59748544176
+  },
+  "weights_gib_per_gpu_by_phase": {
+    "prefill": 55.645167991518974,
+    "decode": 55.645167991518974
+  }
+}

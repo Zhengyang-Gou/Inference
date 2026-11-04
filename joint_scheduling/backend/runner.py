@@ -4,10 +4,12 @@ import json
 from dataclasses import asdict, replace
 from pathlib import Path
 
-from .expert_parallel import validate_profile as validate_ep_profile
+from .expert_profile import validate_profile as validate_ep_profile
 from .build import require_backend
 from .client import Ns3Backend
-from .runtime import ComputeProfile, KV_TRANSFER_MODES, CONTROLLED_KV_MODES, load_workload
+from .compute_profile import ComputeProfile
+from .settings import KV_TRANSFER_MODES, CONTROLLED_KV_MODES
+from ..workload.inputs import load_workload
 from ..evaluation import TraceRecorder, analyze_trace
 from ..evaluation.export import export_result
 from ..evaluation.pressure import summarize_pressure
@@ -154,7 +156,8 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
     with Ns3Backend(config.topology, output / "network", config.runtime.seed,
                     config.runtime.congestion_control, config.runtime.packet_payload_bytes,
                     config.runtime.switch_buffer_bytes, config.runtime.rpc_timeout_seconds,
-                    network_priority_enabled=config.runtime.network_priority_enabled) as backend:
+                    network_priority_enabled=config.runtime.network_priority_enabled,
+                    submission_batch_size=config.runtime.rpc_submission_batch_size) as backend:
         metadata = {"synthetic": profile.provenance["synthetic"] or workload_provenance["synthetic"],
                     "backend": backend.metadata, "compute_profile_provenance": profile.provenance,
                     "workload_provenance": workload_provenance, "effective_baseline": snapshot["effective_baseline"],
@@ -177,9 +180,10 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
                     components={name:sorted(component.owned_fields)
                                 for name,component in baseline.components.items()}),indent=2)+'\n')
                 baseline.capture("initial")
-                for row in requests:
-                    if row["arrival_seconds"] <= config.runtime.time_limit_seconds:
-                        backend.call_at(row["arrival_seconds"], lambda rid=row["request_id"]: baseline.arrive(rid))
+                with backend.submission_batch():
+                    for row in requests:
+                        if row["arrival_seconds"] <= config.runtime.time_limit_seconds:
+                            backend.call_at(row["arrival_seconds"], lambda rid=row["request_id"]: baseline.arrive(rid))
                 backend.run_until(config.runtime.time_limit_seconds)
                 baseline.capture("simulation_end")
                 observer.finish()

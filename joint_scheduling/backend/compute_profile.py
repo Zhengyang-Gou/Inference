@@ -2,7 +2,7 @@
 import math
 from pathlib import Path
 from ..validation import require_mapping
-from .inputs import read_json, number
+from ..validation import read_json, number
 
 
 def profile_kind(provenance):
@@ -96,7 +96,7 @@ class ComputeProfile:
         if "expert_parallel" in self.raw:
             if not self.layered:
                 raise ValueError("EP requires a layered schema 2 compute profile")
-            from .expert_parallel import ExpertProfile
+            from .expert_profile import ExpertProfile
             self.expert = ExpertProfile(self.raw["expert_parallel"], len(self.phases["prefill"]["layers"]))
 
     def weights_for_phase(self, phase):

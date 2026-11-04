@@ -126,8 +126,12 @@ def write_suite_report(output, report):
     """A short human-readable index; numeric authority remains summary.json."""
     output=Path(output)
     lines=['# 端到端策略对照', '', '类型：`end_to_end`。网络反馈会影响后续执行。', '',
-           f"成功 {report['successful_runs']} / {report['total_runs']} 次，失败 {report['failed_runs']} 次。", '',
-           '| case | 成功 | SLO goodput 均值（请求/秒） |', '| --- | ---: | ---: |']
+           f"成功 {report['successful_runs']} / {report['total_runs']} 次，失败 {report['failed_runs']} 次。", '']
+    execution = report.get('execution')
+    if execution:
+        mode = '多进程' if execution['mode'] == 'multiprocess' else '串行'
+        lines.extend([f"执行方式：{mode}，独立实验并发上限 {execution['max_workers']}（请求 {execution['requested_jobs']}）。", ''])
+    lines.extend(['| case | 成功 | SLO goodput 均值（请求/秒） |', '| --- | ---: | ---: |'])
     for case in report['cases']:
         value=case['metrics']['slo_goodput_rps']['mean']
         lines.append(f"| {case['case_id']} | {case['successful_runs']} | {value if value is not None else '无有效样本'} |")

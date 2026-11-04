@@ -47,4 +47,6 @@ observation/
 
 feedback.network_observation_enabled=true 时增加显式周期采样，两种记录模式都向调度器提供相同的延迟可见快照。默认只输出 `network_summary.json`，包含最后采样的端口累计计数及采样峰值；debug 模式额外输出 `network_samples.jsonl`。采样数据包括端口分类发送字节、队列、PFC 暂停、平滑后的速率和 QP ACK 进度；节点内链路为已有 FIFO 模型的服务进度。NetworkObserver.latest_observed() 同样仅返回延迟后可见的最新快照。
 
+静态本地端口模板只在初始化时构造。仅当端口原始字段未变、全部平滑速率为零且 PFC 增量为零时，复用上一采样的计算结果；非零速率仍逐次衰减，队列、容量或计数变化仍完整计算。各次快照保持独立，采样周期、可见延迟及调度输入不变。
+
 字节在包开始发送时计入，含包头，极短窗口利用率可略高于 1；它与普通 StateObserver 的整条逻辑消息在途字节是两种口径。动态模式的 KV 额度、请求 SLO 余量和阻塞原因见 kv_scheduling_decision 事件，调度汇总见 kv_scheduler_summary.json。具体算法见 ../kv_scheduler/README.md。

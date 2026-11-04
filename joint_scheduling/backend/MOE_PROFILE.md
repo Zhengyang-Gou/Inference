@@ -1,6 +1,6 @@
 # DeepSeek-V3 H800 profile
 
-主研究使用 `../profiles/deepseek_v3_h800_tp1_ep32_ep128_estimated.json`：TP1、P-EP32 / D-EP128，EP rank 对应 GPU。Attention 分别为 DP32、DP128，与专家使用同一批 GPU。
+主研究使用 `../profiles/deepseek_v3_h800_tp1_ep16_ep16_estimated.json`：32 GPU、P16/D16、TP1，两侧 Attention DP16 / Expert EP16，与专家使用同一批 GPU。EP rank 对应 GPU。原 `ep32_ep128` profile 继续用于 160 GPU 参考布局。
 这是**公开 H800 计算采样推导的估算模型**，`synthetic=true`、`profile_kind=estimated_simulation_profile` 始终保留。
 旧 `deepseek_v3_h800_tp4_ep8_estimated.json` 和 128 GPU 配置保留用于回归与独立对照。
 两层 EP fixtures 继续仅用于快速功能测试，不作为这个模型的来源。
@@ -18,7 +18,7 @@
 - Decode 参考：EP128/TP1、4K prompt、每 GPU batch 128、两个 micro-batch；
   每 micro-batch 64 tokens，均衡路由下每 GPU 512 assignments、2 个专家。
 
-当前执行器没有复刻原引擎的双 micro-batch 重叠和 gate，目标仿真使用下述显式代价假设。
+当前执行器没有复刻原引擎的双 micro-batch 重叠和学习式 gate 评分；显式路由现遵守模型的 8 组／最多 4 组约束，目标仿真使用下述代价假设。真实部署依据及 32/48 GPU 候选见 [部署调研](DEPLOYMENT_RESEARCH.md)。
 
 ## 生成与复现
 
@@ -29,7 +29,7 @@
   --model-config third_party/vidur/data/hf_configs/deepseek_v3_config.json \
   --prefill-trace /absolute/source/prefill.json \
   --decode-trace /absolute/source/decode.json \
-  --tp 1 --prefill-ep 32 --decode-ep 128 --max-context 16384 \
+  --tp 1 --prefill-ep 16 --decode-ep 16 --max-context 16384 \
   --prefill-chunk-tokens 512 --prefill-batch-token-budget 2048 \
   --decode-batch-size 64 --output /absolute/new-profile.json
 ```
@@ -53,18 +53,20 @@ NCCL 不进入 compute time，网络由 ns-3 独立执行。
 - 专家计算拟合 `a * assignments + b * active_experts`，两项由 P/D 参考共同确定后按目标 TP 分摊。
   执行时只对目标切片中非零 expert ID 收第二项，避免把整个 EP group 的专家全算作已访问。
 - 前 3 层 dense MLP 和其余层 shared MLP 使用独立曲线，chunk `layer_overrides` 保留这一差异。
-- 周期均衡 top-8 路由是实验假设；Azure 不提供专家 ID，不能声称复现真实 gate 或数据相关热点。
+- 周期均衡 top-8 路由遵守 `n_group=8`、`topk_group=4`，覆盖 70 种组组合、2240 token；每个入选组固定 2 个不同专家，完整周期每专家 70 次 assignment。互补组交错以平衡短请求的组需求。组评分、组内选择及 Azure 请求相关热点仍为实验假设。
 
 16K 是**仿真代价曲线覆盖范围**。研究通过离线数据检验、参数敏感性和请求/字节守恒评估模型假设。
 当前 Decode 仍执行 aggregate dense step 后再执行 MoE 层，未复刻真实层间交错。
+
+FreeInference 单独使用 `deepseek_v3_h800_tp1_ep16_ep16_160k_estimated.json`。它以同一组已冻结的官方 4K H800 计算锚点生成，TP1/EP16/16、chunk 512、packed budget 2048、Decode batch 64，上下文网格扩到仓库模型配置允许的 163840；权重、KV 字节和路由不变。该网格完全覆盖已导入的 1192 请求样本，长上下文部分仍是解析外推，不是新增测量。原 16K profile 与引用它的 Azure 规格保持原身份。来源、审计和 FreeInference 规格见 [输入说明](../../data/freeinference/README.md)。
 
 ## KV 和权重
 
 MLA 每层每 GPU 保存 BF16 的 512 维 compressed latent + 64 维 rotary key，即 1152 B/token，61 层合计 70272 B/token。主研究 TP1 仅一份物理 KV，P→D 的初始 payload 为输入长度×70272 B。旧 TP4 模式保留四份副本的原核算规则。
 
-权重估算：非 routed 参数按 TP 分片，routed 参数按该阶段 EP×TP 分片；矩阵 FP8、每 128×128 block 一个 FP32 scale、embedding/norm BF16。主 profile 的 `weights_bytes_per_gpu_by_phase` 分别为 P 39308906160 B（36.6093 GiB）、D 23979177648 B（22.3323 GiB）；显存账本按 GPU 角色扣除对应值。旧标量 `weights_bytes_per_gpu` 在分阶段 profile 中取两者最大值供兼容读取，不作为 D 的实际容量扣减。
+权重估算：非 routed 参数按 TP 分片，routed 参数按该阶段 EP×TP 分片；矩阵 FP8、每 128×128 block 一个 FP32 scale、embedding/norm BF16。主 EP16/16 profile 的 P/D 每 GPU 权重均约 55.6452 GiB；原 EP32/128 参考分别为 39308906160 B（36.6093 GiB）、23979177648 B（22.3323 GiB）。显存账本按 GPU 角色扣除对应值。旧标量 `weights_bytes_per_gpu` 在分阶段 profile 中取两者最大值供兼容读取，不作为 D 的实际容量扣减。
 
-`provenance.expert_parallel_sizes` 声明两阶段 EP32/EP128；旧 `expert_parallel_size` 单一规模仍可读取。旧 profile 没有分阶段权重时，两侧沿用同一个权重值。workspace、activation buffer 和 MTP 不在当前容量模型中。`--ep` 保留作为两阶段默认值，`--prefill-ep` / `--decode-ep` 可分别覆盖。
+`provenance.expert_parallel_sizes` 声明目标两阶段 EP 规模，主 profile 为 EP16/EP16；旧 `expert_parallel_size` 单一规模仍可读取。旧 profile 没有分阶段权重时，两侧沿用同一个权重值。workspace、activation buffer 和 MTP 不在当前容量模型中。`--ep` 保留作为两阶段默认值，`--prefill-ep` / `--decode-ep` 可分别覆盖。
 
 ## AICB/AIOB 导入
 

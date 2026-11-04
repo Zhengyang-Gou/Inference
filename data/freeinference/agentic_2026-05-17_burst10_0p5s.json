@@ -1,0 +1,142 @@
+{
+ "schema_version": 1,
+ "provenance": {
+  "source_file": "2026-05-17.jsonl.zst",
+  "source_url": "https://huggingface.co/datasets/harvardMadsys/freeinference_agentic_trace/resolve/bb26cf72c9c20f2b05f765d88548156a74d3c253/release/2026-05-17_2026-05-23/traces/2026-05-17.jsonl.zst",
+  "source_sha256": "f768c3a44d6c7eb02340adcb7bceaf5a451e20dc568d7a96d69f78bfb70e09a8",
+  "source_format": "freeinference",
+  "source_request_count": 1375,
+  "source_origin_ns": 1778977459236000000,
+  "source_duration_ns": 113425196000001,
+  "source_synthetic": false,
+  "source_lengths": "unchanged paired observations",
+  "clipped_requests": 0,
+  "dropped_requests": 183,
+  "session_dependencies_modeled": false,
+  "prefix_reuse_enabled_by_import": false,
+  "source_files": [
+   {
+    "path": "2026-05-17.jsonl.zst",
+    "sha256": "f768c3a44d6c7eb02340adcb7bceaf5a451e20dc568d7a96d69f78bfb70e09a8",
+    "bytes": 484429
+   }
+  ],
+  "source_identity_kind": "file SHA-256",
+  "imported_request_count": 1192,
+  "rejection_reason_counts": {
+   "invalid_completion_tokens": 183
+  },
+  "invalid_request_policy": "skip",
+  "root_session_count": 25,
+  "nested_session_count": 0,
+  "token_definition": "provider prompt/completion; cached prompt tokens are not subtracted",
+  "prefix_hashes_imported": false,
+  "replay_semantics": "open-loop observed LLM request arrivals",
+  "synthetic": true,
+  "description": "Dense burst of 10 FreeInference requests; arrivals rebased to 0 s, relative offsets and paired lengths unchanged.",
+  "arrival_time_scaled": true,
+  "full_scaled_duration_seconds": 1192.0,
+  "injection_start_seconds": 0.0,
+  "injection_duration_seconds": 552.046157081,
+  "requested_full_trace_rate_rps": 1.0,
+  "actual_selected_rate_rps": 0.018114427338605184,
+  "time_scale": 0.010509128853522011,
+  "source_window_end_seconds": 113425.196000001,
+  "selected_request_count": 10,
+  "time_window_excluded_requests": 0,
+  "paired_lengths_sha256": "26cb5a858040aee69088b2d2618001f976332979109f9c2e9491314961951515",
+  "source_row_order_sha256": "51a38f3aeffb81ec0e2c01d4265a334c3f4b989b714123cab189bbb727393f56",
+  "time_scale_changes_absolute_burst_duration": true,
+  "slo_origin": "explicit experiment assumptions",
+  "burst_selection": {
+   "parent_workload": "agentic_2026-05-17_1rps.json",
+   "parent_sha256": "d63dbf1285f6613324c6116408688574d4f6409a62e483ddfdeee53bdb76e058",
+   "start_index": 302,
+   "end_index": 311,
+   "note": "subset of the frozen timeline; no regenerate, no length clipping",
+   "rebased_start_seconds": 551.560162
+  }
+ },
+ "requests": [
+  {
+   "request_id": "freeinference-000000196",
+   "arrival_seconds": 0.0,
+   "input_tokens": 94923,
+   "output_tokens": 72,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000621",
+   "arrival_seconds": 0.001523824,
+   "input_tokens": 46900,
+   "output_tokens": 93,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000622",
+   "arrival_seconds": 0.072512989,
+   "input_tokens": 48061,
+   "output_tokens": 67,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000197",
+   "arrival_seconds": 0.084556451,
+   "input_tokens": 95935,
+   "output_tokens": 509,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000623",
+   "arrival_seconds": 0.139887014,
+   "input_tokens": 49171,
+   "output_tokens": 322,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000198",
+   "arrival_seconds": 0.207408167,
+   "input_tokens": 96988,
+   "output_tokens": 468,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000820",
+   "arrival_seconds": 0.222047384,
+   "input_tokens": 6338,
+   "output_tokens": 8,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000199",
+   "arrival_seconds": 0.338698714,
+   "input_tokens": 97933,
+   "output_tokens": 283,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000624",
+   "arrival_seconds": 0.366096013,
+   "input_tokens": 51952,
+   "output_tokens": 589,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  },
+  {
+   "request_id": "freeinference-000000200",
+   "arrival_seconds": 0.485994664,
+   "input_tokens": 98552,
+   "output_tokens": 84,
+   "ttft_slo_seconds": 1.0,
+   "itl_slo_seconds": 0.1
+  }
+ ]
+}

@@ -7,6 +7,11 @@ from .component import RuntimeComponent
 class NetworkExecutor(RuntimeComponent):
     owned_fields = frozenset(['collective_counter', 'collective_demands', 'transfer_counter'])
 
+    def init_network_state(self):
+        self.collective_demands = {}
+        self.collective_counter = 0
+        self.transfer_counter = 0
+
     def transfer(self, rid, kind, src, dst, size, complete, priority=None, **details):
         self.transfer_counter += 1
         priority = (1 if kind=='collective' else 2) if priority is None else priority

@@ -4,6 +4,8 @@
 
 推荐从 [研究系统说明](RESEARCH_SYSTEM.md) 和 [研究配置](configs/research/README.md) 开始。`backend/execution/` 按职责组合运行时；旧命令和 `backend.runtime` 的计算 profile 导入保持兼容。
 
+代码的依赖方向、配置与输入归属、命令扩展方式及兼容入口见 [模块边界](ARCHITECTURE.md)。配置、负载和实验预检可独立使用，执行组件负责初始化各自状态。
+
 **已实现拓扑后端导出、物理对象容量账本、ns-3 仿真 时钟/网络适配器、简单请求基线及 evaluation 的统计与绘图。已实现 schema 2 逐层 KV 就绪与分块立即传输、动态网络观测、集合通信保护和 SLO 门控。`run-baseline` 支持候选剪枝＋增量贪心或轮询绑定，可与前缀缓存、FIFO/Chunked/合批 Prefill 和 Decode 连续批处理组合；预测采用有界近似，不复刻完整 Vidur/Sarathi 批处理；计算参数需要显式提供并验证覆盖范围。**
 
 实验性 [EP 接入](backend/EXPERT_PARALLEL.md) 可使跨节点 collective 使用 EP dispatch/combine、TP 保持节点内，支持共享专家计算队列和五种 KV 模式；支持轮询和 P 轮询/D 均衡随机的静态绑定，EP 联合选择与绑定预测会明确拒绝。
@@ -30,7 +32,8 @@ joint_scheduling/
 ├── check.sh               # 全部测试与分组网络仿真 smoke
 ├── config.py              # 统一加载与跨模块检查
 ├── validation.py          # 公共字段校验
-└── __main__.py            # 配置与拓扑检查命令
+├── cli/                   # 按职责分组的命令参数和处理函数
+└── __main__.py            # 兼容的统一命令入口
 ```
 
 模块之间通过接口共享同一资源状态和时间基准。拓扑只描述物理资源与既定部署，实例绑定与 KV 启动是后续策略的决策。
@@ -63,7 +66,7 @@ joint_scheduling/
 | `reservations` | 默认最大输出预留、安全余量、共享前缀计数与源端释放规则 |
 | `prefix_cache` | 缓存总开关、P/D 独立复用、每实例缓存预算与 LRU 淘汰开关 |
 | `evaluation` | 测量窗口、时间桶、默认 SLO、分位数、输出位置、图表与格式 |
-| `runtime` | 基线入口的种子、负载、KV 传输模式、终止时间、拥塞控制、MTU、缓存和 RPC 超时 |
+| `runtime` | 基线入口的种子、负载、KV 传输模式、终止时间、拥塞控制、MTU、缓存、RPC 超时和提交批次 |
 | `expert_parallel` | 可选实验性 EP 开关及同角色 TP 实例分组，默认关闭，需额外 EP profile |
 
 配置校验会拒绝未知字段、重复 JSON 键、非有限数值、重复 GPU 部署、缺少 P/D 任一角色，以及明显矛盾的跨模块额度。未填写字段使用默认值；五个基础配置段和部署列表必须存在，evaluation/runtime/prefix_cache 可省略以兼容已有配置。功能开关总表见根目录 README；前缀缓存默认关闭，详细格式见 [前缀缓存说明](prefix_cache/README.md)。
@@ -117,4 +120,4 @@ joint_scheduling/
 
 ## 实验基础功能
 
-负载、观测和批量运行已接入统一 CLI。用 `generate-workload --spec ... --output ...` 创建真实基线可读的请求文件；`run-baseline` 自动生成 observation/，`--plot` 同时生成状态时间线；`run-experiments --spec ... --output ...` 串行执行参数矩阵并导出 runs.csv、comparison.csv 与 summary.json。详情见 workload/README.md、observation/README.md 和 experiments/README.md。
+负载、观测和批量运行已接入统一 CLI。用 `generate-workload --spec ... --output ...` 创建真实基线可读的请求文件；`run-baseline` 自动生成 observation/，`--plot` 同时生成状态时间线；`run-experiments --spec ... --output ...` 默认串行执行参数矩阵，增加 `--jobs N` 可并行运行独立 case/seed，并导出 runs.csv、comparison.csv 与 summary.json。详情见 workload/README.md、observation/README.md 和 experiments/README.md。

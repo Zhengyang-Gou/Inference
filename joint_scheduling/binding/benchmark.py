@@ -16,7 +16,7 @@ from pathlib import Path
 
 from ..backend.runner import run_baseline
 from ..config import load_config
-from ..backend.runtime import ComputeProfile
+from ..backend.compute_profile import ComputeProfile
 from . import Binding
 from .predictor import WholePlanPredictor
 

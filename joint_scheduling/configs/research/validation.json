@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "base_config": "base.json",
-  "profile": "../../profiles/deepseek_v3_h800_tp1_ep32_ep128_estimated.json",
+  "profile": "../../profiles/deepseek_v3_h800_tp1_ep16_ep16_estimated.json",
   "workload": "../../../data/azure/conv_first_second_validation.json",
   "seeds": [
     7
@@ -64,13 +64,13 @@
       "topology.intra_node_bandwidth_gbps": 1280,
       "topology.intra_node_latency_us": 0.5,
       "expert_parallel.rank_unit": "gpu",
-      "topology.num_leaves": 10,
+      "topology.num_leaves": 2,
       "topology.num_spines": 4,
       "topology.nodes_per_leaf": 2,
       "topology.gpus_per_node": 8
     },
     "input_sha256": {
-      "profile": "59e28f3221c73230a7b4dd7028762b48193e76578f3af43b30e92adce5155438",
+      "profile": "3132eaade8c48121bc4dfab5457ac4485dc37e1e9af783a645ec93159a240537",
       "workload": "5a5d1eaf06ce49fcc54c811130390421ba0d2a4cb14426c3fa36c1966fed8125"
     }
   },

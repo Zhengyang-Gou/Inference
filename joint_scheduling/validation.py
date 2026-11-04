@@ -1,6 +1,8 @@
 """Small, dependency-free helpers shared by all module configurations."""
 
+import json
 import math
+from pathlib import Path
 from dataclasses import fields
 from typing import Mapping, get_type_hints
 
@@ -57,3 +59,24 @@ def read_settings(cls, raw, section):
         if "choices" in field.metadata and value not in field.metadata["choices"]:
             raise ConfigError("{} must be one of {}".format(path, field.metadata["choices"]))
     return result
+
+
+def read_json(path):
+    def bad_constant(value):
+        raise ValueError("nonfinite JSON value: " + value)
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("duplicate JSON key: " + key)
+            result[key] = value
+        return result
+    with Path(path).open(encoding="utf-8") as handle:
+        return json.load(handle, parse_constant=bad_constant, object_pairs_hook=unique)
+
+
+def number(value, name, positive=False, integral=False):
+    valid_type = type(value) is int if integral else type(value) in (int, float)
+    if not valid_type or not math.isfinite(value) or value < 0 or (positive and value == 0):
+        raise ValueError("{} must be a finite {}{}".format(name, "positive " if positive else "nonnegative ", "integer" if integral else "number"))
+    return value

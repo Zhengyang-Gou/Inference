@@ -55,6 +55,8 @@ smoke 验证提高带宽降低传输时间、接收端汇聚竞争、12 个请�
 
 `runtime` 是运行入口配置，设置种子、负载路径、终止时间、拥塞控制、MTU、交换机缓存和 RPC 超时；支持 dcqcn 或 none，路由使用已实现的 ECMP。
 
+`runtime.rpc_submission_batch_size` 控制同一回调内 SEND/LOCAL/LOCAL_PORTS/TIMER 的管道提交批次，默认 128，允许 1–256；设为 1 恢复逐条同步提交。每次仿真只启动一个常驻 ns-3 子进程，批量提交减少 Python 与该进程的同步等待。每条命令仍保留独立编号与原有顺序，逐条检查原协议的 OK 回复；STATS 和 ADVANCE 前必须提交完此前命令，完成回调和仿真时钟规则保持不变。它只影响模拟程序的实际耗时，不代表真实 EP dispatch 的通信合并，也不增加模型中的计算/通信重叠。协议仍为 v4，此项 Python 优化无需重新构建后端。
+
 计算数据由 `feedback.compute_profile_path` 指定，负载由 `runtime.workload_path` 指定，均相对于配置文件。CLI 的 `--profile/--workload` 可覆盖，显式 CLI 路径相对于当前目录。
 
 ### 计算性能文件
@@ -175,10 +177,13 @@ run/
 ├── network/
 │   ├── network.topo
 │   ├── backend_metadata.json
+│   ├── backend_rpc_summary.json
 │   └── backend.log
 ├── result/                # evaluation 的 CSV/JSON 和配置快照；引用根目录的唯一事件文件
 └── figures/               # --plot 时生成
 ```
+
+`network/backend_rpc_summary.json` 记录提交命令数、提交批次数、查询/推进次数与同步交换批次数（提交批次加查询/推进，不含握手和关闭），用于定位执行器开销。调大提交批次不会减少逻辑流或完成事件数。
 
 网络后端锁定 CMake 3.31.10；CI 配置使用 Ubuntu 24.04 与 Conda 的 `simai` Python 3.12 环境。配置/统计代码保持 Python 3.8 语法兼容，其他环境用 CI/本机回归确认。目录、工具链或网络源码调整后应重新执行 build、doctor 和 check。新模型、协议或更精细本地调度应先补实现与回归，再更新版本锁。
 

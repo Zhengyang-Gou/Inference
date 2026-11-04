@@ -29,6 +29,8 @@
 
 每个可变运行时字段在 `owned_fields` 中只登记一个所有者，组件禁止创建未声明的字段；各次输出的 `runtime_components.json` 可审计实际分工。协调器的旧方法/字段通过显式注册表转发，`runner._Baseline` 保留兼容名称。
 
+各组件现在也初始化自己的状态，协调器仅按依赖顺序装配。配置类型、EP profile 与执行算法分开；命令入口按功能分组；实验参数、预检与执行分别维护。现有配置字段、默认值、命令参数及兼容导入不变，扩展约定见 [模块边界](ARCHITECTURE.md)。
+
 迁移边界仍然存在：原绑定、EP 和 packed Prefill 算法通过兼容端口读取其他组件的状态，旧请求 mapping 访问保留。请求的顶层输入不能被执行进度覆盖，预测快照与运行时独立；进度分区尚未全部转换为强类型记录。后续新功能应直接使用所属组件接口，避免增加跨组件写入。这次迁移不改变算法、事件顺序或 EP 同步语义。
 
 ## 输入与结果身份
@@ -58,7 +60,7 @@
 | MoE EP | 节点内 TP、跨节点 dispatch/combine、专家 FIFO、chunk/packed P、连续 D、KV/MLU | EP 仍禁止联合选择与绑定预测；主研究另关闭前缀缓存和绑定窗口 |
 | 固定网络诊断 | audited 单 case/seed、固定请求、逐层立即 KV、1 ms 观测、节点内 TP | 原生网络优先级关闭；流类别须有独立端点对；端口重用冷却必须满足；输入未排空时失败 |
 
-主研究使用 160 GPU、TP1、P-EP32 / D-EP128；EP rank 对应 GPU，Attention 为 DP32/DP128。两阶段各一个模型单元；权重和显存账本按阶段核算，不单独制造 DP 大数据流。旧 EP8 则为 8 个 TP team；异步源 batch，没有全组 batch 屏障；Decode 仍为聚合 dense step 后执行 MoE 层。H800 profile 是 `estimated_simulation_profile`，专家路由是模型假设，SLO 来自实验配置。研究范围限定为这些显式仿真语义。
+主研究使用 32 GPU、P16/D16、TP1；EP rank 对应 GPU，两侧 Attention DP16 / Expert EP16。两阶段各一个模型单元；权重和显存账本按阶段核算，不单独制造 DP 大数据流。原 P32/D128 的 160 GPU 布局保留在 `base_160gpu.json`。旧 EP8 则为 8 个 TP team；异步源 batch，没有全组 batch 屏障；Decode 仍为聚合 dense step 后执行 MoE 层。H800 profile 是 `estimated_simulation_profile`，专家路由是模型假设，SLO 来自实验配置。研究范围限定为这些显式仿真语义。
 
 主研究网络改为每 GPU 独立 RDMA 端点（400 Gbps，节点总计 3.2 Tbps），Leaf 上联逻辑聚合总计 6.4 Tbps；节点内使用每 GPU 发送/接收端口各 160 GB/s 的无阻塞交换抽象。物理节点身份仍用于本地/远程判断，网络端点 ID 用于路由、拥塞、遥测和固定流量重放。独立端口可并发，共用端口排队；旧共享 NIC/FIFO 模式保留。RPC v4，升级须重建后端。
 

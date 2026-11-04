@@ -13,7 +13,7 @@ import statistics
 from collections import defaultdict
 from pathlib import Path
 
-from .runtime import number, read_json
+from ..validation import number, read_json
 
 
 PUBLIC_REVISION = "449602428a1b023acb8a505d4f34fef536535db6"
@@ -229,9 +229,15 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
     expected = dict(model_type="deepseek_v3",hidden_size=7168,num_hidden_layers=61,first_k_dense_replace=3,
         num_routed_experts=256,num_experts_per_tok=8,moe_intermediate_size=2048,intermediate_size=18432,
         kv_lora_rank=512,q_lora_rank=1536,qk_nope_head_dim=128,qk_rope_head_dim=64,
-        v_head_dim=128,num_attention_heads=128,num_shared_experts=1,vocab_size=129280)
+        v_head_dim=128,num_attention_heads=128,num_shared_experts=1,vocab_size=129280,n_group=8,topk_group=4)
     if any(shape.get(k) != v for k,v in expected.items()):
         raise ValueError("model configuration does not match supported DeepSeek-V3 shapes")
+    from .expert_routing import balanced_group_pattern
+    routing_pattern = balanced_group_pattern(shape['num_routed_experts'],shape['num_experts_per_tok'],
+                                            shape['n_group'],shape['topk_group'])
+    routing_policy = dict(kind='balanced_group_limited_periodic',n_group=shape['n_group'],topk_group=shape['topk_group'],
+        period_tokens=len(routing_pattern),experts_per_selected_group=2,
+        scope='All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing')
     if max_context > shape["max_position_embeddings"]:
         raise ValueError("requested profile context exceeds the model context limit")
     if 256 % ep_size or 128 % tp_size or 2048 % tp_size or 7168 % tp_size:
@@ -327,7 +333,7 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
         "Simulation TP/EP, context and batch grids are analytically scaled from source anchors; no statistical error bound is inferred.",
         "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.",
         "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
-        "Balanced periodic routing is an experimental assumption, not Azure or learned DeepSeek router data.",
+        "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.",
         "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
         "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
         "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
@@ -343,7 +349,8 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
             decode_attention="Batch*context relative to source, divided by target TP, plus a two-kernel floor",
             experts="Fit assignment work plus actual active-expert weight/launch work; divide work by target TP",
             expert_full_tp_seconds_per_assignment=a,expert_full_tp_seconds_per_active_expert=b),
-        kv_layout="BF16 compressed MLA latent+rotary key replicated across TP ranks",routing="explicit balanced periodic top-k",
+        kv_layout="BF16 compressed MLA latent+rotary key replicated across TP ranks",routing="explicit balanced group-limited periodic top-k",
+        routing_policy=routing_policy,
         coverage=dict(max_context=max_context,max_prefill_chunk_tokens=prefill_chunk_tokens,
             max_prefill_batch_tokens=prefill_batch_token_budget,max_decode_batch_size=decode_batch_size),
         limitations=limitations)
@@ -353,12 +360,13 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
                     decode=dict(tp_size=tp_size,collectives_per_step=122,points=copy.deepcopy(batches[0]["points"]),batches=batches)),
         expert_parallel=dict(activation_layout="tp_sharded",dense_compute_excludes_experts=True,
             num_experts=256,top_k=8,hidden_size=7168,dispatch_element_bytes=1,combine_element_bytes=2,
-            routing_pattern=[[(i+j*32)%256 for j in range(8)] for i in range(256)],prefill_layer_ids=list(range(3,61)),decode_layers=58,
+            n_group=shape['n_group'],topk_group=shape['topk_group'],
+            routing_pattern=routing_pattern,prefill_layer_ids=list(range(3,61)),decode_layers=58,
             expert_compute_seconds_per_assignment={phase:a/tp_size for phase in ("prefill","decode")},
             expert_compute_seconds_per_active_expert={phase:b/tp_size for phase in ("prefill","decode")},expert_tp_collectives_per_call=1))
     audit=dict(status="estimated_simulation_profile",modeling_scope="simulation_compute_costs",
         model="deepseek-ai/DeepSeek-V3",gpu="NVIDIA H800",tp_size=tp_size,ep_size=ep_size,
-        layers=61,moe_layers=58,routed_experts=256,top_k=8,
+        layers=61,moe_layers=58,routed_experts=256,top_k=8,routing_policy=copy.deepcopy(routing_policy),
         parameter_count=61*attention_parameters+dense_parameters+shared_parameters+routed_parameters+embeddings+norms,
         weights_bytes_per_gpu=weights,weights_gib_per_gpu=weights/2**30,
         kv_bytes_per_token_per_gpu=61*layer_kv//tp_size,kv_bytes_per_token_per_tp_team=61*layer_kv,

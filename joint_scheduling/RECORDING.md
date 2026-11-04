@@ -14,6 +14,7 @@
 | `config.json`、`reproducibility.json`、`runtime_components.json` | 可移动复跑的配置、输入/源码/后端身份及组件状态所有者 |
 | `source/`，或 suite 的 `inputs/source/` | 未提交源码的固定归档与清单，独立于 essential/debug；对照实验共用一次归档 |
 | `network/network.topo`、`backend_metadata.json`、`backend.log` | 保留网络拓扑、构建指纹及后端错误诊断 |
+| `network/backend_rpc_summary.json` | 后端命令数与同步交换批次数，区分执行器开销和模型中的通信工作量 |
 | 根目录 `events.jsonl` | 每个请求的到达、全部 token 返回、完成/失败，以及绑定、Prefill 开始、KV 就绪和首次 Decode 开始等关键时刻 |
 | `result/summary.json` | SLO、TTFT、交接、ITL、吞吐、失败/未完成数，以及积压和达标率上下界 |
 | `result/requests.csv`、`tokens.csv`、`timeseries.csv` | 按请求和 token 核对结果、重新绘制指标图 |

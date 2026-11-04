@@ -7,21 +7,13 @@ import json
 import re
 from calendar import timegm
 from datetime import datetime
-from decimal import Decimal, InvalidOperation, ROUND_HALF_EVEN
+from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
 
-from ..backend.runtime import number, validate_requests
-
-
-def _nanoseconds(value, units_per_second=1):
-    try:
-        result = Decimal(str(value)) * Decimal(10**9) / units_per_second
-        if not result.is_finite() or result < 0 or result >= 2**63:
-            raise ValueError("trace time is outside the nonnegative nanosecond clock")
-        return int(result.to_integral_value(rounding=ROUND_HALF_EVEN))
-    except (InvalidOperation, TypeError) as error:
-        raise ValueError("trace time must be a finite number") from error
+from ..validation import number
+from .inputs import validate_requests
+from .trace_values import nanoseconds as _nanoseconds, positive_integer as _positive_integer
 
 
 def _azure_timestamp(value):
@@ -32,15 +24,7 @@ def _azure_timestamp(value):
     return timegm(whole.timetuple()) * 10**9 + int((match[2] or "").ljust(9, "0"))
 
 
-def _positive_integer(value, label):
-    if type(value) is int:
-        return number(value, label, positive=True, integral=True)
-    if isinstance(value, str) and re.fullmatch(r"[0-9]+", value):
-        return number(int(value), label, positive=True, integral=True)
-    raise ValueError("{} must be a positive integer; failed/empty responses require explicit preprocessing".format(label))
-
-
-def read_trace(path, trace_format, source_url="", expected_sha256=None, source_synthetic=False):
+def read_trace(path, trace_format, source_url="", expected_sha256=None, source_synthetic=False, *, invalid_requests="error"):
     """Return ordered records plus source identity; retain source row identities.
 
     Mooncake hashes stay in the source file. Importing a trace never enables a
@@ -49,11 +33,20 @@ def read_trace(path, trace_format, source_url="", expected_sha256=None, source_s
     path = Path(path)
     if type(source_synthetic) is not bool:
         raise ValueError("source_synthetic must be explicitly boolean")
-    data = path.read_bytes()
-    digest = hashlib.sha256(data).hexdigest()
+    extra, audit = {}, None
+    if trace_format == "freeinference":
+        from .freeinference import read_freeinference
+        parsed = read_freeinference(path, expected_sha256=expected_sha256, invalid_requests=invalid_requests)
+        records, extra, audit = parsed["records"], parsed["provenance"], parsed["audit"]
+        digest = parsed["source_sha256"]
+    else:
+        if invalid_requests != "error":
+            raise ValueError("--invalid-requests skip is supported only for FreeInference")
+        data = path.read_bytes()
+        digest = hashlib.sha256(data).hexdigest()
+        records = []
     if expected_sha256 is not None and digest != expected_sha256:
         raise ValueError("trace SHA-256 does not match the frozen source")
-    records = []
     if trace_format == "azure":
         rows = csv.DictReader(data.decode("utf-8-sig").splitlines())
         if len(rows.fieldnames or []) != 3 or set(rows.fieldnames or []) != {"TIMESTAMP", "ContextTokens", "GeneratedTokens"}:
@@ -76,12 +69,12 @@ def read_trace(path, trace_format, source_url="", expected_sha256=None, source_s
             records.append(dict(source_index=index, source_time_ns=_nanoseconds(row["timestamp"], 1000),
                                 input_tokens=_positive_integer(row["input_length"], "input_length"),
                                 output_tokens=_positive_integer(row["output_length"], "output_length")))
-    else:
-        raise ValueError("trace format must be azure or mooncake")
+    elif trace_format != "freeinference":
+        raise ValueError("trace format must be azure, mooncake or freeinference")
     if not records:
         raise ValueError("trace must contain at least one request")
     records.sort(key=lambda row: (row["source_time_ns"], row["source_index"]))
-    origin = records[0]["source_time_ns"]
+    origin = extra.get("source_origin_ns", records[0]["source_time_ns"])
     for row in records:
         row["source_time_ns"] -= origin
     provenance = dict(source_file=path.name, source_url=source_url, source_sha256=digest,
@@ -90,7 +83,11 @@ def read_trace(path, trace_format, source_url="", expected_sha256=None, source_s
                       source_synthetic=source_synthetic,
                       source_lengths="unchanged paired observations", clipped_requests=0, dropped_requests=0,
                       session_dependencies_modeled=False, prefix_reuse_enabled_by_import=False)
-    return dict(records=records, provenance=provenance)
+    provenance.update(extra)
+    result = dict(records=records, provenance=provenance)
+    if audit is not None:
+        result["audit"] = audit
+    return result
 
 
 def scale_trace(trace, target_rps=None, *, request_prefix="trace", start_seconds=0,
@@ -128,7 +125,7 @@ def scale_trace(trace, target_rps=None, *, request_prefix="trace", start_seconds
             number(value, name, positive=True)
     if not isinstance(request_prefix, str) or not request_prefix.strip():
         raise ValueError("request_prefix must be nonempty")
-    requests, source_indices = [], []
+    requests, source_indices, lineage = [], [], {}
     for row in records:
         at_ns = row["source_time_ns"] * scaled_duration // source_duration
         if at_ns >= injection_ns:
@@ -142,6 +139,8 @@ def scale_trace(trace, target_rps=None, *, request_prefix="trace", start_seconds
             item["itl_slo_seconds"] = itl_slo_seconds
         requests.append(item)
         source_indices.append(row["source_index"])
+        if "metadata" in row:
+            lineage[item["request_id"]] = copy.deepcopy(row["metadata"])
     if not requests:
         raise ValueError("selected trace interval contains no requests")
     pairs = [[row["input_tokens"], row["output_tokens"]] for row in requests]
@@ -161,6 +160,8 @@ def scale_trace(trace, target_rps=None, *, request_prefix="trace", start_seconds
                       time_scale_changes_absolute_burst_duration=target_rps is not None,
                       slo_origin="explicit experiment assumptions" if ttft_slo_seconds is not None or itl_slo_seconds is not None else "not supplied by source")
     workload = dict(schema_version=1, provenance=provenance, requests=requests)
+    if lineage:
+        workload["trace_metadata"] = dict(requests=lineage, semantics="Observed lineage only; no session dependencies or source completion times are imposed")
     validated, _ = validate_requests(workload)
     if [row["request_id"] for row in validated] != [row["request_id"] for row in requests]:
         raise ValueError("native request sorting would change trace order; timing needs finer resolution")

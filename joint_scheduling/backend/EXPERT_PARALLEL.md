@@ -1,6 +1,8 @@
 # 实验性 EP 接入：节点内 TP，跨节点专家路由
 
-主研究已切换为 160 GPU、TP1、P-EP32 / D-EP128，EP rank 对应 GPU。P/D 各一个模型单元，Attention 分别 DP32/DP128；DP 通过独立请求、批量和 KV 状态体现，不增加额外 DP 大数据流。
+主研究使用 32 GPU、P16/D16、TP1，两侧 DP16/EP16，EP rank 对应 GPU。P/D 各一个模型单元；DP 通过独立请求、批量和 KV 状态体现，不增加额外 DP 大数据流。原 P32/D128 的 160 GPU 布局保留为显式参考。
+
+独立的路由/激活字节与实际提交依赖核验见 [EP 流量核验](EP_FLOW_AUDIT.md)。2026-11-04 已将主周期路由修正为满足 8 个专家组、每 token 最多 4 组的约束，profile 加载时显式校验；P 侧仍为直接发送模型。并行口径和 32/48 GPU 候选见 [部署调研](DEPLOYMENT_RESEARCH.md)。
 
 DeepSeek-V3/H800 的完整结构与长上下文估算 profile、公开数据来源和 AICB 导入入口见 [MoE profile](MOE_PROFILE.md)。旧 EP fixtures 仍仅用于小规模功能测试。
 
@@ -15,7 +17,7 @@ KV 调度可选 [MLU 分级策略](../kv_scheduler/MLU.md)：按 EP 阶段登记
 - 一个 placement 仍是一组 TP GPU，负责一个 attention 请求队列及其 KV 分片。EP 模式强制该 TP 组完全位于一台服务器。
 - 多个同角色、同 TP 宽度的 placement 组成一个 EP 组，P/D 分组独立，所有 placement 必须且只能属于一个组。
 - `rank_unit=gpu` 要求 TP1，每个 placement 是一张 GPU，EP 组内按 GPU rank 分配专家。旧 `rank_unit=tp_team` 保留同 TP 坐标组成通信组的规则，TP4×EP8 仍表示 32 GPU。
-- 专家按连续 expert ID 等分给组内各 placement；P/D 可以使用不同 EP 规模，同一阶段的各模型单元须使用相同规模。主研究 256 专家，P-EP32 每 GPU 8 个，D-EP128 每 GPU 2 个。
+- 专家按连续 expert ID 等分给组内各 placement；P/D 可以使用不同 EP 规模，同一阶段的各模型单元须使用相同规模。主研究 256 专家，P/D 的 EP16 均为每 GPU 16 个；160 GPU 参考布局的 P-EP32、D-EP128 分别为每 GPU 8、2 个。
 - 显式周期路由表为每个新 token 指定 top-k 个不同专家，支持非均匀路由；不强行使用等字节 AllToAll。
 - 执行顺序为当前源 batch 的 dispatch 全部完成 → 各目标专家计算和节点内 TP → combine 全部完成 → 当前层就绪/下一步。
 - 目标 TP team 的普通计算、专家计算和对应本地 TP barrier 使用同一 FIFO 执行通道。来自多个源的专家任务会排队，不能在同一组 GPU 上同时执行两份计算。

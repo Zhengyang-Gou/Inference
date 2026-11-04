@@ -18,18 +18,18 @@ class GPUNetworkTopologyTests(unittest.TestCase):
     def test_research_bandwidths_ports_and_unchanged_parallel_layout(self):
         config = load_config(PACKAGE/'configs/research/base.json')
         topo = config.topology
-        self.assertEqual((topo.num_nodes, topo.num_gpus), (20, 160))
+        self.assertEqual((topo.num_nodes, topo.num_gpus), (4, 32))
         self.assertEqual((topo.nic_model, topo.endpoint_bandwidth_gbps), ('per_gpu', 400))
         self.assertEqual(topo.nic_bandwidth_gbps, 3200)
         self.assertEqual(topo.num_spines*topo.uplink_bandwidth_gbps, topo.nodes_per_leaf*topo.nic_bandwidth_gbps)
         self.assertEqual((topo.intra_node_model, topo.intra_node_bandwidth_gbps), ('gpu_ports', 1280))
         self.assertTrue(all(len(p.gpu_ids)==1 for p in topo.placements))
-        self.assertEqual([len(g) for g in config.expert_parallel.groups], [32,128])
+        self.assertEqual([len(g) for g in config.expert_parallel.groups], [16,16])
         graph = build_manifest(topo)
-        self.assertEqual(len([l for l in graph['links'] if l['src'].startswith('gpu-')]), 160)
+        self.assertEqual(len([l for l in graph['links'] if l['src'].startswith('gpu-')]), 32)
         with tempfile.TemporaryDirectory() as folder:
             path = export_backend_topology(topo, Path(folder)/'network.topo')
-            self.assertEqual(path.read_text().splitlines()[0], '174 1 0 14 200 NONE')
+            self.assertEqual(path.read_text().splitlines()[0], '38 1 0 6 40 NONE')
         resources = NetworkResources(topo, topology_resources(topo))
         self.assertEqual(resources.for_gpus(0, 1), ('local:gpu-0:tx', 'local:gpu-1:rx'))
         a, b = set(resources.for_gpus(0, 8)), set(resources.for_gpus(1, 9))

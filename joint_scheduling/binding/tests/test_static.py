@@ -23,17 +23,21 @@ class StaticBindingTests(unittest.TestCase):
                               input_tokens=8, output_tokens=4) for i in range(515)]
 
     def test_balanced_cycles_and_multiple_destinations_per_prefiller(self):
-        plan = plan_bindings(self.requests, self.config.topology, self.config.binding)
-        ds = {p.instance_id for p in self.config.topology.placements if p.role == 'decode'}
-        for start in range(0, 512, 128):
-            self.assertEqual({b.decode_instance_id for b in plan[start:start+128]}, ds)
-        counts = Counter(b.decode_instance_id for b in plan)
-        self.assertLessEqual(max(counts.values())-min(counts.values()), 1)
-        targets = defaultdict(set)
-        for i, binding in enumerate(plan):
-            self.assertEqual(binding.prefill_instance_id, f'p{i%32}')
-            targets[binding.prefill_instance_id].add(binding.decode_instance_id)
-        self.assertTrue(all(len(destinations) > 1 for destinations in targets.values()))
+        for name in ('base.json', 'base_160gpu.json'):
+            with self.subTest(layout=name):
+                config = load_config(PACKAGE/'configs/research'/name)
+                plan = plan_bindings(self.requests, config.topology, config.binding)
+                ps = [p.instance_id for p in config.topology.placements if p.role == 'prefill']
+                ds = {p.instance_id for p in config.topology.placements if p.role == 'decode'}
+                for start in range(0, len(plan)-len(ds)+1, len(ds)):
+                    self.assertEqual({b.decode_instance_id for b in plan[start:start+len(ds)]}, ds)
+                counts = Counter(b.decode_instance_id for b in plan)
+                self.assertLessEqual(max(counts.values())-min(counts.values()), 1)
+                targets = defaultdict(set)
+                for i, binding in enumerate(plan):
+                    self.assertEqual(binding.prefill_instance_id, ps[i%len(ps)])
+                    targets[binding.prefill_instance_id].add(binding.decode_instance_id)
+                self.assertTrue(all(len(destinations) > 1 for destinations in targets.values()))
 
     def test_plan_ignores_lengths_and_global_rng_and_preserves_arrival_order(self):
         before = random.getstate()
@@ -53,10 +57,15 @@ class StaticBindingTests(unittest.TestCase):
         self.assertGreater(document['cross_leaf_requests'], 0)
         self.assertLess(document['cross_leaf_requests'], len(self.requests))
         self.assertEqual(sum(document['decode_counts'].values()), len(self.requests))
-        legacy = plan_bindings(self.requests, self.config.topology,
-                               replace(self.config.binding, policy='round_robin'))
-        self.assertTrue(all(b.prefill_instance_id == f'p{i%32}' and b.decode_instance_id == f'd{i%128}'
-                            for i,b in enumerate(legacy)))
+        for name in ('base.json', 'base_160gpu.json'):
+            with self.subTest(layout=name):
+                config = load_config(PACKAGE/'configs/research'/name)
+                legacy = plan_bindings(self.requests, config.topology,
+                                       replace(config.binding, policy='round_robin'))
+                ps = [p.instance_id for p in config.topology.placements if p.role == 'prefill']
+                ds = [p.instance_id for p in config.topology.placements if p.role == 'decode']
+                self.assertTrue(all(b.prefill_instance_id == ps[i%len(ps)] and b.decode_instance_id == ds[i%len(ds)]
+                                    for i,b in enumerate(legacy)))
 
     def test_static_policy_rejects_dynamic_dispatch_and_invalid_seeds(self):
         for field in ('window_enabled', 'joint_selection_enabled'):

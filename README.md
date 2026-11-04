@@ -4,9 +4,11 @@ Inference 是面向大模型 Prefill–Decode 分离推理的调度研究仓库�
 
 **本仓库只做仿真。** 请求、计算、容量和通信事件均在 CPU 上推进；H800 等设备名称用于标识离线计算代价，节点与网络由显式参数建模。
 
-当前主研究入口是 [Azure + DeepSeek-V3 的 EP/KV 对照](joint_scheduling/configs/research/README.md)：160 GPU、TP1，Prefill 为 Attention DP32 / Expert EP32，Decode 为 DP128 / EP128，比较 Immediate / FIFO / MLU。计算使用 **公开数据推导的仿真计算 profile**，网络由 ns-3 分组模型执行，研究范围限定为离散事件仿真。该入口关闭绑定预测、联合选择和前缀缓存，相关功能与测试仍保留。其他配置的用途见 [配置目录](joint_scheduling/configs/README.md)，整理前快照与复现方法见 [冻结基线](joint_scheduling/RESEARCH_BASELINE.md)。
+当前主研究入口是 [DeepSeek-V3 的 EP/KV 对照](joint_scheduling/configs/research/README.md)：32 GPU、P:D＝16:16、TP1，两侧均为 Attention DP16 / Expert EP16，比较 Immediate / FIFO / MLU。Azure 暂作回归输入，更新的真实请求候选及兼容性核验见 [trace 调研](joint_scheduling/workload/TRACE_RESEARCH.md)；160 GPU 布局保留为显式参考。计算使用 **公开数据推导的仿真计算 profile**，网络由 ns-3 分组模型执行，研究范围限定为离散事件仿真。该入口关闭绑定预测、联合选择和前缀缓存，相关功能与测试仍保留。其他配置的用途见 [配置目录](joint_scheduling/configs/README.md)，整理前快照与复现方法见 [冻结基线](joint_scheduling/RESEARCH_BASELINE.md)。
 
 运行时组件、允许的功能组合、输入/源码归档和两类实验的边界，统一见 [研究系统说明](joint_scheduling/RESEARCH_SYSTEM.md)。
+
+已支持 [FreeInference 原始会话 trace](data/freeinference/README.md) 导入（含 Zstandard 和子 agent 展开），提供 32 卡单请求验证与 1 rps 对照规格；匹配的 163840-token profile 使用原公开锚点外推，原始时间版和所有排除项均可核验。
 
 请求负载、模型、节点/网络拓扑、P/D 比例、TP/EP、带宽、SLO 和实验矩阵的统一前置口径见根目录 [实验报告](实验报告.md)。
 
@@ -159,7 +161,7 @@ conda activate simai
 ./inference generate-workload --spec joint_scheduling/configs/workload_example.json --output joint_scheduling/artifacts/generated-workload.json
 ./inference --config joint_scheduling/configs/baseline_smoke.json run-baseline --workload joint_scheduling/artifacts/generated-workload.json --output joint_scheduling/artifacts/generated-run --plot
 ./inference run-experiments --spec joint_scheduling/configs/experiments_example.json --output joint_scheduling/artifacts/suite-example --dry-run
-./inference run-experiments --spec joint_scheduling/configs/experiments_example.json --output joint_scheduling/artifacts/suite-example
+./inference run-experiments --spec joint_scheduling/configs/experiments_example.json --output joint_scheduling/artifacts/suite-example --jobs 2
 ```
 
 [负载生成](joint_scheduling/workload/README.md) 支持周期、Poisson 和突发到达，以及长短请求和 SLO 混合。到达与长度使用独立随机流，同 seed 下改变到达率仍保留对应请求长度。

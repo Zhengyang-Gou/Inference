@@ -7,7 +7,7 @@ import random
 from collections import Counter
 from pathlib import Path
 
-from ..backend.runtime import number
+from ..validation import number
 
 
 def _keys(value, required, optional, label):
@@ -161,7 +161,7 @@ def generate_workload(spec, seed=None):
         "synthetic": True, "description": spec.get("description", "Generated synthetic request workload"),
         "generator": "inference-workload-v1", "seed": seed, "generator_spec": spec,
         "class_counts": dict(sorted(counts.items()))}, "requests": requests}
-    from ..backend.runtime import validate_requests
+    from .inputs import validate_requests
     validate_requests(result)
     return result
 

@@ -1,6 +1,10 @@
-# 主研究配置：Azure / DeepSeek-V3 / EP 与 KV
+# 主研究配置：32 GPU、P:D＝1:1、DeepSeek-V3 / EP 与 KV
 
 本目录是 EP/KV 仿真研究的统一入口。计算由离线 profile 驱动，通信由 ns-3 RDMA 分组模型驱动；所有事件在 CPU 上推进。短程功能验证仅解释对应仿真场景。
+
+2026-11-04 已将主布局从 160 GPU 切到 **32 GPU、P16/D16**。Azure 目前保留为回归输入；新版真实 trace 的来源、实测长度覆盖和接入取舍见 [请求 trace 调研](../../workload/TRACE_RESEARCH.md)，本次没有将不覆盖的长请求截短后冒充完整新负载。
+
+FreeInference 适配已提供：`freeinference_validation.json` 使用一条未截短的真实请求检查三策略连通性；`freeinference_kv_policy_1rps.json` 固定 1192 条有效请求和 163840-token 估算 profile，将同一分片的时间轴显式缩放到 1 请求/秒。来源分片范围、183 个排除项和复现步骤见 [FreeInference 输入说明](../../../data/freeinference/README.md)。它是单会话日期分片的外生请求重放，不代表全平台一天，也不模拟 agent 闭环依赖。
 
 ## 固定条件
 
@@ -9,9 +13,9 @@
 | 请求 | `data/azure/conv_original.json`，19,366 个 Azure conv 请求，保留成对输入/输出长度与原始相对到达时间 |
 | 注入时长 / 平均到达率 | 3501.721937001 秒 / 5.530421989 请求每秒，未压缩时间轴 |
 | 模型 | DeepSeek-V3 671B / H800 估算 profile，`estimated_simulation_profile`，用于仿真计算代价 |
-| 仿真拓扑 | 20 节点 × 8 GPU = 160 GPU，P/D 为 32/128 GPU；10 Leaf × 4 Spine；每 GPU 独立 400 Gbps NIC，节点合计 3.2 Tbps；每 Leaf 上联 4×1.6=6.4 Tbps 逻辑聚合容量，与下联 1:1 |
+| 仿真拓扑 | 4 节点 × 8 GPU = 32 GPU，P/D 为 16/16 GPU，各 2 节点；2 Leaf × 4 Spine；每 GPU 独立 400 Gbps NIC，节点合计 3.2 Tbps；每 Leaf 上联 4×1.6=6.4 Tbps 逻辑聚合容量，与下联 1:1 |
 | 节点内通信 | `gpu_ports`，每 GPU 发送/接收端口各 1280 Gbps（160 GB/s）、0.5 μs；独立端口并发，共用发送或接收端口排队 |
-| 并行 | TP1；P 为 Attention DP32 / Expert EP32，D 为 DP128 / EP128；EP 按 GPU rank，P/D 各一个模型单元 |
+| 并行 | TP1；P/D 均为 Attention DP16 / Expert EP16；EP 按 GPU rank，P/D 各一个模型单元 |
 | 执行语义 | 异步源 batch dispatch → 专家 FIFO → combine；没有全 EP 组 batch 屏障，Decode 是聚合 dense step 后执行 MoE 层 |
 | Prefill / Decode | chunk 512 token；P 总预算 2048 token、最多 16 请求；D 最大 batch 64 |
 | 网络 | DCQCN，包 payload 8000 B，交换机 buffer 16 MiB；各组完全相同 |
@@ -23,7 +27,11 @@
 
 完整参数以 `base.json` 和启动生成的 `comparison_audit.json` 为准。当前 `rank_unit=gpu`、TP1；DP 与 EP 使用同一批 GPU，不将两者相乘。旧 `tp_team` 模式仍保留；当前语义见 [EP 说明](../../backend/EXPERT_PARALLEL.md)。模型估算来源、覆盖和限制见 [profile 说明](../../backend/MOE_PROFILE.md)。
 
-第一步已切换为 TP1、P-EP32 / D-EP128：P 为 4 节点，D 为 16 节点；Leaf 0–3 各一 P 一 D、Leaf 4–9 各两 D。1:4 是参考单元配比，尚未判定最优。P/D 每 GPU 权重分别约 36.6093 / 22.3323 GiB，KV 为 70272 B/token 单副本；双微批重叠和 DeepEP 聚合转发仍未实现。对外和节点内参考带宽见 [DeepEP H800 配置](https://github.com/deepseek-ai/DeepEP/blob/v1.2.1/README.md#performance)。`nic_bandwidth_gbps=3200` 始终按节点合计，`nic_model=per_gpu` 将其均分为 8 个独立网卡端点；`intra_node_bandwidth_gbps=1280` 在 `gpu_ports` 模式按单 GPU 的发送/接收端口计。上联为逻辑聚合容量，局部网络为端口模型，均不等价于完整 IB/NVSwitch/DeepEP 实现。旧共享 NIC/FIFO 模式保留，既有运行按原配置解释。
+2026-11-04 起，主路由符合 `n_group=8`／`topk_group=4`；确定性均衡周期为 2240 token，覆盖全部 70 种四组组合。它匹配官方分组约束，仍是合成评分/选择，并未复现普通 DeepEP 的节点聚合转发。旧核验中的固定 2 倍字节比例属于旧路由，见 [EP 流量核验](../../backend/EP_FLOW_AUDIT.md)。所有规格已同步新 profile 哈希。
+
+显式规模入口 `base_32gpu.json` 与主 `base.json` 一致；48 GPU（P16/D32）仍可通过 `base_48gpu.json`、`validation_48gpu.json` 和 `kv_policy_48gpu.json` 对照。原 160 GPU（P32/D128）保存在 `base_160gpu.json` 以及 `kv_policy_160gpu.json`、`network_priority_160gpu.json`、`validation_160gpu.json` 和 `contention_diagnostic_160gpu.json`。早期 `kv_step1_160gpu*` 和 1 秒探针也显式指向该参考布局。显存下限、真实部署口径与竞争检查流程见 [部署调研](../../backend/DEPLOYMENT_RESEARCH.md)。
+
+当前 P/D 各为 2 节点，两个 Leaf 各连接一 P 一 D。P/D 每 GPU 权重均约 55.6452 GiB，在 80 GiB、5% 预留的模型中剩余约 20.35 GiB；此数未包含 activation/workspace/DeepEP buffer，不能作为实机部署保证。KV 为 70272 B/token 单副本；双微批重叠和 DeepEP 聚合转发仍未实现。对外和节点内参考带宽见 [DeepEP H800 配置](https://github.com/deepseek-ai/DeepEP/blob/v1.2.1/README.md#performance)。`nic_bandwidth_gbps=3200` 始终按节点合计，`nic_model=per_gpu` 将其均分为 8 个独立网卡端点；`intra_node_bandwidth_gbps=1280` 在 `gpu_ports` 模式按单 GPU 的发送/接收端口计。上联为逻辑聚合容量，局部网络为端口模型，均不等价于完整 IB/NVSwitch/DeepEP 实现。旧共享 NIC/FIFO 模式保留，既有运行按原配置解释。
 
 ## 两套对照
 
@@ -33,7 +41,7 @@
 
 以上规格显式标注 `experiment_type="end_to_end"`。各次自动冻结配置、请求、profile、源码（含未提交修改）和后端身份，suite 输出 `report.md`、统计 JSON/CSV、各次 `reproducibility.json`，见 [系统边界](../../RESEARCH_SYSTEM.md)。
 
-P/D 在请求到达时提交绑定，随后不迁移。D 每轮将全部 128 个实例打乱后各用一次，打乱只使用 `binding.seed`，不随网络 seed 或 KV 调度结果变化。对照预检核对绑定计划身份，端到端 suite 只生成一份 `inputs/binding_plan.json`，所有 case/网络 seed 复用并在运行前校验；每次运行另存 `binding_plan.json` 及哈希。Azure 全量的跨 Leaf 请求为 18154/19366（93.7416%），这是计划统计，尚未执行全量仿真。旧 `round_robin` 保留轮询行为，但在两池大小不同的新布局中不保证同 Leaf。
+P/D 在请求到达时提交绑定，随后不迁移。D 每轮将全部 16 个实例打乱后各用一次，打乱只使用 `binding.seed`，不随网络 seed 或 KV 调度结果变化。对照预检核对绑定计划身份，端到端 suite 只生成一份 `inputs/binding_plan.json`，所有 case/网络 seed 复用并在运行前校验；每次运行另存 `binding_plan.json` 及哈希。32 GPU 布局的 Azure 全量跨 Leaf 请求为 9663/19366（49.8967%），这是计划统计，尚未执行全量仿真。旧运行的绑定计划仍按其冻结布局解释。
 
 从仓库根目录预检，不会创建输出目录或启动网络后端：
 
@@ -50,7 +58,7 @@ P/D 在请求到达时提交绑定，随后不迁移。D 每轮将全部 128 个
 ./inference run-experiments --spec joint_scheduling/configs/research/validation.json --output joint_scheduling/artifacts/research/validation --fail-fast
 ```
 
-`validation.json` 使用相同模型和拓扑，但显式选取 Azure 原始轨迹的前 1 秒：其中只有 **1 个请求（输入 374、输出 44）**，仿真和统计窗口为 5 秒、seed 7。三种策略已完成ns-3 仿真后端验证。它用于检查输入、模型、调度与后端是否接通，不代表竞争压力，也不能证明 160 GPU 的负载足够。
+`validation.json` 使用相同模型和拓扑，但显式选取 Azure 原始轨迹的前 1 秒：其中只有 **1 个请求（输入 374、输出 44）**，仿真和统计窗口为 5 秒、seed 7。32 GPU 的三种策略已完成 ns-3 仿真后端验证。它用于检查输入、模型、调度与后端是否接通，不代表竞争压力，也不能证明 32 GPU 的负载足够。
 
 ## 防止对照条件混用
 
@@ -67,4 +75,4 @@ P/D 在请求到达时提交绑定，随后不迁移。D 每轮将全部 128 个
 
 此规格标注 `frozen_network_replay`：先端到端运行，再按相同提交时间、字节数、优先级和端点顺序重放 both / EP only / KV only，最后自动生成比较与报告。不依赖聊天工作区脚本。
 
-输入是原诊断的 4 个真实 Azure 请求，按完整轨迹目标 128 请求/秒缩放时间后选取前 4 个，片段实际约 19.65 请求/秒、注入约 0.2035 秒。它不是持续 128 请求/秒。使用当前 160 GPU、TP1、P-EP32 / D-EP128、估算 profile 与 8000 B payload；使用无门控逐层立即 KV、网络优先级关闭。端到端请求结果在 `run/result/`，固定流量结果在 `replay-*/`，归因在 `comparison.json` / `report.md`，不能将重放的时延差直接解释为请求 SLO 改善。
+输入是原诊断的 4 个真实 Azure 请求，按完整轨迹目标 128 请求/秒缩放时间后选取前 4 个，片段实际约 19.65 请求/秒、注入约 0.2035 秒。它不是持续 128 请求/秒。使用当前 32 GPU、TP1、P/D 均 EP16、估算 profile 与 8000 B payload，截止 15 秒用于排空；使用无门控逐层立即 KV、网络优先级关闭。端到端请求结果在 `run/result/`，固定流量结果在 `replay-*/`，归因在 `comparison.json` / `report.md`，不能将重放的时延差直接解释为请求 SLO 改善。

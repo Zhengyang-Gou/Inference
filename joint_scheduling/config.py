@@ -6,8 +6,8 @@ from pathlib import Path
 
 from .binding import BindingConfig
 from .binding.static import endpoint_policy, validate_static_settings
-from .backend.runtime import RuntimeConfig, parse_config as parse_runtime
-from .backend.expert_parallel import ExpertParallelConfig, parse_config as parse_ep, validate_config as validate_ep
+from .backend.settings import RuntimeConfig, parse_config as parse_runtime
+from .backend.expert_config import ExpertParallelConfig, parse_config as parse_ep, validate_config as validate_ep
 from .feedback import FeedbackConfig
 from .evaluation.config import EvaluationConfig, parse_config as parse_evaluation
 from .kv_scheduler import KVConfig

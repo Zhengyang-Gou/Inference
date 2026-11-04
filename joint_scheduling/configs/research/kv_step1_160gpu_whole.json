@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "base_config": "base.json",
+  "base_config": "base_160gpu.json",
   "profile": "../../profiles/deepseek_v3_h800_tp1_ep32_ep128_estimated.json",
   "workload": "../../../data/azure/conv_40rps_representative_5s.json",
   "seeds": [
@@ -64,7 +64,7 @@
       "feedback.observation_delay_us": 100
     },
     "input_sha256": {
-      "profile": "59e28f3221c73230a7b4dd7028762b48193e76578f3af43b30e92adce5155438",
+      "profile": "1137f14e901594a0bd6678f535020fdaf9df42e58bf5e39a088eb2d665949525",
       "workload": "bbed3141bb8cbe34d09be5608e53d7af06b147045782cc14c34d7261704070b2"
     }
   },

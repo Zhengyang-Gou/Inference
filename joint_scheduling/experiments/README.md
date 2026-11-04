@@ -1,8 +1,12 @@
 # 批量实验运行
 
+代码按职责分为 `planning.py`（规格解析与预检）、`parameters.py`（允许的参数与覆盖）、`comparison.py`（配对审计）、`runner.py`（冻结输入与汇总）、`execution.py`（单次运行）、`parallel.py`（有界进程调度）及 `contention.py`（固定流量诊断）。`plan_suite` 和 `run_suite` 的原调用入口保留；预检不加载请求执行器或网络客户端。
+
 运行器串行执行参数矩阵，复用现有ns-3 仿真 基线与评估模块。每个运行拥有独立输入、网络进程和结果目录，观测按配置启用。
 
 当前 EP/KV 主研究使用 [research 配置](../configs/research/README.md)，本页其余旧示例用于功能与接口验证。
+
+`audit-ep` 提供独立的逐 token 路由/字节参考及可选的实际流依赖核验，使用方法、参考 gate 约束与模型差异见 [EP 流量核验](../backend/EP_FLOW_AUDIT.md)。核验通过不修改当前实验语义。
 
 `experiment_type` 缺省为 `end_to_end`，明确设置为 `frozen_network_replay` 时运行正式竞争诊断：一个已审计的固定输入 case/seed，端到端运行后重放 both / EP only / KV only，再输出比较和 `report.md`。该类型要求节点内 TP、EP 开启、逐层立即 KV、原生网络优先级关闭和 1 ms 采样，并检查端点对及端口重用以保持重放身份。示例是 `configs/research/contention_diagnostic.json`。
 
@@ -75,6 +79,7 @@
 suite/
 ├── plan.json             # 输入规格、解析后的基础配置与完整运行计划
 ├── environment.json      # Python 解释器、版本与平台
+├── execution.json        # 并发数、启动方式、结果顺序与 fail-fast 语义
 ├── inputs/               # 启动时冻结的计算采样、负载或生成规格
 ├── runs.jsonl            # 每次完成或失败后立即追加并刷新
 ├── runs.csv              # 每次运行的状态、参数、输入哈希与指标
@@ -87,13 +92,31 @@ suite/
     └── run/              # 正常 baseline 结果、network/ 和 observation/
 ```
 
-某次失败时默认继续后续运行；只要出现失败，CLI 返回非零退出码 2，同时保留汇总。`--fail-fast` 会停止后续执行并将剩余条目标记为 skipped。失败不当作零吞吐成功样本：失败数明确报告，指标均值只使用成功运行；无有效样本为 null，一个样本的样本标准差为 null。
+某次失败时默认继续后续运行；只要出现失败，CLI 返回非零退出码 2，同时保留汇总。`--fail-fast` 停止提交新任务，尚未提交的条目标记为 skipped，已提交任务完成收尾。失败不当作零吞吐成功样本：失败数明确报告，指标均值只使用成功运行；无有效样本为 null，一个样本的样本标准差为 null。
 
 arrived/failed/incomplete 按到达 cohort 统计，completed/吞吐按完成窗口统计，延迟来自到达 cohort 中已完成请求。不同窗口或负载的结果不能直接解释为算法收益。每次记录真正执行的轮询/联合绑定、FIFO Prefill 和 KV 规则；adaptive_comparison_example.json 比较逐层立即、保护下 FIFO 与保护下 SLO，使用不同到达时间和请求级阈值；生成器与示例计算数据均为 synthetic，当前批量实验用于机制和管线验证。
 
 运行时长 wall_seconds 仅表示工具执行耗时，不是仿真时延。比较性能时使用 completion_throughput_rps、slo_goodput_rps 和各延迟指标。
 
 前缀缓存对照见 `configs/prefix_cache_comparison_example.json`：缓存关闭/开启 × 三种逐层 KV 模式 × 两个 seed，共 12 次。支持扫描 `prefix_cache` 的实际配置字段、`kv_scheduler.slo_priority_enabled`、`kv_scheduler.collective_protection_enabled`、`kv_scheduler.inflight_budget_mode`、`feedback.network_observation_enabled` 和 `feedback.state_observation_enabled`。受控 KV 开关仍要求矩阵中包含受控模式。输入与前缀身份在各组冻结共享，`runs.csv` 和 `comparison.csv` 增加 prefix_hit_tokens、prefix_saved_kv_transfer_bytes、prefix_resident_bytes；命中 token 是 P/D 两侧累计查询命中的总和，驻留字节是结束时的缓存占用。
+
+## 多进程运行
+
+`--jobs` 指定最多同时执行的独立 case/seed 数，默认 `1` 保留串行方式。例如：
+
+```bash
+./inference run-experiments --spec joint_scheduling/configs/research/kv_policy.json --output joint_scheduling/artifacts/research/kv-policy-parallel --jobs 4
+```
+
+实际进程数不超过实验总数。多个任务使用 `spawn` 启动的独立 Python 工作进程，各次运行创建自己的 ns-3 后端和输出目录；单次仿真的时间轴、计算/通信顺序与策略不变。`run_suite(..., jobs=4)` 提供相同能力，`jobs` 是新增的仅限关键字参数。作为脚本调用进程版 API 时，将入口放在 `if __name__ == '__main__':` 保护中。
+
+主进程先冻结 profile、负载/生成规格和源码，并为审计要求一致的对照生成一份绑定计划，再启动任务。工作进程只写自己的运行目录；主进程独占 `runs.jsonl`、CSV 和汇总的写入。实时日志和进度回调按完成顺序交付，最终 `runs.csv`、比较表及汇总按计划顺序排列。每条执行记录包含 `worker_pid`；`execution.json` 和 `summary.json.execution` 保存请求并发数、实际上限、启动方式及失败处理语义。
+
+并行 `--fail-fast` 在观察到失败后停止提交新任务：已提交任务允许完成，尚未提交的任务记为 skipped，不创建其运行目录。普通异常和进程池/子进程异常均保留失败记录，不作为零吞吐成功样本。默认串行时仍在第一次失败后跳过后续运行。
+
+`--dry-run --jobs 4` 只报告计划与执行设置，不启动工作进程或创建输出目录；`--jobs` 必须是正整数。固定流量诊断规格只有一个任务，端到端阶段和三次重放仍串行，实际并发数记录为 1。
+
+并行任务会竞争宿主 CPU/内存，`wall_seconds` 和绑定的实际 CPU 计时可能变化；仿真时间使用原有显式开销。测量单任务控制开销时使用 `--jobs 1`。进程数属于执行设置，不参与策略参数扫描或改变仿真配置。
 
 ## 持续加压
 

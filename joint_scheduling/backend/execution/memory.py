@@ -1,12 +1,26 @@
 """MemoryRuntime: explicit runtime component; scheduling order preserved."""
+import hashlib
 import math
 from ...reservations import PhysicalObjectReservation
 from ...prefix_cache.layout import PrefixPlan
+from ...reservations.ledger import CapacityLedger
+from ...prefix_cache import PrefixCache
 from .component import RuntimeComponent
 
 
 class MemoryRuntime(RuntimeComponent):
     owned_fields = frozenset(['ledger', 'prefix_cache'])
+
+    def init_memory_state(self):
+        usable = int(self.config.topology.gpu_memory_gib * 2**30 * (1 - self.config.reservations.capacity_safety_fraction))
+        weights = {gpu: self.profile.weights_for_phase(p.role) for p in self.config.topology.placements for gpu in p.gpu_ids}
+        capacities = {"gpu-{}".format(gpu): usable-weights.get(gpu, self.profile.weights_bytes_per_gpu)
+                      for gpu in range(self.config.topology.num_gpus)}
+        if min(capacities.values()) < 0:
+            raise ValueError("model weights exceed usable GPU capacity")
+        self.ledger = CapacityLedger(capacities)
+        self.prefix_cache = (PrefixCache(self.config.prefix_cache, self.ledger,
+            hashlib.sha256(self.profile.path.read_bytes()).hexdigest(), self.emit) if self.config.prefix_cache.enabled else None)
 
     def _objects(self, row):
         if "binding_objects" in row:

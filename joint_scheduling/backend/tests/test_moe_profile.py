@@ -90,7 +90,7 @@ class MoEProfileTests(unittest.TestCase):
         self.assertEqual(profile.weights_bytes_per_gpu,max(profile.weights_bytes_per_gpu_by_phase.values()))
         self.assertLess(profile.weights_for_phase('prefill'),76*2**30)
         self.assertEqual(audit['ep_sizes_by_phase'],{'prefill':32,'decode':128})
-        validate_profile(load_config(PACKAGE/'configs/research/base.json'),profile)
+        validate_profile(load_config(PACKAGE/'configs/research/base_160gpu.json'),profile)
         malformed=copy.deepcopy(raw);malformed['weights_bytes_per_gpu_by_phase']['decode']=-1
         with self.assertRaises(ValueError):self.load(malformed,'invalid.json')
 
