@@ -21,7 +21,7 @@ import importlib, json, sys
 from pathlib import Path
 module = importlib.import_module(sys.argv[1])
 if sys.argv[1] == 'joint_scheduling.experiments.planning':
-    for name in ('kv_policy', 'contention_diagnostic'):
+    for name in ('kv_policy', 'network_priority'):
         module.plan_suite(Path('joint_scheduling/configs/research') / (name + '.json'))
 blocked = ('joint_scheduling.backend.runtime',
            'joint_scheduling.backend.expert_parallel',

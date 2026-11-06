@@ -16,12 +16,17 @@ class RuntimeTelemetry(RuntimeComponent):
             started_chunks=self.prefill_chunk_started_count, completed_chunks=self.prefill_chunk_completed_count,
             completed_query_tokens=self.prefill_chunk_query_tokens,
             scheduling="within_token_budget_batch" if self.prefill_batching else "round_robin_at_chunk_boundary" if self.config.runtime.prefill_chunk_tokens else "whole_request_fifo"),indent=2)+"\n")
-        (self.observer.output.parent / "decode_batch_summary.json").write_text(json.dumps(dict(
+        decode_summary=dict(
             max_batch_size=self.config.runtime.decode_batch_size,
             started_batches=self.decode_batch_counter, completed_batches=self.decode_batch_completed,
             completed_batch_size_histogram=self.decode_batch_histogram,
             context_model="padded_max_context", timing_model="profile_batch_and_context_interpolation",
-            active_batches_at_end={key:list(ids) for key,ids in self.active_decode_batches.items()}), indent=2)+"\n")
+            active_batches_at_end={key:list(ids) for key,ids in self.active_decode_batches.items()})
+        if self.profile.decode_layered:
+            decode_summary.update(execution='layerwise_nonexpert_compute_then_corresponding_MoE',
+                layers_per_step=len(self.profile.phases['decode']['layers']),
+                active_layer_indices={key:state['index'] for key,state in self.active_decode_steps.items()})
+        (self.observer.output.parent / "decode_batch_summary.json").write_text(json.dumps(decode_summary,indent=2)+"\n")
         if self.prefix_cache is not None:
             (self.observer.output / "prefix_cache_summary.json").write_text(
                 json.dumps(self.prefix_cache.snapshot(), indent=2)+"\n")

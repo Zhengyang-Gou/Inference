@@ -8,7 +8,7 @@
 
 `audit-ep` 提供独立的逐 token 路由/字节参考及可选的实际流依赖核验，使用方法、参考 gate 约束与模型差异见 [EP 流量核验](../backend/EP_FLOW_AUDIT.md)。核验通过不修改当前实验语义。
 
-`experiment_type` 缺省为 `end_to_end`，明确设置为 `frozen_network_replay` 时运行正式竞争诊断：一个已审计的固定输入 case/seed，端到端运行后重放 both / EP only / KV only，再输出比较和 `report.md`。该类型要求节点内 TP、EP 开启、逐层立即 KV、原生网络优先级关闭和 1 ms 采样，并检查端点对及端口重用以保持重放身份。示例是 `configs/research/contention_diagnostic.json`。
+`experiment_type` 缺省为 `end_to_end`，明确设置为 `frozen_network_replay` 时运行正式竞争诊断：一个已审计的固定输入 case/seed，端到端运行后重放 both / EP only / KV only，再输出比较和 `report.md`。该类型要求节点内 TP、EP 开启、逐层立即 KV、原生网络优先级关闭和 1 ms 采样，并检查端点对及端口重用以保持重放身份。原固定Azure派生诊断规格已随负载清理移除；新诊断使用当前任务 outputs/inputs/ 中明确审计的临时输入/规格，不向 data/ 增加固定派生负载。
 
 所有端到端运行保存 `reproducibility.json`（配置/请求/profile 哈希、源码树及后端身份、模型估算状态）。suite 在 `inputs/source/` 冻结一次源码，各次通过相对路径引用，移动结果时保留整套目录；单次 baseline 也独立冻结源码。`runs.jsonl/csv` 增加实验类型、源码摘要和后端 fingerprint；每套输出 `report.md`。详细文件职责见 [研究系统](../RESEARCH_SYSTEM.md)。
 

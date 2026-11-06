@@ -1,12 +1,16 @@
+# 当前范围说明
+
+2026-11-06 起正式研究只保留 Azure2023/2024；下文为历史候选调研，不是当前可用负载清单。非Azure输入与对应规格已移除，历史运行按 outputs/ 冻结输入解释。当前目录见 [Azure输入](../../data/azure/README.md)。
+
 # 真实推理请求 trace 调研与接入判断
 
 核对日期：2026-11-04。研究主布局已采用 32 GPU、P16/D16、TP1、两侧 DP16/EP16。本次完成公开来源核对、原始文件检查和当前 16K profile 覆盖审计；Azure 仍作为回归输入，实验主负载尚未替换。
 
-后续适配已完成：FreeInference 原始 JSONL/ZST、目录、多层子 agent 和排除项审计已接入 `import-trace`；新增的 163840-token 估算 profile 覆盖该日期分片全部 1192 个有效请求。提供独立的 32 GPU 验证与 1 rps 规格，见 [FreeInference 输入及复现](../../data/freeinference/README.md)。下列 16K 统计保留为原始兼容性检查，不能解读成新 profile 的覆盖率。
+后续适配已完成：FreeInference 原始 JSONL/ZST、目录、多层子 agent 和排除项审计已接入 `import-trace`；新增的 163840-token 估算 profile 覆盖该日期分片全部 1192 个有效请求。提供独立的 32 GPU 验证与 1 rps 规格，见 原任务的历史归档（对应当前输入目录已撤下）。下列 16K 统计保留为原始兼容性检查，不能解读成新 profile 的覆盖率。
 
 ## 选择建议
 
-**以 FreeInference Agentic Trace 2026 作为现代真实负载的主候选，以 Mooncake FAST’25 tool-agent 作为近期接入对照。** 前者有明确的 2026 年采集窗口和会话信息，后者已被现有 Mooncake 导入器识别。当前主要障碍是长上下文曲线和会话语义，不是文件能否下载。SwissAI/OpenTela 适合作为另一类通用 serving 验证集，需先流式审计全量、明确数据使用条款。
+**以下为历史候选选择，不再作为当前接入建议；当前负载限定为Azure2023/2024。** 前者有明确的 2026 年采集窗口和会话信息，后者已被现有 Mooncake 导入器识别。当前主要障碍是长上下文曲线和会话语义，不是文件能否下载。SwissAI/OpenTela 适合作为另一类通用 serving 验证集，需先流式审计全量、明确数据使用条款。
 
 | 候选 | 采集时间与公开版本 | 公开内容 | 对当前研究的判断 |
 | --- | --- | --- | --- |

@@ -1,5 +1,7 @@
 # Decode 连续批处理
 
+研究用 MoE profile 现在提供显式逐层 Decode 曲线。一个 batch 的成员及上下文在本 token 步骤内固定，逐层推进计算、TP 和对应 MoE，全部层完成后统一返回各成员 token，再决定下一轮成员。`decode_batch_summary.json` 记录执行语义和截止时的层进度；旧聚合 profile 的执行保持兼容。
+
 P/D 保持分离，Prefill 默认单请求 FIFO，也可开启 [token 分块轮转](CHUNKED_PREFILL.md)。Decode 每个实例在每轮开始时从就绪队列取至多
 `runtime.decode_batch_size` 个请求，执行一次共同前向；每个成员生成一个 token。
 只有 Prefill 完成且全部输入 KV 实际收到的请求才能加入。轮次中到达的请求等待下一轮，

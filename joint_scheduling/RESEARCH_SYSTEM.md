@@ -2,6 +2,8 @@
 
 当前研究问题是：P/D 分离的 MoE 推理中，KV 传输如何影响 EP 通信，SLO 调度如何影响请求表现。正式运行路径是自有 profile 驱动执行器 + ns-3 RDMA 网络；GPU 计算时间由 profile 给出，CPU 上推进仿真。全部实验在 CPU 上推进计算事件和网络事件。
 
+当前研究 profile 显式使用逐层周期路由和 token/目标 GPU 激活去重；专家计算按 assignment 保留，本地合并完成后再回传。Decode 按显式 61 层曲线逐层执行非专家计算与对应 MoE，全部层完成才返回 token；MLU 预算只保留当前及未来层。路由仍合成，层内 kernel 仍为估算聚合，本地合并额外成本当前为显式零假设；没有节点聚合转发。旧 profile 默认维持原路由/assignment 和 aggregate Decode 语义，结果以冻结 profile 和 `reproducibility.json` 的声明为准。
+
 唯一推荐配置入口为 [research/README.md](configs/research/README.md)。完整 Azure 策略矩阵、网络优先级消融、短程集成验证和固定流量诊断有不同的命名与输出类型，不能互相替代。
 
 ## 运行时组件
@@ -60,7 +62,7 @@
 | MoE EP | 节点内 TP、跨节点 dispatch/combine、专家 FIFO、chunk/packed P、连续 D、KV/MLU | EP 仍禁止联合选择与绑定预测；主研究另关闭前缀缓存和绑定窗口 |
 | 固定网络诊断 | audited 单 case/seed、固定请求、逐层立即 KV、1 ms 观测、节点内 TP | 原生网络优先级关闭；流类别须有独立端点对；端口重用冷却必须满足；输入未排空时失败 |
 
-主研究使用 32 GPU、P16/D16、TP1；EP rank 对应 GPU，两侧 Attention DP16 / Expert EP16。两阶段各一个模型单元；权重和显存账本按阶段核算，不单独制造 DP 大数据流。原 P32/D128 的 160 GPU 布局保留在 `base_160gpu.json`。旧 EP8 则为 8 个 TP team；异步源 batch，没有全组 batch 屏障；Decode 仍为聚合 dense step 后执行 MoE 层。H800 profile 是 `estimated_simulation_profile`，专家路由是模型假设，SLO 来自实验配置。研究范围限定为这些显式仿真语义。
+主研究使用 32 GPU、P16/D16、TP1；EP rank 对应 GPU，两侧 Attention DP16 / Expert EP16。两阶段各一个模型单元；权重和显存账本按阶段核算，不单独制造 DP 大数据流。原 P32/D128 的 160 GPU 布局保留在 `base_160gpu.json`。旧 EP8 则为 8 个 TP team；异步源 batch，没有全组 batch 屏障。H800 profile 是 `estimated_simulation_profile`，专家路由是模型假设，SLO 来自实验配置。研究范围限定为这些显式仿真语义。
 
 主研究网络改为每 GPU 独立 RDMA 端点（400 Gbps，节点总计 3.2 Tbps），Leaf 上联逻辑聚合总计 6.4 Tbps；节点内使用每 GPU 发送/接收端口各 160 GB/s 的无阻塞交换抽象。物理节点身份仍用于本地/远程判断，网络端点 ID 用于路由、拥塞、遥测和固定流量重放。独立端口可并发，共用端口排队；旧共享 NIC/FIFO 模式保留。RPC v4，升级须重建后端。
 

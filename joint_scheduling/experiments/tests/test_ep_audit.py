@@ -53,7 +53,7 @@ class ReferenceTests(unittest.TestCase):
         config = load_config(PACKAGE/'configs/research/base_160gpu.json')
         report = audit_layout(config,ComputeProfile(config.profile_path()))
         self.assertEqual(report['status'],'passed')
-        self.assertEqual(report['checked_source_cursor_cases'],160*4)
+        self.assertEqual(report['checked_source_cursor_cases'],160*4*len(report['layer_ids_checked']))
         phases = report['phase_period_totals']
         for phase in ('prefill','decode'):
             row = phases[phase]['dispatch']

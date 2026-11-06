@@ -56,9 +56,9 @@ NCCL 不进入 compute time，网络由 ns-3 独立执行。
 - 周期均衡 top-8 路由遵守 `n_group=8`、`topk_group=4`，覆盖 70 种组组合、2240 token；每个入选组固定 2 个不同专家，完整周期每专家 70 次 assignment。互补组交错以平衡短请求的组需求。组评分、组内选择及 Azure 请求相关热点仍为实验假设。
 
 16K 是**仿真代价曲线覆盖范围**。研究通过离线数据检验、参数敏感性和请求/字节守恒评估模型假设。
-当前 Decode 仍执行 aggregate dense step 后再执行 MoE 层，未复刻真实层间交错。
+当前研究 Decode 已按 61 层交错执行本层非路由专家计算与对应 MoE。`decode.layers` 引用 `layer_profiles` 的 Dense/MoE 两类 batch/context 曲线；前 3 层用 Dense，后 58 层用 MoE 非专家成本。各层之和保留原 aggregate 计算量与通信次数，层内 kernel 仍为估算聚合，没有新增实机测量。旧 profile 缺少这些字段时维持原 aggregate 执行。`step_overhead_seconds` 只在本步首层计一次，用于原有开销敏感性分析。
 
-FreeInference 单独使用 `deepseek_v3_h800_tp1_ep16_ep16_160k_estimated.json`。它以同一组已冻结的官方 4K H800 计算锚点生成，TP1/EP16/16、chunk 512、packed budget 2048、Decode batch 64，上下文网格扩到仓库模型配置允许的 163840；权重、KV 字节和路由不变。该网格完全覆盖已导入的 1192 请求样本，长上下文部分仍是解析外推，不是新增测量。原 16K profile 与引用它的 Azure 规格保持原身份。来源、审计和 FreeInference 规格见 [输入说明](../../data/freeinference/README.md)。
+163840-token 扩展曲线 `deepseek_v3_h800_tp1_ep16_ep16_160k_estimated.json` 作为通用长上下文估算 profile 保留，沿用冻结4K计算锚点，长上下文属于外推。对应的非Azure研究负载与规格已移除；未来Azure2024需单独审计覆盖，不因保留曲线就宣称已验证。
 
 ## KV 和权重
 

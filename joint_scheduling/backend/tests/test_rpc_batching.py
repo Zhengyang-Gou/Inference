@@ -31,6 +31,7 @@ def client(replies, size=128, partial=False):
     backend.log_path = Path('unused-test-backend.log')
     backend._read = Mock(side_effect=replies)
     backend._next_id, backend.now_ns = 1, 0
+    backend.native_schedule=None;backend._epoch_completions=[]
     backend._callbacks, backend._part_owners = {}, {}
     backend._batch_depth, backend._pending_submissions = 0, []
     backend._submission_commands = backend._submission_batches = backend._barrier_commands = 0
@@ -39,6 +40,20 @@ def client(replies, size=128, partial=False):
 
 
 class SubmissionBatchTests(unittest.TestCase):
+    def test_native_calendar_copies_completion_epoch_and_rejects_extra_commands(self):
+        backend=client(['OK','TIME 0 1 1','OK'])
+        seen=[]
+        backend.native_schedule=lambda row:seen.append(row)
+        backend.call_at(0,lambda:backend.call_at(.001,lambda:None))
+        backend.advance(0)
+        self.assertEqual(seen[0]['after_ids'],[])
+        self.assertEqual(seen[1]['after_ids'],[1])
+        self.assertEqual(seen[1]['command'],'TIMER {id} 1000000')
+        seen[1]['after_ids'].append(999)
+        self.assertEqual(backend._epoch_completions,[1])
+        for command in ('TIMER {id} 1\nCLOSE','ADVANCE {id} 0','TIMER 1 0'):
+            with self.assertRaises(BackendError):backend.submit_frozen_event(command,lambda:None)
+
     def test_nested_batches_keep_ids_and_callbacks_without_advancing_time(self):
         backend = client(['OK'] * 3)
         callbacks = []

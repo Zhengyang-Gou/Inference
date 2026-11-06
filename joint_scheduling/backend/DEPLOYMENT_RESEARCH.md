@@ -60,10 +60,10 @@ SGLang 的 DeepSeek-V3 部署文档列出 FP8 的 H100/H800 建议规模为 2×8
 
 ## 候选配置与实验入口
 
-`configs/research/base.json` 已采用 32 GPU、P16/D16，与显式的 `base_32gpu.json` 一致。`kv_policy.json`、`network_priority.json`、`validation.json` 和 `contention_diagnostic.json` 随之切换；原规格保存在对应的 `*_160gpu.json`。`base_48gpu.json` 以及匹配的 `ep16_ep32` profile 仍供规模对照，两个显式规模均保留 `validation_*gpu.json` 和 `kv_policy_*gpu.json`。每个规格内部固定输入、布局、profile 和绑定种子。
+`configs/research/base.json` 已采用 32 GPU、P16/D16，与显式的 `base_32gpu.json` 一致。当前保留 `kv_policy.json`、`network_priority.json` 及对应160GPU规格；固定派生切片的validation/contention规格已撤下。`base_48gpu.json` 以及匹配的 `ep16_ep32` profile 仍供规模对照，两个显式规模保留 `kv_policy_*gpu.json`。每个规格内部固定输入、布局、profile 和绑定种子。
 
 ```bash
-./inference run-experiments --spec joint_scheduling/configs/research/validation_32gpu.json --output joint_scheduling/artifacts/research/validation-32gpu --jobs 2
+./inference run-experiments --spec joint_scheduling/configs/research/kv_policy_32gpu.json --output outputs/azure2023-policy-32gpu --dry-run
 ./inference run-experiments --spec joint_scheduling/configs/research/kv_policy_32gpu.json --output joint_scheduling/artifacts/research/kv-policy-32gpu --dry-run
 ./inference --config joint_scheduling/configs/research/base_32gpu.json audit-ep --output joint_scheduling/artifacts/research/audit-32gpu --expert-groups 8 --max-groups-per-token 4
 ```

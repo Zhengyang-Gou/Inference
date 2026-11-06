@@ -8,6 +8,7 @@ class RuntimeHooks:
     # Observational only: no runtime/clock handle is exposed to either callback.
     event: Optional[Callable] = None  # (name, time_ns, copied_details)
     network_sample: Optional[Callable] = None  # (copied_snapshot)
+    native_schedule: Optional[Callable] = None  # (copied native registration, no backend handle)
 
 
 class RuntimeComponent:

@@ -7,14 +7,16 @@
       "path": "raw/AzureLLMInferenceTrace_conv.csv",
       "sha256": "2f1e5b666d4e3055fdbba98598ce2ec307767b9064e03e2fa46676dbcc7d0bf8",
       "request_count": 19366,
-      "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv"
+      "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv",
+      "year": 2023
     },
     {
       "dataset": "code",
       "path": "raw/AzureLLMInferenceTrace_code.csv",
       "sha256": "54e9a6d2a4bd06ba1e060304b900abbc74cbea53de96506e60fe5bb4f2277fb6",
       "request_count": 8819,
-      "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_code.csv"
+      "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_code.csv",
+      "year": 2023
     }
   ],
   "prepared": [
@@ -24,20 +26,19 @@
       "request_count": 19366,
       "duration_seconds": 3501.721937001,
       "purpose": "full_trace_research_input"
+    }
+  ],
+  "versions": [
+    {
+      "year": 2023,
+      "status": "available",
+      "description": "Frozen original conversation/code CSV and unscaled conversation JSON."
     },
     {
-      "path": "conv_first_second_validation.json",
-      "sha256": "5a5d1eaf06ce49fcc54c811130390421ba0d2a4cb14426c3fa36c1966fed8125",
-      "request_count": 1,
-      "duration_seconds": 1.0,
-      "purpose": "integration_validation_only"
-    },
-    {
-      "path": "conv_four_requests_128rps_diagnostic.json",
-      "sha256": "38c2c915449152fe7b11ee2dcc2c6326f5e84398d890a06bc0d59de9f6f04096",
-      "request_count": 4,
-      "duration_seconds": 0.203520696,
-      "purpose": "finite_trace_contention_diagnostic_only"
+      "year": 2024,
+      "status": "not_downloaded",
+      "documentation": "https://github.com/Azure/AzurePublicDataset/blob/master/AzureLLMInferenceDataset2024.md",
+      "description": "Official source retained for future import; no local payload or coverage claim."
     }
   ]
 }

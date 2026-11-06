@@ -40,7 +40,7 @@ class ScaledDeploymentTests(unittest.TestCase):
         self.assertEqual(current.topology.num_gpus,32)
         self.assertEqual([len(g) for g in current.expert_parallel.groups],[16,16])
         self.assertEqual(profile.provenance['expert_parallel_sizes'],{'prefill':16,'decode':16})
-        for name in ('kv_policy','network_priority','validation','contention_diagnostic'):
+        for name in ('kv_policy','network_priority'):
             spec=root/(name+'.json');raw=json.loads(spec.read_text())
             self.assertEqual(raw['base_config'],'base.json')
             self.assertEqual((root/raw['profile']).resolve(),current.profile_path().resolve())

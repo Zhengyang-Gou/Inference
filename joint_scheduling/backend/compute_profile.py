@@ -63,7 +63,7 @@ class ComputeProfile:
                 if total_kv != self.kv_bytes_per_token:
                     raise ValueError("sum of layer KV bytes must equal kv_bytes_per_token")
             else:
-                if "layers" in values:
+                if "layers" in values and (phase != 'decode' or not self.layered):
                     raise ValueError("layer profiles require schema_version 2 and the prefill phase")
                 self._validate_samples(values)
         chunked = self.phases["prefill"].get("chunked")
@@ -78,7 +78,50 @@ class ComputeProfile:
                     if index >= len(self.phases["prefill"]["layers"]):
                         raise ValueError("chunk override layer is outside the compute profile")
                     self.chunked_by_layer[index] = override["profile"]
-        batches = self.phases["decode"].get("batches", [])
+        self._validate_decode_curve(self.phases['decode'])
+        decode = self.phases['decode']
+        self.decode_layered = 'layers' in decode
+        self.decode_step_overhead = number(decode.get('step_overhead_seconds',0.),'decode step overhead')
+        if self.decode_layered:
+            families = decode.get('layer_profiles')
+            sequence = decode['layers']
+            if (not isinstance(families,dict) or not families or not isinstance(sequence,list) or
+                    len(sequence) != len(self.phases['prefill']['layers']) or
+                    any(not isinstance(name,str) or name not in families for name in sequence) or
+                    set(sequence) != set(families)):
+                raise ValueError('decode layers require a complete, referenced layer_profiles mapping')
+            for curve in families.values():
+                if not isinstance(curve,dict) or set(curve)-{'points','batches','collectives_per_step'}:
+                    raise ValueError('invalid decode layer profile fields')
+                self._validate_samples(curve)
+                self._validate_decode_curve(curve)
+                if ([b['batch_size'] for b in curve.get('batches',[])] !=
+                        [b['batch_size'] for b in decode.get('batches',[])]):
+                    raise ValueError('decode layers must cover the aggregate batch grid')
+            if sum(families[name]['collectives_per_step'] for name in sequence) != decode['collectives_per_step']:
+                raise ValueError('decode layer collective counts do not conserve the aggregate')
+            for batch in [dict(batch_size=1,points=decode['points'])]+decode.get('batches',[]):
+                size = batch['batch_size']
+                for point in batch['points']:
+                    parts = {name:self._lookup_decode_curve(curve,[point['tokens']]*size,decode['tp_size'])
+                             for name,curve in families.items()}
+                    total = math.fsum(parts[name]['compute_seconds'] for name in sequence)+self.decode_step_overhead
+                    if not math.isclose(total,point['compute_seconds'],rel_tol=1e-9,abs_tol=1e-12):
+                        raise ValueError('decode layer compute does not conserve the aggregate')
+                    if any(part['collective_bytes'] != point['collective_bytes'] for part in parts.values()):
+                        raise ValueError('decode layer message shape differs from aggregate')
+        elif 'layer_profiles' in decode or self.decode_step_overhead:
+            raise ValueError('decode layer profiles/overhead require explicit layers')
+        self.expert = None
+        if "expert_parallel" in self.raw:
+            if not self.layered:
+                raise ValueError("EP requires a layered schema 2 compute profile")
+            from .expert_profile import ExpertProfile
+            self.expert = ExpertProfile(self.raw["expert_parallel"], len(self.phases["prefill"]["layers"]))
+
+    @staticmethod
+    def _validate_decode_curve(curve):
+        batches = curve.get("batches", [])
         if not isinstance(batches, list):
             raise ValueError("decode batches must be a list")
         previous = 0
@@ -88,16 +131,10 @@ class ComputeProfile:
             size = number(batch["batch_size"], "batch_size", True, True)
             if size <= previous:
                 raise ValueError("decode batch sizes must be unique and increasing")
-            self._validate_samples(dict(batch, collectives_per_step=self.phases["decode"]["collectives_per_step"]))
+            ComputeProfile._validate_samples(dict(batch, collectives_per_step=curve["collectives_per_step"]))
             previous = size
-        if batches and (batches[0]["batch_size"] != 1 or batches[0]["points"] != self.phases["decode"]["points"]):
+        if batches and (batches[0]["batch_size"] != 1 or batches[0]["points"] != curve["points"]):
             raise ValueError("decode batch size 1 must match legacy decode points")
-        self.expert = None
-        if "expert_parallel" in self.raw:
-            if not self.layered:
-                raise ValueError("EP requires a layered schema 2 compute profile")
-            from .expert_profile import ExpertProfile
-            self.expert = ExpertProfile(self.raw["expert_parallel"], len(self.phases["prefill"]["layers"]))
 
     def weights_for_phase(self, phase):
         return self.weights_bytes_per_gpu_by_phase[phase]
@@ -181,15 +218,30 @@ class ComputeProfile:
 
     def lookup_decode_batch(self, contexts, tp_size):
         """Padded maximum context, interpolation in context then batch size; no extrapolation."""
+        return self._lookup_decode_curve(self.phases['decode'],contexts,tp_size)
+
+    def decode_batch_steps(self, contexts, tp_size):
+        aggregate = self.lookup_decode_batch(contexts,tp_size)
+        if not self.decode_layered:
+            return (aggregate,)
+        decode = self.phases['decode']
+        samples = {name:self._lookup_decode_curve(curve,contexts,tp_size)
+                   for name,curve in decode['layer_profiles'].items()}
+        return tuple(dict(samples[name],layer_id=index,
+            compute_seconds=samples[name]['compute_seconds']+(self.decode_step_overhead if index==0 else 0.))
+            for index,name in enumerate(decode['layers']))
+
+    def _lookup_decode_curve(self, config, contexts, tp_size):
         if not contexts:
             raise ValueError("decode batch must be nonempty")
         for context in contexts:
             number(context, "decode context", True, True)
         size, tokens = len(contexts), max(contexts)
         if size == 1:
-            return self.lookup("decode", tokens, tp_size)
-        config = self.phases["decode"]
-        if tp_size != config["tp_size"]:
+            if tp_size != self.phases['decode']['tp_size']:
+                raise ValueError('decode TP size does not match profile')
+            return self._interpolate(config,tokens,'decode')
+        if tp_size != self.phases['decode']['tp_size']:
             raise ValueError("decode TP size does not match profile")
         batches = config.get("batches", [])
         if not batches or size > batches[-1]["batch_size"]:

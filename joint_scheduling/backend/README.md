@@ -6,6 +6,11 @@ DeepSeek-V3/H800 的 TP1、P-EP32 / D-EP128 主 profile 已提供公开采样推
 
 `slo_mlu` 支持 KV 晋升和 EP 分阶段保护，`runtime.network_priority_enabled` 控制仿真 NIC/交换机数据优先级。RPC 为版本 4，增加 GPU 本地端口命令，需要重建后端；覆盖只进入隔离构建，详见 [MLU 调度](../kv_scheduler/MLU.md)。
 
+网络后端由 `feedback.time_authority` / `feedback.network_backend` 唯一选择，`backend/factory.py` 解析；
+`client.py`（ns-3）与 `flow_client.py`（flowSim）共用 `rpc.py` 的行协议、批量提交、完成回调和截止推进，
+Prefill/Decode/EP/KV/MLU 与策略代码不感知后端。flowSim 是 vendored 流级模型，用于快速策略筛选，
+构建/切换/能力映射/模型限制见 [flowSim 后端](FLOWSIM.md)。
+
 当前已能在 CPU 上运行请求端到端基线，支持整份交接、Prefill 后分块，以及逐层 KV 就绪后分块立即传输。
 
 实验性 EP 路径已接入分组网络仿真：节点内 TP、跨 TP team 的 dispatch→专家计算→combine 可与 KV 共享链路；支持轮询和 P 轮询/D 均衡随机的静态绑定，联合选择和绑定预测明确禁用。配置、160 GPU 主布局及旧 128 GPU 对照和模型边界见 [EP 接入说明](EXPERT_PARALLEL.md)。

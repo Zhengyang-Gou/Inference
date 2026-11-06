@@ -24,6 +24,9 @@ class ExpertParallelMixin:
             inter_node_dispatch_bytes=0, inter_node_combine_bytes=0, routed_assignments=0,
             expert_assignments={i: 0 for i in self.instances}, modeled_expert_compute_seconds=0.,
             compute_queue_wait_seconds=0., peak_compute_queue=0)
+        if self.ep_enabled and self.profile.expert.communication_mode == 'token_rank':
+            self.ep_stats.update(local_combine_calls=0, local_combine_extra_assignments=0,
+                                 modeled_local_combine_seconds=0.)
 
     def gpu_task(self, instance, rid, seconds, kind, after_compute, on_start=None, **details):
         """One FIFO compute/TP lane per TP team; release after its local TP barrier."""
@@ -70,29 +73,37 @@ class ExpertParallelMixin:
             # Cursor-stable routing: cached history is never dispatched again.
             members = (self.active_prefill_batches[instance]['members'] if instance in self.active_prefill_batches else
                        [dict(chunk_tokens=query, cached_tokens=details.get('cached_tokens', max(cached, row.get('prefill_computed_tokens', 0))))])
-            assignments = [0]*self.profile.expert.raw['num_experts']
-            for member in members:
-                for i, n in enumerate(self.profile.expert.counts(member['chunk_tokens'], member['cached_tokens'])):
-                    assignments[i] += n
+            spans = [(m['chunk_tokens'], m['cached_tokens']) for m in members]
             layers = [layer_id] if layer_id in self.profile.expert.raw['prefill_layer_ids'] else []
         else:
             # Route each new token by its own cursor; regrouping requests into
             # different continuous batches must not change their experts.
             members = self.active_decode_batches.get(instance, (rid,))
-            assignments = [0]*self.profile.expert.raw['num_experts']
+            spans = []
             for member in members:
                 peer = self.requests[member]
                 cursor = peer['input_tokens']+max(0, peer['generated']-1)
-                for i, n in enumerate(self.profile.expert.counts(1, cursor)):
-                    assignments[i] += n
-            layers = list(range(self.profile.expert.raw['decode_layers']))
+                spans.append((1, cursor))
+            if self.profile.decode_layered:
+                layers = [layer_id] if layer_id in self.profile.expert.raw['prefill_layer_ids'] else []
+            else:
+                layers = (list(self.profile.expert.raw['prefill_layer_ids'])
+                          if self.profile.expert.routing_mode == 'layerwise_periodic' else
+                          list(range(self.profile.expert.raw['decode_layers'])))
+        def route(layer):
+            return self.profile.expert.routing_counts(spans, len(self.ep_groups[instance]), layer)
         def moe(index):
+            if index==0 and phase=='decode' and self.profile.decode_layered:
+                for member in self.active_decode_batches.get(instance,(rid,)):
+                    self.requests[member]['decode_nonexpert_finished']=True
             if index==0 and self.mlu_enabled:
                 self.collective_demands.pop('next-dispatch:'+instance,None)
             if index == len(layers):
                 finish()
             else:
-                self.expert_call(rid, instance, phase, layers[index], assignments, lambda: moe(index+1))
+                assignments, rank_tokens = route(layers[index])
+                self.expert_call(rid, instance, phase, layers[index], assignments, lambda: moe(index+1),
+                                 rank_tokens=rank_tokens)
         def segment(index):
             row['segment_index'] = index
             def started(end):
@@ -104,8 +115,9 @@ class ExpertParallelMixin:
                     self.requests[peer]['segment_index'] = index
                 if self.mlu_enabled and layers and index==max(1,count)-1:
                     tp=self.collective_seconds(self.instances[instance].gpu_ids,dict(sample,collectives_per_step=int(count>0)))
+                    assignments, rank_tokens = route(layers[0])
                     self.ep_phase_demand('next-dispatch:'+instance,'dispatch_pending',
-                        self.ep_flows(instance,assignments),end+tp)
+                        self.ep_flows(instance,assignments,rank_tokens=rank_tokens),end+tp)
             def after_compute(release):
                 def next_segment():
                     release()
@@ -123,15 +135,18 @@ class ExpertParallelMixin:
                           on_start=started,tp_seconds=tp_seconds)
         segment(0)
 
-    def ep_flows(self, source, assignments, combine=False):
+    def ep_flows(self, source, assignments, combine=False, *, rank_tokens=None):
         group = self.ep_groups[source]
         ep = self.profile.expert.raw
         per_rank = ep['num_experts']//len(group)
         width = len(self.instances[source].gpu_ids)
         unit = ep['combine_element_bytes' if combine else 'dispatch_element_bytes']
+        deduplicate = self.profile.expert.communication_mode == 'token_rank'
+        if deduplicate and (rank_tokens is None or len(rank_tokens) != len(group)):
+            raise ValueError('token_rank EP flows require per-target token incidence')
         flows = []
         for i, target in enumerate(group):
-            count = sum(assignments[i*per_rank:(i+1)*per_rank])
+            count = rank_tokens[i] if deduplicate else sum(assignments[i*per_rank:(i+1)*per_rank])
             for rank, src in enumerate(self.instances[source].gpu_ids):
                 dst = self.instances[target].gpu_ids[rank]
                 # Shard channels before multiplying by assignment count.
@@ -168,14 +183,21 @@ class ExpertParallelMixin:
         for src, dst, size in flows:
             self.transfer(rid, 'collective', src, dst, size, done, collective_type='ep_'+stage, ep_call_id=call_id)
 
-    def expert_call(self, rid, instance, phase, layer, assignments, complete):
+    def expert_call(self, rid, instance, phase, layer, assignments, complete, *, rank_tokens=None):
         self.ep_counter += 1
         cid = 'ep-{}'.format(self.ep_counter)
         self.ep_stats['started_calls'] += 1
         self.ep_stats['routed_assignments'] += sum(assignments)
         self.ep_calls[cid] = dict(request_id=rid, source_instance_id=instance, phase=phase, layer_id=layer)
         self.emit('ep_call_started', ep_call_id=cid, expert_assignments=assignments, **self.ep_calls[cid])
-        dispatch, combine = self.ep_flows(instance, assignments), self.ep_flows(instance, assignments, True)
+        dispatch = self.ep_flows(instance, assignments, rank_tokens=rank_tokens)
+        combine = self.ep_flows(instance, assignments, True, rank_tokens=rank_tokens)
+        deduplicate = self.profile.expert.communication_mode == 'token_rank'
+        def payload_count(target, count):
+            return rank_tokens[self.ep_groups[instance].index(target)] if deduplicate else count
+        def combine_cost(target, count):
+            return ((count-payload_count(target, count))*self.profile.expert.local_combine_seconds
+                    if deduplicate else 0.)
         if self.scheduler is not None and not self.mlu_enabled:
             resources = {key for src, dst, _ in dispatch+combine for key in self.scheduler.resources.for_gpus(src, dst)}
             self.collective_demands[cid] = dict(resources=tuple(sorted(resources)), starts_at_seconds=self.backend.now_seconds())
@@ -199,9 +221,9 @@ class ExpertParallelMixin:
                     count=sum(counts)
                     seconds=self.profile.expert.compute_seconds(phase,counts)
                     local_tp=self.collective_seconds(self.instances[target].gpu_ids,dict(
-                        collective_bytes=count*self.profile.expert.raw['hidden_size']*self.profile.expert.raw['combine_element_bytes'],
+                        collective_bytes=payload_count(target,count)*self.profile.expert.raw['hidden_size']*self.profile.expert.raw['combine_element_bytes'],
                         collectives_per_step=self.profile.expert.raw['expert_tp_collectives_per_call']))
-                    self.ep_calls[cid]['expert_ready_estimates'][target]=self.backend.now_seconds()+self.gpu_queue_seconds(target)+seconds+local_tp
+                    self.ep_calls[cid]['expert_ready_estimates'][target]=self.backend.now_seconds()+self.gpu_queue_seconds(target)+seconds+combine_cost(target,count)+local_tp
                 self.ep_phase_demand(cid,'combine_pending',combine,max(self.ep_calls[cid]['expert_ready_estimates'].values()))
             pending = [len(destinations)]
             def expert_done():
@@ -225,18 +247,43 @@ class ExpertParallelMixin:
                         if index == self.profile.expert.raw['expert_tp_collectives_per_call']:
                             reduced()
                         else:
-                            size = count*self.profile.expert.raw['hidden_size']*self.profile.expert.raw['combine_element_bytes']
+                            size = payload_count(target,count)*self.profile.expert.raw['hidden_size']*self.profile.expert.raw['combine_element_bytes']
                             self.allreduce(rid, self.instances[target].gpu_ids, size, lambda: reduce(index+1))
-                    reduce(0)
+                    if deduplicate:
+                        tokens = payload_count(target,count)
+                        cost = combine_cost(target,count)
+                        self.ep_lane_active[target]['tp_seconds'] -= cost
+                        self.ep_stats['local_combine_calls'] += 1
+                        self.ep_stats['local_combine_extra_assignments'] += count-tokens
+                        self.ep_stats['modeled_local_combine_seconds'] += cost
+                        if cost:
+                            self.compute_active.add(target)
+                            self.ep_lane_active[target].update(stage='local_combine',
+                                compute_end_seconds=self.backend.now_seconds()+cost)
+                        self.emit('ep_local_combine_started', request_id=rid, ep_call_id=cid,
+                                  instance_id=target, token_count=tokens, extra_assignments=count-tokens,
+                                  modeled_compute_seconds=cost)
+                        def combined():
+                            if cost:
+                                self.compute_active.remove(target)
+                            self.emit('ep_local_combine_completed', request_id=rid, ep_call_id=cid,
+                                      instance_id=target, token_count=tokens)
+                            reduce(0)
+                        if cost:
+                            self.backend.call_at(self.backend.now_seconds()+cost, combined)
+                        else:
+                            combined()
+                    else:
+                        reduce(0)
                 local_tp=self.collective_seconds(self.instances[target].gpu_ids,dict(
-                    collective_bytes=count*self.profile.expert.raw['hidden_size']*self.profile.expert.raw['combine_element_bytes'],
+                    collective_bytes=payload_count(target,count)*self.profile.expert.raw['hidden_size']*self.profile.expert.raw['combine_element_bytes'],
                     collectives_per_step=self.profile.expert.raw['expert_tp_collectives_per_call'])) if self.scheduler is not None else 0.
-                def started(end,target=target,local_tp=local_tp):
+                def started(end,target=target,local_tp=local_tp,count=count):
                     if self.mlu_enabled:
-                        self.ep_calls[cid]['expert_ready_estimates'][target]=end+local_tp
+                        self.ep_calls[cid]['expert_ready_estimates'][target]=end+combine_cost(target,count)+local_tp
                         self.ep_phase_demand(cid,'combine_pending',combine,max(self.ep_calls[cid]['expert_ready_estimates'].values()))
                 self.gpu_task(target, rid, seconds, 'expert', after_compute, on_start=started,
-                              ep_call_id=cid, assignments=count,tp_seconds=local_tp)
+                              ep_call_id=cid, assignments=count,tp_seconds=local_tp+combine_cost(target,count))
         self.ep_exchange(rid, cid, 'dispatch', dispatch, dispatched)
 
     def gpu_queue_seconds(self,instance):
@@ -255,11 +302,43 @@ class ExpertParallelMixin:
             starts_at_seconds=starts,duration_seconds=duration,stage=stage,ep_call_id=cid)
         self.request_dispatch()
 
-    def ep_estimate_seconds(self, instance, tokens, layers=1):
+    def ep_decode_spans(self, rows):
+        return [(1, r['input_tokens']+max(0,r['generated']-1)) for r in rows]
+
+    def ep_estimate_seconds(self, instance, tokens, layers=1, *, spans=None, layer_ids=None):
         """Isolated-call resource heuristic; excludes concurrent expert queue waiting."""
         if not self.ep_enabled or not tokens or not layers:
             return 0.
         ep = self.profile.expert
+        if ep.routing_mode == 'layerwise_periodic' or ep.communication_mode == 'token_rank':
+            group = self.ep_groups[instance]
+            spans = [(tokens, 0)] if spans is None else spans
+            layer_ids = list(ep.raw['prefill_layer_ids'])[:layers] if layer_ids is None else layer_ids
+            total = 0.
+            for layer in layer_ids:
+                assignments, rank_tokens = ep.routing_counts(spans, len(group), layer)
+                work = {}
+                for src, dst, size in (self.ep_flows(instance, assignments, rank_tokens=rank_tokens)+
+                                      self.ep_flows(instance, assignments, True, rank_tokens=rank_tokens)):
+                    for key in self.scheduler.resources.for_gpus(src, dst):
+                        work[key] = work.get(key,0)+size
+                network = max((size/(self.scheduler.resources.capacities[key]*(1-self.config.kv_scheduler.safety_margin_fraction))
+                               for key,size in work.items()),default=0.)
+                width = ep.raw['num_experts']//len(group)
+                compute = []
+                for index,target in enumerate(group):
+                    counts = assignments[index*width:(index+1)*width]
+                    n = sum(counts)
+                    if not n:
+                        continue
+                    payload = rank_tokens[index] if ep.communication_mode == 'token_rank' else n
+                    merge = (n-payload)*ep.local_combine_seconds
+                    tp = self.collective_seconds(self.instances[target].gpu_ids,dict(
+                        collective_bytes=payload*ep.raw['hidden_size']*ep.raw['combine_element_bytes'],
+                        collectives_per_step=ep.raw['expert_tp_collectives_per_call']))
+                    compute.append(ep.compute_seconds(self.instances[instance].role,counts)+merge+tp)
+                total += network+max(compute,default=0.)+8*self.config.topology.link_latency_us/1e6
+            return total
         assignments = ep.counts(tokens)
         work = {}
         for src, dst, size in self.ep_flows(instance, assignments)+self.ep_flows(instance, assignments, True):
@@ -287,9 +366,18 @@ class ExpertParallelMixin:
                 protection=(('phase_aware_MLU' if self.mlu_enabled else 'active_EP_call_union_resources_reserved_through_combine')
                             if self.scheduler is not None and self.config.kv_scheduler.collective_protection_enabled else 'disabled'),
                 limitations=['no_global_EP_batch_barrier', 'affine_assignment_and_active_expert_compute_profile',
-                             'no_activation_memory_accounting', 'no_joint_binding_prediction',
-                             'decode_dense_step_then_aggregated_MoE_layers'])
+                             'no_activation_memory_accounting', 'no_joint_binding_prediction']+
+                             ([] if self.profile.decode_layered else ['decode_dense_step_then_aggregated_MoE_layers']))
+            if self.profile.decode_layered:
+                value['decode_execution']='layerwise_nonexpert_compute_then_corresponding_MoE'
             if self.config.expert_parallel.rank_unit == 'gpu':
                 value.update(rank_unit='gpu', phase_ep_sizes={role: next(len(g) for g in self.config.expert_parallel.groups
                     if self.instances[g[0]].role == role) for role in ('prefill', 'decode')})
+            ep = self.profile.expert
+            if ep.routing_mode == 'layerwise_periodic' or ep.communication_mode == 'token_rank':
+                value.update(routing=ep.routing_mode, routing_seed=ep.routing_seed,
+                    communication_mode=ep.communication_mode,
+                    decode_moe_layer_ids=(list(ep.raw['prefill_layer_ids']) if ep.routing_mode == 'layerwise_periodic'
+                                          else list(range(ep.raw['decode_layers']))),
+                    local_combine_seconds_per_extra_assignment=ep.local_combine_seconds)
             (self.observer.output.parent/'expert_parallel_summary.json').write_text(json.dumps(value, indent=2)+'\n')

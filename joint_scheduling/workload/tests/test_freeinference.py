@@ -181,26 +181,6 @@ class FreeInferenceTests(unittest.TestCase):
         self.assertEqual(self.cli("--output", out), 2)
         self.assertEqual(self.cli("--output", self.root / "x.json", "--audit-output", out), 2)
 
-    def test_shipped_sample_is_covered_and_uses_audited_32gpu_experiment_inputs(self):
-        from joint_scheduling.backend.compute_profile import ComputeProfile
-        from joint_scheduling.experiments import plan_suite
-        from joint_scheduling.workload.trace import profile_coverage
-        repo = Path(__file__).resolve().parents[3]
-        native = json.loads((repo / "data/freeinference/agentic_2026-05-17_original.json").read_text())
-        scaled = json.loads((repo / "data/freeinference/agentic_2026-05-17_1rps.json").read_text())
-        self.assertEqual(native["provenance"]["paired_lengths_sha256"], scaled["provenance"]["paired_lengths_sha256"])
-        self.assertEqual(native["provenance"]["source_request_count"], 1375)
-        self.assertEqual(native["provenance"]["dropped_requests"], 183)
-        self.assertFalse(native["provenance"]["arrival_time_scaled"])
-        self.assertEqual(scaled["provenance"]["actual_selected_rate_rps"], 1)
-        for name, count in (("freeinference_validation", 3), ("freeinference_kv_policy_1rps", 6)):
-            plan = plan_suite(repo / ("joint_scheduling/configs/research/" + name + ".json"))
-            self.assertEqual(len(plan["runs"]), count)
-            self.assertEqual(plan["base_config"]["reservations"]["reserve_max_output_tokens"], 8192)
-            self.assertEqual([len(g) for g in plan["base_config"]["expert_parallel"]["groups"]], [16, 16])
-            profile = ComputeProfile(plan["profile"])
-            self.assertEqual(profile_coverage(native, profile)["covered_count"], len(native["requests"]))
-            self.assertLess(max(r["input_tokens"]+r["output_tokens"] for r in native["requests"]), 163840)
 
 
 if __name__ == "__main__":

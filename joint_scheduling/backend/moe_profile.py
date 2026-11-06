@@ -235,7 +235,8 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
     from .expert_routing import balanced_group_pattern
     routing_pattern = balanced_group_pattern(shape['num_routed_experts'],shape['num_experts_per_tok'],
                                             shape['n_group'],shape['topk_group'])
-    routing_policy = dict(kind='balanced_group_limited_periodic',n_group=shape['n_group'],topk_group=shape['topk_group'],
+    routing_policy = dict(kind='layerwise_balanced_group_limited_periodic',routing_seed=7,layer_stride=104729,
+        communication_mode='token_rank',n_group=shape['n_group'],topk_group=shape['topk_group'],
         period_tokens=len(routing_pattern),experts_per_selected_group=2,
         scope='All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing')
     if max_context > shape["max_position_embeddings"]:
@@ -316,6 +317,13 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
         cost=3*dense_linear(batch,True)+58*dense_linear(batch,False)
         batches.append(dict(batch_size=batch,points=[dict(tokens=c,
             compute_seconds=cost+61*attention(batch,c,"decode"),collective_bytes=message(batch)) for c in contexts]))
+    decode_families={}
+    for name,is_dense in (('dense',True),('moe',False)):
+        family_batches=[dict(batch_size=batch,points=[dict(tokens=c,
+            compute_seconds=dense_linear(batch,is_dense)+attention(batch,c,'decode'),
+            collective_bytes=message(batch)) for c in contexts]) for batch in _knots(decode_batch_size)]
+        decode_families[name]=dict(collectives_per_step=2,
+            points=copy.deepcopy(family_batches[0]['points']),batches=family_batches)
     h=shape["hidden_size"];heads=shape["num_attention_heads"]
     attention_parameters=(h*1536+1536*heads*(128+64)+h*(512+64)+512*heads*(128+128)+heads*128*h)
     dense_parameters=3*3*h*18432
@@ -334,8 +342,10 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
         "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.",
         "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
         "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.",
+        "Layer-specific deterministic rotations route each token independently of chunk/batch scheduling; learned gate scores are not modeled.",
+        "Activations are deduplicated per token/target GPU; local expert outputs combine before return. Local combine arithmetic has explicit zero uncalibrated cost; no inter-node aggregation/forwarding is modeled.",
         "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
-        "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
+        "Decode executes each layer's non-expert compute/TP before its routed MoE; intra-layer kernels are aggregate costs and two-microbatch overlap is not reproduced.",
         "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
         "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget.",
     ]
@@ -357,10 +367,13 @@ def build_moe_profile(model_config_path, anchors, tp_size=4, ep_size=8,
     profile=dict(schema_version=2,model="deepseek-ai/DeepSeek-V3",provenance=provenance,
         network_communication_excluded=True,weights_bytes_per_gpu=weights,kv_bytes_per_token=61*layer_kv,
         phases=dict(prefill=dict(tp_size=tp_size,layers=layers,chunked=chunked),
-                    decode=dict(tp_size=tp_size,collectives_per_step=122,points=copy.deepcopy(batches[0]["points"]),batches=batches)),
+                    decode=dict(tp_size=tp_size,collectives_per_step=122,points=copy.deepcopy(batches[0]["points"]),batches=batches,
+                        layers=['dense']*3+['moe']*58,layer_profiles=decode_families,step_overhead_seconds=0.)),
         expert_parallel=dict(activation_layout="tp_sharded",dense_compute_excludes_experts=True,
             num_experts=256,top_k=8,hidden_size=7168,dispatch_element_bytes=1,combine_element_bytes=2,
             n_group=shape['n_group'],topk_group=shape['topk_group'],
+            routing_mode='layerwise_periodic',routing_seed=7,communication_mode='token_rank',
+            local_combine_seconds_per_extra_assignment=0.,
             routing_pattern=routing_pattern,prefill_layer_ids=list(range(3,61)),decode_layers=58,
             expert_compute_seconds_per_assignment={phase:a/tp_size for phase in ("prefill","decode")},
             expert_compute_seconds_per_active_expert={phase:b/tp_size for phase in ("prefill","decode")},expert_tp_collectives_per_call=1))

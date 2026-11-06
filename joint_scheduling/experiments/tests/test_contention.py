@@ -36,6 +36,19 @@ class ContentionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'experiment_type'):plan_suite(self.save())
 
     @unittest.skipUnless(backend_available(),'native backend not built')
+    def test_whole_ready_kv_preserves_one_message_per_rank_in_replay(self):
+        raw=json.loads((self.root/'base.json').read_text())
+        raw['runtime']['kv_transfer_mode']='whole_ready_immediate'
+        (self.root/'base.json').write_text(json.dumps(raw))
+        result=run_suite(self.save(),self.root/'out')
+        self.assertEqual(result['status'],'completed')
+        self.assertLessEqual(result['baseline_flow_replay_max_ack_error_ns'],1)
+        with (self.root/'out/flows.csv').open() as handle:
+            kv=[r for r in csv.DictReader(handle) if r['kind']=='kv']
+        self.assertEqual(len(kv),12)
+        self.assertEqual({int(r['payload_bytes']) for r in kv},{32768})
+
+    @unittest.skipUnless(backend_available(),'native backend not built')
     def test_live_baseline_and_three_replays_have_separate_identities(self):
         result=run_suite(self.save(),self.root/'out');out=self.root/'out'
         self.assertEqual(result['status'],'completed');self.assertEqual(result['frozen_replays'],3)
@@ -48,6 +61,12 @@ class ContentionTests(unittest.TestCase):
             self.assertEqual(replay['experiment_type'],'frozen_network_replay')
             self.assertEqual(replay['source']['source_tree_sha256'],live['source']['source_tree_sha256'])
         self.assertTrue((out/'report.md').exists());self.assertTrue((out/'replay_inputs.json').exists())
+        calendar=[json.loads(line) for line in (out/'native_schedule.jsonl').read_text().splitlines()]
+        self.assertTrue(any(row['command'].startswith('TIMER ') for row in calendar))
+        self.assertTrue(any(row['command'].startswith('LOCAL') for row in calendar))
+        self.assertTrue(any(row['after_ids'] for row in calendar))
+        replay=json.loads((out/'replay-both/summary.json').read_text())
+        self.assertTrue(replay['retained_native_timers_and_local_submissions'])
 
     @unittest.skipUnless(backend_available(),'native backend not built')
     def test_gpu_nic_endpoint_ids_survive_frozen_replay(self):

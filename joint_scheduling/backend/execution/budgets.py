@@ -26,8 +26,35 @@ class BudgetEstimator(MLUBudgetMixin, RuntimeComponent):
         sample = self.profile.lookup("decode", row["input_tokens"] + max(0, row["generated"]-1), len(ranks))
         seconds = sample["compute_seconds"] + self.collective_seconds(ranks, sample)
         if self.ep_enabled:
-            seconds += self.ep_estimate_seconds(row['d'], 1, self.profile.expert.raw['decode_layers'])
+            seconds += self.ep_estimate_seconds(row['d'], 1, self.profile.expert.raw['decode_layers'],
+                                               spans=self.ep_decode_spans([row]))
         return seconds
+
+    def layered_decode_remaining_seconds(self, instance):
+        """Visible current/future layers only; current EP remains conservative."""
+        state=self.active_decode_steps.get(instance)
+        if state is None:
+            return 0.
+        members=self.active_decode_batches[instance]
+        leader=self.requests[members[0]]
+        ranks=self.instances[instance].gpu_ids
+        steps=state['steps'];index=state['index'];sample=steps[index]
+        now=self.backend.now_seconds()
+        current=0.
+        if not leader.get('decode_nonexpert_finished',False):
+            count=sample['collectives_per_step'];segment=leader.get('segment_index',0)
+            part=sample['compute_seconds']/max(1,count)
+            queued=(self.ep_enabled and any(task[0]==members[0] and task[2]=='dense'
+                                           for task in self.ep_lanes[instance]))
+            current=(part if queued else max(0.,leader.get('compute_segment_end',now)-now))
+            current+=max(0,max(1,count)-segment-1)*part
+            current+=self.collective_seconds(ranks,dict(sample,collectives_per_step=max(0,count-segment)))
+        future=sum(s['compute_seconds']+self.collective_seconds(ranks,s) for s in steps[index+1:])
+        if self.ep_enabled:
+            layers=[s['layer_id'] for s in steps[index:] if s['layer_id'] in self.profile.expert.raw['prefill_layer_ids']]
+            future+=self.ep_estimate_seconds(instance,len(members),len(layers),
+                spans=self.ep_decode_spans([self.requests[rid] for rid in members]),layer_ids=layers)
+        return current+future
 
     def request_budget(self, row, network):
         now = self.backend.now_seconds()
@@ -56,7 +83,8 @@ class BudgetEstimator(MLUBudgetMixin, RuntimeComponent):
             predicted_first = now+current+future
         if self.ep_enabled and not row['prefill_finished']:
             query = max(1, row['input_tokens']-row.get('prefill_computed_tokens', 0))
-            predicted_first += self.ep_estimate_seconds(row['p'], query, len(self.profile.expert.raw['prefill_layer_ids']))
+            predicted_first += self.ep_estimate_seconds(row['p'], query, len(self.profile.expert.raw['prefill_layer_ids']),
+                spans=[(query,row.get('prefill_computed_tokens',0))])
         queued = list(self.queues[row["d"]])
         size = self.config.runtime.decode_batch_size
         queue_seconds = 0
@@ -66,14 +94,18 @@ class BudgetEstimator(MLUBudgetMixin, RuntimeComponent):
                 [r["input_tokens"]+max(0,r["generated"]-1) for r in members], len(self.instances[row["d"]].gpu_ids))
             queue_seconds += sample["compute_seconds"] + self.collective_seconds(self.instances[row["d"]].gpu_ids, sample)
             if self.ep_enabled:
-                queue_seconds += self.ep_estimate_seconds(row['d'], len(members), self.profile.expert.raw['decode_layers'])
+                queue_seconds += self.ep_estimate_seconds(row['d'], len(members), self.profile.expert.raw['decode_layers'],
+                                                         spans=self.ep_decode_spans(members))
         active = self.active_by_instance.get(row["d"])
-        if active is not None:
+        if active is not None and self.profile.decode_layered:
+            queue_seconds += self.layered_decode_remaining_seconds(row['d'])
+        elif active is not None:
             members = self.active_decode_batches.get(row["d"], (active,))
             sample = self.profile.lookup_decode_batch([self.requests[rid]["input_tokens"]+max(0,self.requests[rid]["generated"]-1) for rid in members], len(self.instances[row["d"]].gpu_ids))
             queue_seconds += sample["compute_seconds"] + self.collective_seconds(self.instances[row["d"]].gpu_ids, sample)
             if self.ep_enabled:
-                queue_seconds += self.ep_estimate_seconds(row['d'], len(members), self.profile.expert.raw['decode_layers'])
+                queue_seconds += self.ep_estimate_seconds(row['d'], len(members), self.profile.expert.raw['decode_layers'],
+                                                         spans=self.ep_decode_spans([self.requests[rid] for rid in members]))
         latest = min(predicted_first, ttft_deadline) + itl_slo - queue_seconds - self.decode_step_seconds(row)
         # After the first token the handoff deadline is anchored to its actual
         # return time, including a missed TTFT rather than moving it forward.

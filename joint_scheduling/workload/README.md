@@ -20,30 +20,9 @@
 不会自动循环补足。`--sha256` 验证冻结来源。`--profile` 同时检查 Prefill 和最后一次 Decode 上下文，
 越界时不写文件。请求 SLO 用 `--ttft-slo-seconds` / `--itl-slo-seconds` 明确指定，来源轨迹没有的目标不能当成原始业务承诺。
 
-### FreeInference 适配
+### 非主研究格式的兼容代码
 
-```bash
-./inference import-trace \
-  --trace data/freeinference/raw/2026-05-17.jsonl.zst --format freeinference \
-  --sha256 f768c3a44d6c7eb02340adcb7bceaf5a451e20dc568d7a96d69f78bfb70e09a8 \
-  --invalid-requests skip --request-prefix freeinference \
-  --profile joint_scheduling/profiles/deepseek_v3_h800_tp1_ep16_ep16_160k_estimated.json \
-  --ttft-slo-seconds 1 --itl-slo-seconds 0.1 \
-  --output joint_scheduling/artifacts/freeinference/replay.json
-```
-
-FreeInference 的 `--trace` 可为单个原始文件，或仅含原始会话文件的目录；目录按相对路径排序、递归读取 `.jsonl` / `.jsonl.zst`。不读取 `processed/*.parquet`。Zstandard 依赖随 `backend/requirements.txt` 安装，仅在解压 `.zst` 时加载。文件按块解压、逐行解析，最终的请求与精简元数据仍保存在内存；大数据建议按周导入。
-
-- 展开会话及工具调用中的嵌套子 agent；按请求自己的 `start_ms` 排序，以纳秒记录时间。长度取 `provider_tokens.prompt` / `completion`，不扣除 cached tokens。
-- 默认 `--invalid-requests error`：遇到无效时间或非正/缺失长度时拒绝。显式 `skip` 才排除这些请求，所有排除项和原因写入 `replay.audit.json`；来源计数、原因汇总、`dropped_requests` 也进入负载 provenance。原始合法时间戳仍决定完整时间区间，排除请求不会悄悄挤掉时间间隔。
-- 目录身份是排序后的相对路径、字节数、SHA-256 清单的确定性哈希；单文件身份仍为原文件字节 SHA-256。同一周重复出现的 session ID 会拒绝，避免重叠输入导致重复计数。
-- `trace_metadata.requests[request_id]` 保留来源文件/行、会话、step、turn、父会话/工具位置、模型和原始到达时间。它不进入执行队列字段，也不把 source `end_ms` / TTFT 当成仿真服务时间。
-- 不导入工具参数、文本或 `block_ids` 作为可执行内容/缓存命中。源块采用另一 tokenizer；当前以完整 provider token 数重放请求形状。
-- FreeInference 默认同时输出审计；`--audit-output` 可指定位置。质量拒绝和 profile 越界也写审计，负载文件不会写出；两类输出均拒绝覆盖。
-
-已提供固定版本的单分片输入、32 GPU 三策略连通性验证和 1 请求/秒对照规格，见 [样本及复现](../../data/freeinference/README.md)。163,840-token profile 是以原 4K H800 锚点外推的估算曲线，保留 `estimated_simulation_profile`。它覆盖当前样本，不代表所有 FreeInference 数据都已覆盖。现有 16K profile 不变。
-
-当前为固定外部时间戳的请求重放，记录会话关系但不模拟 agent 因上一步完成、工具等待或用户等待产生的后续到达。闭环 agent 完成时间不在此适配范围内。
+通用 Mooncake/FreeInference 导入接口与格式单元测试仍保留，但仓库不再附带这些研究负载或对应实验规格。正式研究仅保留 [Azure2023/2024](../../data/azure/README.md)，2024尚待下载。任何有界切片、时间缩放或压力派生输入只写入当前任务 outputs/inputs/，明确标注来源和派生规则。
 
 可用 `joint_scheduling.experiments.capacity.estimate_capacity` 做离线资源需求核算。
 其参考率是计算需求与平均链路载荷给出的乐观起点，`sustainable_capacity_rps` 保留为 `null`；

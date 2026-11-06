@@ -1,1 +1,1 @@
-"""Versioned ns-3 process adapter and reproducible build helpers."""
+"""Versioned ns-3 / flowSim process adapters and reproducible build helpers."""

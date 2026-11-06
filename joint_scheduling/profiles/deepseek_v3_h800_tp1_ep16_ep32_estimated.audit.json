@@ -10,12 +10,15 @@
   "routed_experts": 256,
   "top_k": 8,
   "routing_policy": {
-    "kind": "balanced_group_limited_periodic",
+    "kind": "layerwise_balanced_group_limited_periodic",
     "n_group": 8,
     "topk_group": 4,
     "period_tokens": 2240,
     "experts_per_selected_group": 2,
-    "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing"
+    "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing",
+    "routing_seed": 7,
+    "layer_stride": 104729,
+    "communication_mode": "token_rank"
   },
   "parameter_count": 670919973888,
   "weights_bytes_per_gpu": 59748544176,
@@ -595,9 +598,11 @@
     "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
     "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.",
     "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
-    "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
+    "Decode executes each layer's non-expert compute/TP before its routed MoE; intra-layer kernels are aggregate costs and two-microbatch overlap is not reproduced.",
     "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
-    "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget."
+    "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget.",
+    "Layer-specific deterministic rotations route each token independently of chunk/batch scheduling; learned gate scores are not modeled.",
+    "Activations are deduplicated per token/target GPU; local expert outputs combine before return. Local combine arithmetic has explicit zero uncalibrated cost; no inter-node aggregation/forwarding is modeled."
   ],
   "ep_sizes_by_phase": {
     "prefill": 16,
@@ -610,5 +615,6 @@
   "weights_gib_per_gpu_by_phase": {
     "prefill": 55.645167991518974,
     "decode": 36.60927169024944
-  }
+  },
+  "decode_execution": "layerwise_nonexpert_compute_then_corresponding_MoE"
 }

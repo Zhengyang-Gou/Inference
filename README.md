@@ -4,13 +4,13 @@ Inference 是面向大模型 Prefill–Decode 分离推理的调度研究仓库�
 
 **本仓库只做仿真。** 请求、计算、容量和通信事件均在 CPU 上推进；H800 等设备名称用于标识离线计算代价，节点与网络由显式参数建模。
 
-当前主研究入口是 [DeepSeek-V3 的 EP/KV 对照](joint_scheduling/configs/research/README.md)：32 GPU、P:D＝16:16、TP1，两侧均为 Attention DP16 / Expert EP16，比较 Immediate / FIFO / MLU。Azure 暂作回归输入，更新的真实请求候选及兼容性核验见 [trace 调研](joint_scheduling/workload/TRACE_RESEARCH.md)；160 GPU 布局保留为显式参考。计算使用 **公开数据推导的仿真计算 profile**，网络由 ns-3 分组模型执行，研究范围限定为离散事件仿真。该入口关闭绑定预测、联合选择和前缀缓存，相关功能与测试仍保留。其他配置的用途见 [配置目录](joint_scheduling/configs/README.md)，整理前快照与复现方法见 [冻结基线](joint_scheduling/RESEARCH_BASELINE.md)。
+当前主研究入口是 [DeepSeek-V3 的 EP/KV 对照](joint_scheduling/configs/research/README.md)：32 GPU、P:D＝16:16、TP1，两侧均为 Attention DP16 / Expert EP16，比较 Immediate / FIFO / MLU。研究输入范围限定为 Azure 2023/2024；[trace 调研](joint_scheduling/workload/TRACE_RESEARCH.md)保留为历史候选记录；160 GPU 布局保留为显式参考。计算使用 **公开数据推导的仿真计算 profile**，网络由 ns-3 分组模型执行，研究范围限定为离散事件仿真。该入口关闭绑定预测、联合选择和前缀缓存，相关功能与测试仍保留。其他配置的用途见 [配置目录](joint_scheduling/configs/README.md)，整理前快照与复现方法见 [冻结基线](joint_scheduling/RESEARCH_BASELINE.md)。
 
 运行时组件、允许的功能组合、输入/源码归档和两类实验的边界，统一见 [研究系统说明](joint_scheduling/RESEARCH_SYSTEM.md)。
 
-已支持 [FreeInference 原始会话 trace](data/freeinference/README.md) 导入（含 Zstandard 和子 agent 展开），提供 32 卡单请求验证与 1 rps 对照规格；匹配的 163840-token profile 使用原公开锚点外推，原始时间版和所有排除项均可核验。
+研究负载仅保留 [Azure 2023/2024](data/azure/README.md)：2023 原始文件及完整对话输入已保留，2024 尚待下载与覆盖审计；已移除其他研究负载和固定派生压力样本。通用导入器、模型曲线与基础功能测试保留。
 
-请求负载、模型、节点/网络拓扑、P/D 比例、TP/EP、带宽、SLO 和实验矩阵的统一前置口径见根目录 [实验报告](实验报告.md)。
+请求负载、模型、节点/网络拓扑、P/D 比例、TP/EP、带宽、SLO 和实验矩阵的当前口径见 [主研究配置](joint_scheduling/configs/research/README.md)及对应 JSON 配置。
 
 当前可运行的是 **CPU 上的 ns-3 分组网络仿真基线**，支持整份 KV、Prefill 后分块、逐层立即，以及动态观测下的集合通信保护和 SLO/FIFO KV 放行模式。已实现显式逐层计算/通信依赖、物理对象容量账本、统一时间与网络反馈、统计和绘图；已实现按共享资源补充带宽令牌、在途额度、集合通信保护及请求级 SLO 余量排序；**已实现可选的候选剪枝＋增量贪心联合绑定**。逐层模式需要显式 schema 2 计算性能文件，示例为 synthetic，使用显式仿真代价。
 

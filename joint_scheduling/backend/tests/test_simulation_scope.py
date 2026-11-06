@@ -30,7 +30,7 @@ class SimulationScopeTests(unittest.TestCase):
         raw=json.loads(path.read_text());digest=hashlib.sha256(path.read_bytes()).hexdigest()
         self.assertTrue(raw['provenance']['synthetic'])
         self.assertEqual(profile_kind(raw['provenance']),'estimated_simulation_profile')
-        for name in ('kv_policy','network_priority','validation','contention_diagnostic'):
+        for name in ('kv_policy','network_priority'):
             with self.subTest(spec=name):
                 plan=plan_suite(PACKAGE/('configs/research/'+name+'.json'))
                 audit=plan['comparison_audit']

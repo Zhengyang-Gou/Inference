@@ -4,10 +4,11 @@ from .component import RuntimeComponent
 
 
 class DecodeRuntime(RuntimeComponent):
-    owned_fields = frozenset(['active_decode_batches', 'decode_batch_completed', 'decode_batch_counter', 'decode_batch_histogram'])
+    owned_fields = frozenset(['active_decode_batches', 'active_decode_steps', 'decode_batch_completed', 'decode_batch_counter', 'decode_batch_histogram'])
 
     def init_decode_state(self):
         self.active_decode_batches = {}
+        self.active_decode_steps = {}
         self.decode_batch_counter = 0
         self.decode_batch_completed = 0
         self.decode_batch_histogram = {}
@@ -48,12 +49,27 @@ class DecodeRuntime(RuntimeComponent):
             self.busy[instance] = False
             self.active_by_instance.pop(instance, None)
             self.active_decode_batches.pop(instance, None)
+            self.active_decode_steps.pop(instance,None)
             self.decode_batch_completed += 1
             self.decode_batch_histogram[len(members)] = self.decode_batch_histogram.get(len(members), 0)+1
             self.emit("decode_batch_completed", instance_id=instance, **details)
             self.kick_decode(instance)
-        self.execute_step(self.requests[members[0]], "decode", max(contexts), complete,
-                          sample=sample, batch_details=details)
+        if self.profile.decode_layered:
+            steps=self.profile.decode_batch_steps(contexts,len(self.instances[instance].gpu_ids))
+            self.active_decode_steps[instance]=dict(steps=steps,index=0)
+            def layer(index):
+                if index==len(steps):
+                    complete();return
+                self.active_decode_steps[instance]['index']=index
+                for rid in members:
+                    self.requests[rid]['decode_layer_index']=index
+                    self.requests[rid]['decode_nonexpert_finished']=False
+                self.execute_step(self.requests[members[0]],'decode',max(contexts),lambda:layer(index+1),
+                    sample=steps[index],layer_id=steps[index]['layer_id'],batch_details=details)
+            layer(0)
+        else:
+            self.execute_step(self.requests[members[0]], "decode", max(contexts), complete,
+                              sample=sample, batch_details=details)
 
     def decode_done(self, rid):
         """Return one member token; the batch callback owns instance rescheduling."""

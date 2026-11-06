@@ -1,5 +1,19 @@
 # 实验性 EP 接入：节点内 TP，跨节点专家路由
 
+## 当前逐层路由与激活去重
+
+2026-11-05 起，研究用 DeepSeek profile 显式启用 `routing_mode="layerwise_periodic"`、`routing_seed=7` 和 `communication_mode="token_rank"`。每个实际 MoE 层使用基础路由周期的独立确定性旋转：`(seed + 104729 × (layer_id+1)) mod period`；P/D 使用相同的真实层编号（3–60）。路由仅由 token 位置、层和固定种子确定，不随 chunk、组批或事件顺序改变；仍是满足分组限制的合成路由，不是真实 gate 轨迹。不同层允许自然重复，但不再固定复用同一行。
+
+执行分别保留专家 assignment 数和 token/目标 rank 份数：同 token 命中同 GPU 的多个专家只发送一份激活，专家计算仍按全部 assignment 和活跃专家收费。目标 GPU 在专家计算后先合并本 token 的本地贡献，再进行所需 TP 和 combine 回传；不同请求的同位置 token 不会被合并。同端点的多个 token 仍聚合为逻辑流。
+
+`local_combine_seconds_per_extra_assignment` 显式设置本地合并的额外成本，研究 profile 当前为 **0（未校准假设）**；非零值会占用原 GPU FIFO 通道，审计核查完成时间。没有实现跨节点聚合转发。
+
+当前研究 Decode 使用显式 61 层曲线，逐层执行非路由专家计算/本地 TP，再执行该层的 routed MoE；前 3 层只有 Dense MLP，后 58 层分别 dispatch → 专家 FIFO → 本地合并/TP → combine。各层完成后才能进入下一层，全部层结束才返回本步所有 batch 成员的 token。层内 Attention、norm、Dense/shared MLP、router 仍采用聚合估算成本，未模拟逐 kernel 或双 micro-batch 流水。
+
+`phases.decode.layers` 引用 `layer_profiles` 中的 Dense/MoE 层曲线族，按 batch/context 插值；加载时验证各层计算量、collective 次数和消息形状与保留的 aggregate 曲线守恒。MLU 剩余预算使用当前层及未来层，已完成层不再重复计入。旧 profile 省略 Decode 层数据时保留原 aggregate 执行，便于冻结结果复现。
+
+旧 profile 省略新字段时保留 `shared_periodic` 和 `expert_assignment` 语义，便于历史输入复现。`expert_parallel_summary.json` 和 `reproducibility.json` 对新 profile 标明路由、传输及本地合并成本。独立审计和 MLU 资源需求/孤立调用估计使用相同的声明语义。
+
 主研究使用 32 GPU、P16/D16、TP1，两侧 DP16/EP16，EP rank 对应 GPU。P/D 各一个模型单元；DP 通过独立请求、批量和 KV 状态体现，不增加额外 DP 大数据流。原 P32/D128 的 160 GPU 布局保留为显式参考。
 
 独立的路由/激活字节与实际提交依赖核验见 [EP 流量核验](EP_FLOW_AUDIT.md)。2026-11-04 已将主周期路由修正为满足 8 个专家组、每 token 最多 4 组的约束，profile 加载时显式校验；P 侧仍为直接发送模型。并行口径和 32/48 GPU 候选见 [部署调研](DEPLOYMENT_RESEARCH.md)。
@@ -74,7 +88,7 @@ KV 调度可选 [MLU 分级策略](../kv_scheduler/MLU.md)：按 EP 阶段登记
 `weights_bytes_per_gpu` 必须同时核算复制/分片的 dense 权重及本地专家权重，不能直接使用 dense Llama 的权重和计算文件。
 开启 EP 时必须提供 EP 文件；EP 文件也不能以关闭 EP 的方式运行，避免漏算专家。
 
-通信量按 assignment、hidden channels 和两阶段独立数据类型计算。先把 hidden channels 精确分片到 TP 坐标，再乘 token-expert assignment 数。
+通信量按所声明的模式、hidden channels 和两阶段独立数据类型计算：旧 `expert_assignment` 按 assignment 计；新 `token_rank` 按每 token 的目标 rank 去重。两者都先把 hidden channels 精确分片到 TP 坐标，再乘相应份数。
 同一 GPU 上的专家路由无需发送；同服务器的不同 TP team 走配置指定的本地 GPU 端口或旧共享 FIFO，跨服务器走 RDMA。
 例如 hidden=5、TP2 分成 3+2 个通道，不能分别向上取整出 6 个通道。
 量化、打包、解包与路由内核耗时没有自动包含在元素字节数中，须纳入适当的计算 profile。
@@ -108,7 +122,7 @@ KV 调度可选 [MLU 分级策略](../kv_scheduler/MLU.md)：按 EP 阶段登记
 
 - 每个源 batch 独立发起路由并等待自己的结果，没有全 EP 组同步组批的 NCCL AllToAll barrier；不能用它声称复现某个框架的完整 EP 调度。
 - 周期路由表是显式输入，不是真实模型 router，也没有自动读取 Mooncake hash_ids 推导专家。
-- Prefill 在指定 MoE 层插入专家阶段；Decode 的已有 profile 是整个 dense token-step，当前先执行这个 dense step，再逐次执行声明的 MoE 层，未建模逐层交错。
+- Prefill 和带显式 Decode 层曲线的 profile 在对应 MoE 层插入专家阶段；缺少 Decode 层曲线的旧 profile 仍按 aggregate step 执行，摘要和复现文件明确区分。
 - 专家计算采用一阶线性模型；激活/路由 buffer 显存、通信 kernel 的 GPU 占用、DeepEP 的具体通信算法尚未建模。
 - 联合选择和绑定预测尚未扩展至共享专家队列，因此被显式禁用。KV SLO 门控增加了孤立 EP 调用成本估计，但没有完整预测所有专家队列等待，不构成 SLO 保证。
 

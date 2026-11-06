@@ -19,6 +19,10 @@ CONTROL_SWEEPS = {"kv_scheduler.max_concurrent_transfers", "kv_scheduler.max_inf
 
 
 EXPLICIT_OVERRIDES = frozenset({
+    # A suite must be able to name its network model explicitly; the pair is
+    # validated by feedback.BACKEND_PAIRS in load_config.
+    'feedback.network_backend',
+    'feedback.time_authority',
     'feedback.network_ewma_alpha',
     'feedback.network_observation_enabled',
     'feedback.network_observation_interval_us',

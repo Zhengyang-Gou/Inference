@@ -27,7 +27,7 @@ def audit_routing_constraint(expert, num_groups, max_groups_per_token):
                 scope='expert ID groups, not physical nodes; audit only, no routing changes')
 
 
-def token_reference(expert, group, placements, source, gpus_per_node, spans):
+def token_reference(expert, group, placements, source, gpus_per_node, spans, layer_id=None):
     """Enumerate independent (token count, cursor) spans, including batch members."""
     raw = expert.raw
     width = len(placements[source].gpu_ids)
@@ -36,13 +36,17 @@ def token_reference(expert, group, placements, source, gpus_per_node, spans):
     assignment_flows, rank_flows = Counter(), Counter()
     node_bytes = 0
     tokens = 0
+    rank_tokens = Counter()
+    shift = ((raw.get('routing_seed',0)+104729*(layer_id+1)) % len(raw['routing_pattern'])
+             if raw.get('routing_mode') == 'layerwise_periodic' and layer_id is not None else 0)
     for size, offset in spans:
         for cursor in range(offset, offset + size):
             tokens += 1
             targets = []
-            for expert_id in raw['routing_pattern'][cursor % len(raw['routing_pattern'])]:
+            for expert_id in raw['routing_pattern'][(cursor+shift) % len(raw['routing_pattern'])]:
                 counts[expert_id] += 1
                 targets.append(group[expert_id // per_rank])
+            rank_tokens.update(set(targets))
             for coordinate, src in enumerate(placements[source].gpu_ids):
                 # Enumerate channel IDs instead of reusing the runtime's formula.
                 channels = len(range(coordinate, raw['hidden_size'], width))
@@ -58,7 +62,7 @@ def token_reference(expert, group, placements, source, gpus_per_node, spans):
                 node_bytes += channels * len(nodes - {src // gpus_per_node})
     return dict(tokens=tokens, assignments=counts,
                 assignment_channels=assignment_flows, rank_channels=rank_flows,
-                remote_node_channels=node_bytes)
+                remote_node_channels=node_bytes, rank_tokens=dict(rank_tokens))
 
 
 def stage_flows(reference, element_bytes, combine=False, rank_deduplicated=False):
@@ -81,6 +85,10 @@ def payload_totals(reference, raw, gpus_per_node):
             distinct_rank_inter_node_bytes=sum(n for (s, d), n in ranks.items()
                                                if s // gpus_per_node != d // gpus_per_node) * unit,
             single_copy_per_remote_node_bytes=reference['remote_node_channels'] * unit)
+        modeled = ranks if raw.get('communication_mode') == 'token_rank' else direct
+        result[stage].update(modeled_bytes=sum(modeled.values())*unit,
+            modeled_inter_node_bytes=sum(n for (s,d),n in modeled.items()
+                if s//gpus_per_node != d//gpus_per_node)*unit)
     return result
 
 
@@ -98,20 +106,25 @@ def audit_layout(config, profile):
     samples = sorted({(1, 0), (1, period - 1), (period + 1, 1), (period, 0)})
     phases = {}
     cases = 0
+    deduplicate = profile.expert.communication_mode == 'token_rank'
+    ids = profile.expert.raw['prefill_layer_ids']
+    layers = (sorted({ids[0],ids[len(ids)//2],ids[-1]})
+              if profile.expert.routing_mode == 'layerwise_periodic' else [None])
     for source, group in groups.items():
-        for tokens, offset in samples:
+        for layer, (tokens, offset) in ((layer,sample) for layer in layers for sample in samples):
             reference = token_reference(profile.expert, group, placements, source,
-                                        config.topology.gpus_per_node, [(tokens, offset)])
-            counts = profile.expert.counts(tokens, offset)
+                                        config.topology.gpus_per_node, [(tokens, offset)], layer)
+            counts, rank_tokens = profile.expert.routing_counts([(tokens,offset)],len(group),layer)
             if counts != reference['assignments'] or sum(counts) != tokens * profile.expert.raw['top_k']:
                 raise ValueError('EP routing count mismatch: ' + source)
             for combine, stage in ((False, 'dispatch'), (True, 'combine')):
-                actual = Counter(ExpertParallelMixin.ep_flows(runtime, source, counts, combine))
-                expected = stage_flows(reference, profile.expert.raw[stage + '_element_bytes'], combine)
+                actual = Counter(ExpertParallelMixin.ep_flows(runtime, source, counts, combine,
+                    **(dict(rank_tokens=rank_tokens) if deduplicate else {})))
+                expected = stage_flows(reference, profile.expert.raw[stage + '_element_bytes'], combine, deduplicate)
                 if actual != expected:
                     raise ValueError('EP flow payload/endpoint mismatch: ' + source + '/' + stage)
             cases += 1
-            if (tokens, offset) == (period, 0):
+            if (tokens, offset) == (period, 0) and layer == layers[0]:
                 phase = placements[source].role
                 row = phases.setdefault(phase, dict(source_count=0, tokens=0,
                     assignments=0, dispatch=Counter(), combine=Counter()))
@@ -123,6 +136,8 @@ def audit_layout(config, profile):
                     row[stage].update(totals[stage])
     return dict(status='passed',checked_source_cursor_cases=cases,
                 checked_stages=cases*2,period_tokens=period,phase_period_totals=phases,
-                production_model='direct_token_expert_assignment_activation_payload',
+                layer_ids_checked=layers,period_totals_layer_id=layers[0],
+                production_model=('token_target_rank_deduplicated_activation_payload' if deduplicate else
+                                  'direct_token_expert_assignment_activation_payload'),
                 reference_scope='activation payload only; no metadata, scales, alignment, control packets or forwarding latency',
                 node_reference='one activation per token per remote physical node; not a simulated DeepEP transport')

@@ -108,6 +108,14 @@ def record_run(output, config_snapshot, profile, workload, backend, experiment_t
             decode_execution='aggregate_dense_step_then_MoE_layers') if config.get('expert_parallel',{}).get('enabled') else None,
         semantics='Feedback affects future compute/communication submissions.' if experiment_type=='end_to_end'
             else 'Submission times frozen; transport attribution only, not request/SLO improvement.')
+    ep = profile_data.get('expert_parallel',{})
+    if identity['parallel_semantics'] is not None and 'layers' in profile_data['phases']['decode']:
+        identity['parallel_semantics']['decode_execution']='layerwise_nonexpert_compute_then_corresponding_MoE'
+    if identity['parallel_semantics'] is not None and ('routing_mode' in ep or 'communication_mode' in ep):
+        identity['parallel_semantics'].update(
+            ep_routing=ep.get('routing_mode','shared_periodic'),ep_routing_seed=ep.get('routing_seed',0),
+            ep_communication=ep.get('communication_mode','expert_assignment'),
+            local_combine_seconds_per_extra_assignment=ep.get('local_combine_seconds_per_extra_assignment',0.))
     if (output/'binding_plan.json').is_file():
         identity['input_sha256']['binding_plan'] = sha256(output/'binding_plan.json')
     if config.get('expert_parallel',{}).get('enabled') and config['expert_parallel'].get('rank_unit') == 'gpu':

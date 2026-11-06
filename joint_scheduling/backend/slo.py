@@ -32,7 +32,8 @@ class MLUBudgetMixin:
         sample=self.profile.lookup_decode_batch([r['input_tokens']+max(0,r['generated']-1) for r in rows],len(placement.gpu_ids))
         seconds=sample['compute_seconds']+self.collective_seconds(placement.gpu_ids,sample)
         if self.ep_enabled:
-            seconds+=self.ep_estimate_seconds(instance,len(rows),self.profile.expert.raw['decode_layers'])
+            seconds+=self.ep_estimate_seconds(instance,len(rows),self.profile.expert.raw['decode_layers'],
+                                             spans=self.ep_decode_spans(rows))
         return seconds
 
     def mlu_budget(self,row,base):
@@ -52,7 +53,9 @@ class MLUBudgetMixin:
         round_cost=sum(self.mlu_decode_cost(d,[self.requests[rid] for rid in ahead[i:i+size]])
                        for i in range(0,len(ahead),size))
         active_cost=self.mlu_decode_cost(d,[self.requests[rid] for rid in active_ids]) if active_ids else 0.
-        if active_ids:
+        if active_ids and self.profile.decode_layered:
+            active_cost=self.layered_decode_remaining_seconds(d)
+        elif active_ids:
             # Known dense progress can be subtracted; the rest remains an
             # isolated conservative estimate, including communication.
             leader=self.requests[active_ids[0]]
@@ -64,7 +67,8 @@ class MLUBudgetMixin:
             compute=(part if queued else max(0.,leader.get('compute_segment_end',now)-now))+max(0,count-segment-1)*part
             active_cost=min(active_cost,compute+self.collective_seconds(self.instances[d].gpu_ids,
                 dict(sample,collectives_per_step=max(0,count-segment)))+
-                (self.ep_estimate_seconds(d,len(active_ids),self.profile.expert.raw['decode_layers']) if self.ep_enabled else 0.))
+                (self.ep_estimate_seconds(d,len(active_ids),self.profile.expert.raw['decode_layers'],
+                    spans=self.ep_decode_spans([self.requests[rid] for rid in active_ids])) if self.ep_enabled else 0.))
         expert_wait=self.expert_backlog_seconds(d)
         elapsed=max(0.,kv_ready-now)
         wait=max(0.,active_cost-elapsed)+max(round_cost,max(0.,expert_wait-elapsed))

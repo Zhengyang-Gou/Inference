@@ -15,9 +15,11 @@ class EPFlowAudit:
     """
     def __init__(self, config, profile):
         self.config, self.profile = config, profile
+        self.deduplicate = profile.expert.communication_mode == 'token_rank'
         self.placements = {p.instance_id: p for p in config.topology.placements}
         self.groups = {source: group for group in config.expert_parallel.groups for source in group}
         self.steps, self.calls, self.transfers = {}, {}, {}
+        self.decode_batches = {}
         self.started = self.completed = self.checked_flows = 0
         self.last_ns = 0
         self.totals = {phase: dict(dispatch=Counter(), combine=Counter(), calls=0, assignments=0)
@@ -36,19 +38,39 @@ class EPFlowAudit:
             if phase == 'decode':
                 self._require('context_tokens' in data, 'missing Decode token cursors')
                 spans = [(1, cursor) for cursor in data['context_tokens']]
+                if self.profile.decode_layered:
+                    layer=data.get('layer_id')
+                    self._require(type(layer) is int and 0<=layer<len(self.profile.phases['decode']['layers']),
+                                  'missing or invalid Decode layer')
+                    if layer==0:
+                        self._require(source not in self.decode_batches,'overlapping Decode batches')
+                        self.decode_batches[source]=dict(batch_id=data.get('batch_id'),next_layer=0,spans=spans)
+                    batch=self.decode_batches.get(source)
+                    self._require(batch is not None and batch['next_layer']==layer and
+                                  batch['batch_id']==data.get('batch_id') and batch['spans']==spans,
+                                  'Decode layer order/batch token identity mismatch')
             elif 'scheduled_tokens' in data:
                 spans = [(n, data['cached_tokens'][rid]) for rid, n in data['scheduled_tokens'].items()]
             else:
                 spans = [(data['tokens'], data.get('cached_tokens', 0))]
-            reference = token_reference(self.profile.expert, self.groups[source], self.placements,
-                source, self.config.topology.gpus_per_node, spans)
-            layers = (list(range(self.profile.expert.raw['decode_layers'])) if phase == 'decode' else
+            decode_layers = (list(self.profile.expert.raw['prefill_layer_ids'])
+                if self.profile.expert.routing_mode == 'layerwise_periodic' else
+                list(range(self.profile.expert.raw['decode_layers'])))
+            layers = (([data['layer_id']] if data['layer_id'] in self.profile.expert.raw['prefill_layer_ids'] else [])
+                      if phase=='decode' and self.profile.decode_layered else decode_layers if phase == 'decode' else
                       [data['layer_id']] if data.get('layer_id') in self.profile.expert.raw['prefill_layer_ids'] else [])
-            self.steps[source] = dict(reference=reference, layers=layers, next_layer=0, active_call=None)
+            self.steps[source] = dict(spans=spans, layers=layers, next_layer=0, active_call=None,
+                                     layered_decode=phase=='decode' and self.profile.decode_layered)
         elif event == 'compute_step_completed':
             step = self.steps.pop(data['instance_id'])
             self._require(step['active_call'] is None and step['next_layer'] == len(step['layers']),
                           'compute step completed before all declared MoE layers')
+            if step['layered_decode']:
+                self.decode_batches[data['instance_id']]['next_layer']+=1
+        elif event == 'decode_batch_completed' and self.profile.decode_layered:
+            batch=self.decode_batches.pop(data['instance_id'],None)
+            self._require(batch is not None and batch['next_layer']==len(self.profile.phases['decode']['layers']) and
+                          batch['batch_id']==data['batch_id'],'Decode batch completed before all layers')
         elif event == 'ep_call_started':
             cid, source, phase = data['ep_call_id'], data['source_instance_id'], data['phase']
             self._require(cid not in self.calls and source in self.steps, 'unknown or duplicate EP call')
@@ -58,14 +80,16 @@ class EPFlowAudit:
             self._require(self.placements[source].role == phase, 'EP phase differs from source role')
             step['next_layer'] += 1
             step['active_call'] = cid
-            reference = step['reference']
+            reference = token_reference(self.profile.expert, self.groups[source], self.placements,
+                source, self.config.topology.gpus_per_node, step['spans'], data['layer_id'])
             self._require(data['expert_assignments'] == reference['assignments'], 'token cursor/assignment mismatch')
             group = self.groups[source]
             per_rank = self.profile.expert.raw['num_experts'] // len(group)
             experts = {target: sum(reference['assignments'][i*per_rank:(i+1)*per_rank])
                        for i, target in enumerate(group)}
             self.calls[cid] = dict(reference=reference, phase=phase, source=source, stages={},
-                experts={target: n for target, n in experts.items() if n}, expert_started=set(), expert_ended=set())
+                experts={target: n for target, n in experts.items() if n}, expert_started=set(), expert_ended=set(),
+                compute_ended=set(), local_combine_started={}, local_combine_ended=set())
             self.started += 1
             totals = payload_totals(reference, self.profile.expert.raw, self.config.topology.gpus_per_node)
             self.totals[phase]['calls'] += 1
@@ -79,7 +103,8 @@ class EPFlowAudit:
                 self._require(stage not in call['stages'], 'duplicate EP communication stage')
                 if stage == 'combine':
                     self._require(call['expert_ended'] == set(call['experts']), 'combine before all experts complete')
-                expected = stage_flows(call['reference'], self.profile.expert.raw[stage+'_element_bytes'], stage=='combine')
+                expected = stage_flows(call['reference'], self.profile.expert.raw[stage+'_element_bytes'],
+                                       stage=='combine', self.deduplicate)
                 self._require(data['size_bytes'] == sum(s*n for (_, _, s), n in expected.items()), 'stage byte total mismatch')
                 self._require(data['flow_count'] == sum(expected.values()), 'stage flow count mismatch')
                 call['stages'][stage] = dict(expected=expected, pending=set(), started_ns=time_ns, completed=False)
@@ -110,11 +135,35 @@ class EPFlowAudit:
             self._require(target in call['experts'] and target not in call['expert_started'], 'unexpected expert destination')
             self._require(data['assignments'] == call['experts'][target], 'expert work differs from routed assignments')
             call['expert_started'].add(target)
+        elif event == 'compute_segment_completed' and data.get('task_kind') == 'expert':
+            call = self.calls[data['ep_call_id']]
+            self._require(data['instance_id'] in call['expert_started'], 'expert compute ended before start')
+            call['compute_ended'].add(data['instance_id'])
+        elif event == 'ep_local_combine_started':
+            call = self.calls[data['ep_call_id']]; target = data['instance_id']
+            self._require(self.deduplicate and target in call['compute_ended'], 'local combine before expert compute')
+            self._require(target not in call['local_combine_started'], 'duplicate local combine')
+            tokens = call['reference']['rank_tokens'][target]
+            extra = call['experts'][target]-tokens
+            cost = extra*self.profile.expert.raw.get('local_combine_seconds_per_extra_assignment',0.)
+            self._require(data['token_count']==tokens and data['extra_assignments']==extra,
+                          'local combine token incidence mismatch')
+            self._require(abs(data['modeled_compute_seconds']-cost)<1e-12, 'local combine cost mismatch')
+            call['local_combine_started'][target] = time_ns+round(cost*1e9)
+        elif event == 'ep_local_combine_completed':
+            call = self.calls[data['ep_call_id']]; target = data['instance_id']
+            self._require(target in call['local_combine_started'] and target not in call['local_combine_ended'],
+                          'local combine completion without start')
+            self._require(time_ns>=call['local_combine_started'][target], 'local combine completed too early')
+            self._require(data['token_count']==call['reference']['rank_tokens'][target], 'local combine token mismatch')
+            call['local_combine_ended'].add(target)
         elif event == 'ep_expert_completed':
             call = self.calls[data['ep_call_id']]
             target = data['instance_id']
             self._require(target in call['expert_started'] and target not in call['expert_ended'], 'unexpected expert completion')
             self._require(data['assignments'] == call['experts'][target], 'expert completion assignment mismatch')
+            if self.deduplicate:
+                self._require(target in call['local_combine_ended'], 'expert released before local combine')
             call['expert_ended'].add(target)
         elif event == 'ep_call_completed':
             call = self.calls[data['ep_call_id']]
@@ -140,14 +189,15 @@ class EPFlowAudit:
             for call in excluded:
                 row = payload_totals(call['reference'], self.profile.expert.raw, self.config.topology.gpus_per_node)[stage]
                 totals.subtract(row)
-            self._require(summary[stage+'_bytes'] == totals['direct_bytes'], 'summary '+stage+' payload mismatch')
-            self._require(summary['inter_node_'+stage+'_bytes'] == totals['direct_inter_node_bytes'],
+            self._require(summary[stage+'_bytes'] == totals['modeled_bytes'], 'summary '+stage+' payload mismatch')
+            self._require(summary['inter_node_'+stage+'_bytes'] == totals['modeled_inter_node_bytes'],
                           'summary '+stage+' remote payload mismatch')
         return dict(status='passed',started_calls=self.started,completed_calls=self.completed,
             incomplete_calls=len(self.calls),checked_logical_flows=self.checked_flows,
             active_logical_flows=len(self.transfers),active_compute_steps=len(self.steps),
+            active_decode_batches=len(self.decode_batches),
             phase_started_call_payloads=self.totals,
-            scope='current direct-assignment model; incomplete calls are not counted as completed')
+            scope='declared routing and communication model; incomplete calls are not counted as completed')
 
 
 def payload_totals_sum(phases, stage):

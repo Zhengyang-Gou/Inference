@@ -97,12 +97,15 @@
     "kv_layout": "BF16 compressed MLA latent+rotary key replicated across TP ranks",
     "routing": "explicit balanced group-limited periodic top-k",
     "routing_policy": {
-      "kind": "balanced_group_limited_periodic",
+      "kind": "layerwise_balanced_group_limited_periodic",
       "n_group": 8,
       "topk_group": 4,
       "period_tokens": 2240,
       "experts_per_selected_group": 2,
-      "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing"
+      "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing",
+      "routing_seed": 7,
+      "layer_stride": 104729,
+      "communication_mode": "token_rank"
     },
     "coverage": {
       "max_context": 16384,
@@ -116,10 +119,13 @@
       "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
       "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.",
       "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
-      "Source two-microbatch compute/communication overlap is not reproduced: executor uses asynchronous source batches and aggregated Decode dense work before MoE layers.",
+      "Decode executes each layer's non-expert compute/TP before its routed MoE; intra-layer kernels are aggregate costs and two-microbatch overlap is not reproduced.",
       "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
-      "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget."
-    ]
+      "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget.",
+      "Layer-specific deterministic rotations route each token independently of chunk/batch scheduling; learned gate scores are not modeled.",
+      "Activations are deduplicated per token/target GPU; local expert outputs combine before return. Local combine arithmetic has explicit zero uncalibrated cost; no inter-node aggregation/forwarding is modeled."
+    ],
+    "decode_execution": "layerwise_nonexpert_compute_then_corresponding_MoE"
   },
   "network_communication_excluded": true,
   "weights_bytes_per_gpu": 25158464940,
@@ -8219,7 +8225,1357 @@
             }
           ]
         }
-      ]
+      ],
+      "layers": [
+        "dense",
+        "dense",
+        "dense",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe",
+        "moe"
+      ],
+      "layer_profiles": {
+        "dense": {
+          "collectives_per_step": 2,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 2,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 4,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 8,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 16,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 32,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 256,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 1024,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 2048,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 8192,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 16384,
+              "compute_seconds": 0.00010124999999999998,
+              "collective_bytes": 14336
+            }
+          ],
+          "batches": [
+            {
+              "batch_size": 1,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 14336
+                }
+              ]
+            },
+            {
+              "batch_size": 2,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00010315624999999999,
+                  "collective_bytes": 28672
+                }
+              ]
+            },
+            {
+              "batch_size": 4,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00010315624999999999,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00011106249999999998,
+                  "collective_bytes": 57344
+                }
+              ]
+            },
+            {
+              "batch_size": 8,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00010315624999999999,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00011106249999999998,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00012687499999999998,
+                  "collective_bytes": 114688
+                }
+              ]
+            },
+            {
+              "batch_size": 16,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00010315624999999999,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00011106249999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00012687499999999998,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.0001585,
+                  "collective_bytes": 229376
+                }
+              ]
+            },
+            {
+              "batch_size": 32,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00010315624999999999,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00011106249999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00012687499999999998,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.0001585,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00022175,
+                  "collective_bytes": 458752
+                }
+              ]
+            },
+            {
+              "batch_size": 64,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 0.00010124999999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 0.00010315624999999999,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 0.00011106249999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 0.00012687499999999998,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.0001585,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00022175,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00034825000000000004,
+                  "collective_bytes": 917504
+                }
+              ]
+            }
+          ]
+        },
+        "moe": {
+          "collectives_per_step": 2,
+          "points": [
+            {
+              "tokens": 1,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 2,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 4,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 8,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 16,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 32,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 64,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 128,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 256,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 512,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 1024,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 2048,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 4096,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 8192,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            },
+            {
+              "tokens": 16384,
+              "compute_seconds": 6.475e-05,
+              "collective_bytes": 14336
+            }
+          ],
+          "batches": [
+            {
+              "batch_size": 1,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 14336
+                }
+              ]
+            },
+            {
+              "batch_size": 2,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 28672
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 6.665625e-05,
+                  "collective_bytes": 28672
+                }
+              ]
+            },
+            {
+              "batch_size": 4,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 6.665625e-05,
+                  "collective_bytes": 57344
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 7.45625e-05,
+                  "collective_bytes": 57344
+                }
+              ]
+            },
+            {
+              "batch_size": 8,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 6.665625e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 7.45625e-05,
+                  "collective_bytes": 114688
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 9.0375e-05,
+                  "collective_bytes": 114688
+                }
+              ]
+            },
+            {
+              "batch_size": 16,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 6.665625e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 7.45625e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 9.0375e-05,
+                  "collective_bytes": 229376
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00012200000000000001,
+                  "collective_bytes": 229376
+                }
+              ]
+            },
+            {
+              "batch_size": 32,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 6.665625e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 7.45625e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 9.0375e-05,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00012200000000000001,
+                  "collective_bytes": 458752
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00018525,
+                  "collective_bytes": 458752
+                }
+              ]
+            },
+            {
+              "batch_size": 64,
+              "points": [
+                {
+                  "tokens": 1,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 2,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 4,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 8,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 16,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 32,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 64,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 128,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 256,
+                  "compute_seconds": 6.475e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 512,
+                  "compute_seconds": 6.665625e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 1024,
+                  "compute_seconds": 7.45625e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 2048,
+                  "compute_seconds": 9.0375e-05,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 4096,
+                  "compute_seconds": 0.00012200000000000001,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 8192,
+                  "compute_seconds": 0.00018525,
+                  "collective_bytes": 917504
+                },
+                {
+                  "tokens": 16384,
+                  "compute_seconds": 0.00031175,
+                  "collective_bytes": 917504
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "step_overhead_seconds": 0.0
     }
   },
   "expert_parallel": {
@@ -30703,6 +32059,10 @@
       "prefill": 1.0047379032258065e-05,
       "decode": 1.0047379032258065e-05
     },
-    "expert_tp_collectives_per_call": 1
+    "expert_tp_collectives_per_call": 1,
+    "routing_mode": "layerwise_periodic",
+    "routing_seed": 7,
+    "communication_mode": "token_rank",
+    "local_combine_seconds_per_extra_assignment": 0.0
   }
 }

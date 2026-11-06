@@ -8,7 +8,7 @@ from .binding import BindingConfig
 from .binding.static import endpoint_policy, validate_static_settings
 from .backend.settings import RuntimeConfig, parse_config as parse_runtime
 from .backend.expert_config import ExpertParallelConfig, parse_config as parse_ep, validate_config as validate_ep
-from .feedback import FeedbackConfig
+from .feedback import BACKEND_PAIRS, FeedbackConfig
 from .evaluation.config import EvaluationConfig, parse_config as parse_evaluation
 from .kv_scheduler import KVConfig
 from .reservations import ReservationsConfig
@@ -97,6 +97,14 @@ def load_config(path=DEFAULT_CONFIG):
         expert_parallel=parse_ep(raw.get("expert_parallel", {})),
     )
     validate_static_settings(config.binding)
+    if (config.feedback.time_authority, config.feedback.network_backend) not in BACKEND_PAIRS:
+        raise ConfigError(
+            "feedback.time_authority/network_backend must be one of {}".format(
+                ", ".join("{} + {}".format(*pair) for pair in BACKEND_PAIRS)))
+    if config.feedback.network_backend == "flowsim" and config.runtime.network_priority_enabled:
+        raise ConfigError(
+            "the flowSim fluid model does not model strict priority queues; "
+            "set runtime.network_priority_enabled=false or use network_backend=ns3_alibabacloud")
     if any(value*1e6 >= 2**63 for value in (config.binding.window_ms, config.binding.max_wait_ms,
                                            config.binding.early_trigger_margin_ms)):
         raise ConfigError("binding window times exceed the nanosecond clock range")

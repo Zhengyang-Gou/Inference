@@ -71,7 +71,7 @@
       "topology.gpus_per_node": 8
     },
     "input_sha256": {
-      "profile": "1fa5db2104c3e901ab92c1dfc2db10fd02bdeb92e8403e3ed5969d4d9932cee1",
+      "profile": "19758041ab09097354f50006acaccfb19031a45d8cc4e01e5f3f2083a585a9cb",
       "workload": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346"
     }
   },

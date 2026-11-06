@@ -37,6 +37,15 @@ class Probe:
         self.counts=defaultdict(lambda:[0,0]);self.endpoint_overlap=defaultdict(float)
         self.endpoint_last={};self.shared=set();self.global_last=0;self.global_overlap_ns=0
         self.previous=None;self.ports={};self.next_progress=time.monotonic()+15
+        self.native_schedule=[];self.last_remote_index=None
+
+    def native_event(self, registration):
+        row=dict(registration)
+        row['flow_index']=self.last_remote_index if row['command'].startswith('SEND ') else None
+        if row['flow_index'] is not None:
+            flow=self.flows[row['flow_index']]
+            assert flow[0]==row['time_ns'],'native SEND detached from logical transfer'
+        self.native_schedule.append(row)
 
     def touch(self,now,endpoints,kind,change):
         self.global_overlap_ns+=(now-self.global_last)*bool(self.shared);self.global_last=now
@@ -60,6 +69,7 @@ class Probe:
             stage=self.stage_ids[(details['ep_call_id'],details['collective_type'])]
             self.stages[stage]['ack_ns']=now
         if event=='transfer_started':
+            self.last_remote_index=None
             source=details['source_gpu_id']//self.gpus_per_node
             dest=details['destination_gpu_id']//self.gpus_per_node
             kind=details['transfer_kind'];stage=-1
@@ -72,6 +82,7 @@ class Probe:
             dest=self.topology.network_endpoint(details['destination_gpu_id'])
             if kind=='collective':assert stage>=0,'TP must stay node-local'
             self.active[details['transfer_id']]=len(self.flows)
+            self.last_remote_index=len(self.flows)
             self.flows.append([now,-1,source,dest,details['size_bytes'],kind,details['priority'],stage,details['request_id']])
             self.touch(now,('tx:'+str(source),'rx:'+str(dest)),kind,1)
         elif event=='transfer_completed':
@@ -113,13 +124,16 @@ def baseline(out,config,source_snapshot):
     workload=json.loads(Path(config.runtime.workload_path).read_text())
     probe=Probe(config)
     began=time.monotonic()
-    result=run_baseline(config,out/'run',hooks=RuntimeHooks(event=probe.event,network_sample=probe.sample),
+    result=run_baseline(config,out/'run',hooks=RuntimeHooks(event=probe.event,network_sample=probe.sample,
+                        native_schedule=probe.native_event),
                         source_snapshot=source_snapshot)
     assert not probe.active and not probe.local_active,'baseline stopped with unfinished flow'
     assert all(s['ack_ns']>=s['start_ns'] for s in probe.stages)
     with (out/'flows.csv').open('w',newline='') as f:
         w=csv.writer(f);w.writerow(['start_ns','ack_ns','source_endpoint','destination_endpoint','payload_bytes','kind','priority','stage_index','request_id']);w.writerows(probe.flows)
     (out/'stages.json').write_text(json.dumps(probe.stages,separators=(',',':'))+'\n')
+    with (out/'native_schedule.jsonl').open('w') as handle:
+        for row in probe.native_schedule:handle.write(json.dumps(row,separators=(',',':'))+'\n')
     pairs=defaultdict(set)
     for r in probe.flows:pairs[r[2],r[3]].add(r[5])
     assert all(len(v)==1 for v in pairs.values()),'removing a class could change the other class port allocation'
@@ -149,34 +163,60 @@ def replay(out,config,probe,keep):
         out.parent/'inputs/workload.json',json.loads(state['manifest'].read_text()),
         'frozen_network_replay',out.parent/'inputs/source')
     prior=defaultdict(list);port_checks=0
+    parts=defaultdict(int)
+    for row in probe.native_schedule:
+        if row['flow_index'] is not None:parts[row['flow_index']]+=1
+    native_completed=set();selected_ids=set()
     with Ns3Backend(config.topology,out/'network',config.runtime.seed,config.runtime.congestion_control,
         config.runtime.packet_payload_bytes,config.runtime.switch_buffer_bytes,config.runtime.rpc_timeout_seconds,False) as backend:
         def done(index):
             nonlocal completed
-            end[index]=backend.now_ns;completed+=1
-        for index,row in enumerate(probe.flows):
-            if keep!='both' and row[5]!=keep:continue
-            while backend.now_ns < row[0]:backend.advance(row[0]/1e9)
-            assert backend.now_ns==row[0]
-            history=prior[row[2],row[3]]
-            if len(history)>=64512:
-                previous=history[-64512]
-                assert end[previous]>=0 and row[0]>=end[previous]+100000000,'port cooldown would alter fixed route identity'
-                assert row[0]>=baseline_ack[previous]+100000000,'baseline port cooldown could alter fixed route identity'
-                port_checks+=1
-            history.append(index)
-            backend.send_hosts(row[2],row[3],row[4],lambda i=index:done(i),kind=row[5],priority=row[6]);selected+=1
+            parts[index]-=1
+            if parts[index]==0:
+                end[index]=backend.now_ns;completed+=1
+        for registration in probe.native_schedule:
+            index=registration['flow_index']
+            row=probe.flows[index] if index is not None else None
+            if row is not None and keep!='both' and row[5]!=keep:continue
+            at=registration['time_ns']
+            while backend.now_ns < at:backend.advance(at/1e9)
+            assert backend.now_ns==at
+            if keep=='both':
+                # A deadline at N can precede an already queued packet at N.
+                # Deliver the original triggering completions before registering
+                # their children; all starts remain frozen at the exact same N.
+                for _ in range(len(registration['after_ids'])+1):
+                    if all(i in native_completed for i in registration['after_ids']):break
+                    backend.advance(at/1e9)
+                assert all(i in native_completed for i in registration['after_ids']), 'native causal epoch differs'
+            if row is not None:
+                history=prior[row[2],row[3]]
+                if len(history)>=64512:
+                    previous=history[-64512]
+                    assert end[previous]>=0 and at>=end[previous]+100000000,'port cooldown would alter fixed route identity'
+                    assert at>=baseline_ack[previous]+100000000,'baseline port cooldown could alter fixed route identity'
+                    port_checks+=1
+                history.append(index)
+            def native_done(native_id=registration['native_id'],flow_index=index):
+                native_completed.add(native_id)
+                if flow_index is not None:done(flow_index)
+            backend.submit_frozen_event(registration['command'],native_done)
+            if row is not None:
+                selected_ids.add(index);selected=len(selected_ids)
             if time.monotonic()>=next_progress:
                 print('replay',keep,'submitted',selected,'completed',completed,flush=True);next_progress=time.monotonic()+15
-        deadline=max(baseline_ack)/1e9+1.
+        selected=sum(1 for i,row in enumerate(probe.flows) if keep=='both' or row[5]==keep)
+        deadline=max(config.runtime.time_limit_seconds,max(baseline_ack)/1e9+1.)
         while completed<selected and backend.now_seconds()<deadline:backend.advance(deadline)
         assert completed==selected,'replay did not drain'
+        backend.run_until(deadline)
         snapshot=backend.network_snapshot()
     with (out/'completions.csv').open('w',newline='') as f:
         writer=csv.writer(f);writer.writerow(['flow_index','ack_ns'])
         writer.writerows((i,n) for i,n in enumerate(end) if n>=0)
     report=dict(experiment_type='frozen_network_replay', selected_flows=selected,completed_flows=completed,port_cooldown_checks=port_checks,
         retained_start_times_payload_and_endpoint_order=True,network_priority_enabled=False,
+        retained_native_timers_and_local_submissions=True,
         final_port_counters=snapshot['resources'])
     (out/'summary.json').write_text(json.dumps(report,indent=2)+'\n')
     print('REPLAY COMPLETE',keep,selected,flush=True)
@@ -239,7 +279,7 @@ def validate_plan(plan):
             or not raw['feedback'].get('network_observation_enabled')
             or raw['feedback'].get('network_observation_interval_us',1000)!=1000):
         raise ValueError('frozen EP/KV replay requires EP, 1ms telemetry and native priority off')
-    if raw['runtime']['kv_transfer_mode']!='layer_ready_immediate':
+    if raw['runtime']['kv_transfer_mode'] not in ('layer_ready_immediate','whole_ready_immediate'):
         raise ValueError('contention attribution uses an ungated immediate baseline')
     width=raw['topology']['gpus_per_node']
     if any(len({gpu//width for gpu in p['gpu_ids']})!=1 for p in raw['topology']['placements']):
@@ -277,6 +317,7 @@ def run_contention(plan, output_dir, progress=None, *, execution=None):
         comparison=analyze(output,config,probe,summary,replays)
         write_json(output/'replay_inputs.json',dict(experiment_type='frozen_network_replay',
             flow_sha256=sha256(output/'flows.csv'),stages_sha256=sha256(output/'stages.json'),
+            native_schedule_sha256=sha256(output/'native_schedule.jsonl'),
             network_config_sha256=sha256(output/'config.json'),
             scope='Same starts, payloads, priorities and per-pair port order; local EP/TP stage ACK times held fixed.'))
         report=dict(schema_version=1,status='completed',experiment_type='frozen_network_replay',

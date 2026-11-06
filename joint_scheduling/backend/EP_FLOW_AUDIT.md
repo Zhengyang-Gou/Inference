@@ -1,5 +1,9 @@
 # EP 流量生成核验
 
+2026-11-05 当前研究 profile 已改为逐层确定性路由与 token/目标 GPU 激活去重；旧 profile 的 assignment 模式继续可复现。核验工具根据 profile 选择通信口径，逐 token、逐层独立枚举，并检查专家计算、本地合并、TP、combine 的完成依赖。静态核验抽取首/中/末 MoE 层，实际执行核验覆盖所有已调用层。当前语义见 [EP 说明](EXPERT_PARALLEL.md)，下文旧路由数据保留为历史记录。
+
+当前研究 Decode 还显式核验 61 层顺序、同一 token 步的 batch 成员与 context 不变，以及最终层完成后才返回 token。本轮 32 GPU、Azure 首秒单请求的实际运行检查了 2552 次 EP 调用、30176 条 EP 逻辑流与 193488 个 assignment，全部完成，无遗留调用或 batch；对应归档为 `outputs/agents/2026-11-05/M-094452-layer-decode-azure/results/main-layer-audit/`。这是机制核验，不代表持续负载压力。
+
 本页保存 2026-11-03 **旧路由**的核验记录：直接发送模型的整数路由、字节、TP 分片和完成依赖一致，但与参考系统存在差异。2026-11-04 已修复主 profile 的分组约束，当前周期为 2240 token、每 token 4 个专家组；本页旧表和字节比例不作为新路由结果。部署依据、路由变更与小规模候选见 [部署调研](DEPLOYMENT_RESEARCH.md)。核验工具自身只读，不修改输入或仿真时序。
 
 ## 可重复执行
@@ -19,7 +23,7 @@
   --output joint_scheduling/artifacts/ep-audit-smoke --simulate
 ```
 
-主模型的实际流核验使用短程验证结果中已冻结的 `config.json`，加相同的 `--simulate`。`configs/research/validation.json` 是实验规格，不能直接作为全局 `--config`；应选其某次 baseline 输出中的 `config.json`。`--simulate` 完整执行所选配置，没有自动截短负载。当前实际流核验要求前缀缓存关闭，以便从现有事件独立恢复 token 游标；静态核验不受这个限制。
+主模型实际流核验需在当前任务 outputs/inputs/ 从保留的原始Azure2023/2024输入明确生成有界配置，再对该配置使用 `--simulate`。原固定切片及 validation 规格已移除，不能继续引用旧输入路径。`--simulate` 完整执行所选配置，没有自动截短负载。当前实际流核验要求前缀缓存关闭，以便从现有事件独立恢复 token 游标；静态核验不受这个限制。
 
 输出包含 `audit_config.json`、`compute_profile.json` 和 `audit_summary.json`；实际运行另存 `run/`，沿用现有的源码、输入和后端身份归档。已有目录拒绝覆盖。`layout.status` 与可选的 `routing_constraint.status` 分别说明实现一致性、参考 gate 约束是否匹配；约束不匹配作为模型差异报告，不修改路由，也不冒充实现错误。路由参考参数必须成对提供，不会自动把任何模型都当作 DeepSeek-V3。
 
