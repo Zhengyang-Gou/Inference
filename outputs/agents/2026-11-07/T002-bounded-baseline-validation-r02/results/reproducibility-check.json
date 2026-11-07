@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "method": "normalized semantic fields from both runs; non-semantic metadata (paths, wall clock, source archive) excluded",
+  "fields": {
+    "tokens_csv": true,
+    "requests_csv": true,
+    "token_times_from_events": true,
+    "request_status_and_slo": true,
+    "completion_window": true,
+    "latencies": true,
+    "binding_plan": true,
+    "ep_summary": true,
+    "kv_and_collective_logical_bytes": true,
+    "prefill_chunk_batch_decode_summaries": true,
+    "final_resources": true,
+    "epflowaudit_result": true,
+    "hook_event_counts": true
+  },
+  "all_semantic_fields_identical": true,
+  "non_semantic_differences_allowed": [
+    "wall_clock_seconds",
+    "run directory paths",
+    "source archive paths",
+    "reproducibility.json run-specific paths"
+  ],
+  "wall_clock_seconds": {
+    "run-a": 280.673291007,
+    "run-b": 287.66477151699996
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "experiment_type": "end_to_end",
+  "input_sha256": {
+    "config": "75a7e2d6d40d671c830596d9e780ab19aed1bd19e5fb1c17e60314ee76bdb596",
+    "profile": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+    "workload": "625bf0a51b258590c4f58ca67c8b121aa184931e1fb35ddd351d2086a392822c",
+    "binding_plan": "164160bc08c819c8e735fabd57518bbb9083209ccef15791634114ed0528f155"
+  },
+  "source": {
+    "git_head": "91cf1e2a16b8ff59b595619a7d0c02c4dd5df8dc",
+    "source_tree_sha256": "427d8527d3ab3f5c637811d1c1d0eba6b6957d09248351515a1cbd128c15ddea",
+    "archive_sha256": "992ece2489bb52aaceee0b0a1f30ef9feb9dd4357b9becf8f31336bb6c07d536",
+    "manifest": "source/manifest.json",
+    "archive": "source/source.tar.gz"
+  },
+  "backend": {
+    "source": "/home/m0nesy/Postgraduate/Inference/third_party/ns3",
+    "revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+    "source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6",
+    "compiler": "/usr/bin/g++",
+    "compiler_version": "g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+    "cmake": "/home/m0nesy/miniconda3/envs/simai/lib/python3.12/site-packages/cmake/data/bin/cmake",
+    "cmake_version": "cmake version 3.31.10",
+    "fingerprint": "23ec96146135d0706e39",
+    "root": "/home/m0nesy/Postgraduate/Inference/joint_scheduling/artifacts/backend/current",
+    "source_copy": "/home/m0nesy/Postgraduate/Inference/joint_scheduling/artifacts/backend/current/source",
+    "build_dir": "/home/m0nesy/Postgraduate/Inference/joint_scheduling/artifacts/backend/current/cmake",
+    "executable": "/home/m0nesy/Postgraduate/Inference/joint_scheduling/artifacts/backend/current/source/build/bin/joint-scheduling-ns3",
+    "manifest": "/home/m0nesy/Postgraduate/Inference/joint_scheduling/artifacts/backend/current/build_manifest.json",
+    "protocol_version": 4,
+    "completion_semantics": "all_bytes_acknowledged_at_sender",
+    "executable_sha256": "a7c76b5679bf4d7e93145a78935f3957dde98865f19af2a20455a0930a33154c"
+  },
+  "profile_status": "estimated_simulation_profile",
+  "profile_synthetic": true,
+  "execution_schema": "pd_profile_driven_v1",
+  "parallel_semantics": {
+    "ep_size_unit": "GPU_ranks",
+    "ep_execution": "asynchronous_source_batch_dispatch_expert_fifo_combine",
+    "decode_execution": "layerwise_nonexpert_compute_then_corresponding_MoE",
+    "ep_routing": "layerwise_periodic",
+    "ep_routing_seed": 7,
+    "ep_communication": "token_rank",
+    "local_combine_seconds_per_extra_assignment": 0.0,
+    "phases": {
+      "prefill": {
+        "attention_tp": 1,
+        "attention_dp_instances": 16,
+        "expert_ep_size": 16,
+        "model_units": 1,
+        "weights_bytes_per_gpu": 59748544176
+      },
+      "decode": {
+        "attention_tp": 1,
+        "attention_dp_instances": 16,
+        "expert_ep_size": 16,
+        "model_units": 1,
+        "weights_bytes_per_gpu": 59748544176
+      }
+    }
+  },
+  "semantics": "Feedback affects future compute/communication submissions."
+}

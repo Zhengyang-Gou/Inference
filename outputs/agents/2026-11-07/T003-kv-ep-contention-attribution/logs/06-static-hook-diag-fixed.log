@@ -1,0 +1,6 @@
+wsl: Failed to translate '\\wsl.localhost\Ubunt\Users\33199\AppData\Local\Programs\WorkBuddy\resources\app.asar.unpacked\cli\vendor\shim\safe-bin'
+wsl: Failed to translate '\\wsl.localhost\Ubunt\Users\33199\AppData\Local\Programs\WorkBuddy\resources\app.asar.unpacked\cli\vendor\shim\safe-bin'
+probe data: {"request_id": "azure-conv-000000000", "transfer_id": "transfer-1", "transfer_kind": "kv", "block_id": "azure-conv-000000000:l0:r0:b0", "layer_id": 0, "offset_bytes": 0, "ready_at_seconds": 0.000472621, "size_bytes": 430848, "source_gpu_id": 0, "destination_gpu_id": 11, "priority": 2}
+OK probe.event
+OK probe.capture
+DIAG2_EXIT=0

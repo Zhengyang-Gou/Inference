@@ -1,0 +1,27 @@
+{
+  "expected_frozen_manifest_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78",
+  "actual_frozen_manifest_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78",
+  "manifest_sha256_match": true,
+  "frozen_files": {
+    "results/frozen/config.json": {
+      "expected": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+      "actual": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+      "match": true
+    },
+    "results/frozen/compute_profile.json": {
+      "expected": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "actual": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "match": true
+    },
+    "results/frozen/workload.json": {
+      "expected": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+      "actual": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+      "match": true
+    },
+    "results/frozen/binding_plan.json": {
+      "expected": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+      "actual": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+      "match": true
+    }
+  }
+}

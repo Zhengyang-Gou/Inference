@@ -1,0 +1,5 @@
+LIVE_START=2026-11-07T19:35:40+0800
+LIVE_EXIT=1
+LIVE_END=2026-11-07T19:35:43+0800
+LIVE FAILED: TypeError: 'int' object is not subscriptable
+ERROR conda.cli.main_run:execute(149): `conda run python work/agents/2026-11-07/T003-kv-ep-contention-attribution/live_baseline.py` failed. (See above for error)

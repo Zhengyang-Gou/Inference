@@ -1,0 +1,194 @@
+{
+  "evidence_type": "independent_review_static_only_no_simulation",
+  "python": "3.12.16 (main, Oct 26 2026, 11:37:43) [GCC 15.3.0]",
+  "python_executable": "/home/m0nesy/miniconda3/envs/simai/bin/python",
+  "max_runtime_decode_context_tokens": 14087,
+  "reported_conservative_context_tokens": 14088,
+  "context_note": "Input audit uses input+output-1 (conservative final-KV extent); actual last Decode lookup uses input+output-2. Both are covered.",
+  "checks": [
+    {
+      "check": "source_identity:base_config",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "source_identity:workload",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "source_identity:compute_profile",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "source_identity:azure_manifest",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "frozen_identity:config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "frozen_identity:compute_profile.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "frozen_identity:workload.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "frozen_identity:binding_plan.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "workload_exact_copy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "profile_exact_copy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "exact_nine_authorized_config_differences",
+      "passed": true,
+      "detail": [
+        "evaluation.output_dir",
+        "feedback.compute_profile_path",
+        "feedback.state_observation_enabled",
+        "kv_scheduler.collective_protection_enabled",
+        "kv_scheduler.decode_admission_limit",
+        "kv_scheduler.policy",
+        "kv_scheduler.slo_priority_enabled",
+        "runtime.kv_transfer_mode",
+        "runtime.workload_path"
+      ]
+    },
+    {
+      "check": "manifest_config_diff_matches_actual",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "portable_profile_path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "portable_workload_path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "portable_evaluation_path",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "main_layout",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "tp1_all_instances",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "prefill_batch_settings",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "decode_settings",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "immediate_no_controlled_kv",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "optimization_switches_off",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "observation_settings",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "slo_values",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "window_and_limit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "request_count_and_ids",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "no_request_slo_overrides",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "project_environment_binding_plan_matches",
+      "passed": true,
+      "detail": "6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5"
+    },
+    {
+      "check": "bindings_cover_requests",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "plan_content_hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "prefill_allocation_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "decode_allocation_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "prefill_ep_and_decode_batches_1_to_64_covered",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "executor_before_after_git_logs_equal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "manifest_baseline_status_raw_hash",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "checks_total": 34,
+  "failures": [],
+  "frozen_config_sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+  "frozen_manifest_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78"
+}

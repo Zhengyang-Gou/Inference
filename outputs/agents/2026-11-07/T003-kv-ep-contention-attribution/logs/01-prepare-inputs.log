@@ -1,0 +1,5 @@
+=== python ===
+Python 3.12.16
+=== prepare inputs ===
+{"status": "inputs_ready", "request_count": 8, "input_tokens": 3913, "output_tokens": 550, "decode_steps": 542, "config_diff": ["evaluation.window_end_seconds", "evaluation.window_start_seconds", "runtime.time_limit_seconds"], "diag_config_diff": ["evaluation.window_end_seconds", "evaluation.window_start_seconds", "feedback.compute_profile_path", "runtime.time_limit_seconds", "runtime.workload_path"], "plan_sha256": "f674f52e79c042008d0f44f79b1146ba5ec1f3a826147f5d18d607a2cf892b89", "frozen_manifest_match": true}
+PREPARE_EXIT=0

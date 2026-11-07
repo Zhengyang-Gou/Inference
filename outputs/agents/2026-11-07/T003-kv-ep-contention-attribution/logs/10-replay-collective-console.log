@@ -1,0 +1,10 @@
+REPLAY_COLLECTIVE_START=2026-11-07T20:00:54+0800
+REPLAY_COLLECTIVE_EXIT=0
+REPLAY_COLLECTIVE_END=2026-11-07T20:02:25+0800
+replay collective submitted 25832 completed 25824
+replay collective submitted 70686 completed 70686
+replay collective submitted 105353 completed 105352
+replay collective submitted 128332 completed 128332
+replay collective submitted 172731 completed 172731
+REPLAY COMPLETE collective 201006
+{"stage": "collective", "status": "completed", "wall_clock_seconds": 86.651, "selected": 201006, "completed": 201006, "port_cooldown_checks": 0, "native_submission_matches": true}

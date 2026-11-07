@@ -1,0 +1,116 @@
+{
+  "run": "run-a",
+  "wall_clock_seconds": 280.673291007,
+  "ep_flow_audit": {
+    "status": "passed",
+    "started_calls": 12122,
+    "completed_calls": 12122,
+    "incomplete_calls": 0,
+    "checked_logical_flows": 141968,
+    "active_logical_flows": 0,
+    "active_compute_steps": 0,
+    "active_decode_batches": 0,
+    "phase_started_call_payloads": {
+      "prefill": {
+        "dispatch": {
+          "direct_bytes": 5141663744,
+          "direct_inter_node_bytes": 2742276096,
+          "distinct_rank_bytes": 3895334912,
+          "distinct_rank_inter_node_bytes": 2096711680,
+          "single_copy_per_remote_node_bytes": 675748864,
+          "modeled_bytes": 3895334912,
+          "modeled_inter_node_bytes": 2096711680
+        },
+        "combine": {
+          "direct_bytes": 10283327488,
+          "direct_inter_node_bytes": 5484552192,
+          "distinct_rank_bytes": 7790669824,
+          "distinct_rank_inter_node_bytes": 4193423360,
+          "single_copy_per_remote_node_bytes": 1351497728,
+          "modeled_bytes": 7790669824,
+          "modeled_inter_node_bytes": 4193423360
+        },
+        "calls": 232,
+        "assignments": 765136
+      },
+      "decode": {
+        "dispatch": {
+          "direct_bytes": 639055872,
+          "direct_inter_node_bytes": 340910080,
+          "distinct_rank_bytes": 483868672,
+          "distinct_rank_inter_node_bytes": 258004992,
+          "single_copy_per_remote_node_bytes": 84030464,
+          "modeled_bytes": 483868672,
+          "modeled_inter_node_bytes": 258004992
+        },
+        "combine": {
+          "direct_bytes": 1278111744,
+          "direct_inter_node_bytes": 681820160,
+          "distinct_rank_bytes": 967737344,
+          "distinct_rank_inter_node_bytes": 516009984,
+          "single_copy_per_remote_node_bytes": 168060928,
+          "modeled_bytes": 967737344,
+          "modeled_inter_node_bytes": 516009984
+        },
+        "calls": 11890,
+        "assignments": 95120
+      }
+    },
+    "scope": "declared routing and communication model; incomplete calls are not counted as completed"
+  },
+  "hooks_events": {
+    "event_counts": {
+      "binding_committed": 3,
+      "collective_completed": 24244,
+      "collective_started": 24244,
+      "compute_segment_completed": 101245,
+      "compute_segment_started": 101245,
+      "compute_step_completed": 12749,
+      "compute_step_started": 12749,
+      "decode_batch_completed": 205,
+      "decode_batch_started": 205,
+      "decode_requeued": 202,
+      "ep_call_completed": 12122,
+      "ep_call_started": 12122,
+      "ep_expert_completed": 75747,
+      "ep_local_combine_completed": 75747,
+      "ep_local_combine_started": 75747,
+      "kv_all_received": 3,
+      "kv_ready": 3,
+      "layer_ready": 183,
+      "prefill_batch_completed": 4,
+      "prefill_batch_started": 4,
+      "prefill_chunk_completed": 4,
+      "prefill_chunk_layer_ready": 244,
+      "prefill_chunk_started": 4,
+      "queue_dequeued": 208,
+      "resources": 494,
+      "transfer_completed": 142212,
+      "transfer_started": 142212
+    },
+    "event_total": 814151,
+    "first_event_ns": 0,
+    "last_event_ns": 6291310080
+  },
+  "result_summary_keys": [
+    "arrival_cohort",
+    "auxiliary_event_count",
+    "comparison_tolerance",
+    "completion_window",
+    "evaluation_config",
+    "expert_parallel",
+    "latencies",
+    "measurement",
+    "observation_end_seconds",
+    "prefix_cache",
+    "pressure",
+    "recording",
+    "run",
+    "schema_version",
+    "source_trace",
+    "static_binding",
+    "total_requests_recorded",
+    "units"
+  ],
+  "status": "completed"
+}

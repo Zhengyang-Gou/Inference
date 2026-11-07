@@ -1,0 +1,5 @@
+kv_ready_to_send passed= True paired= 244 violations= 0
+full_prefill_end_to_first_decode passed= True paired= 3 violations= 0
+sixty_one_layers_to_token passed= True paired= 205 violations= 0
+equivalence all identical: True
+all boundaries passed: True

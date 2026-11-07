@@ -1,0 +1,8 @@
+T001 frozen hashes verified: True
+sample matches TASK table: True input sum 1649 output sum 208
+binding endpoints match parent projection: True
+subset bindings_sha256: 459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3
+config diff keys: ['evaluation.window_end_seconds', 'evaluation.window_start_seconds', 'runtime.time_limit_seconds']
+static checks: [('load_config', 'passed'), ('load_workload', 'passed'), ('expert_profile.validate_profile', 'passed'), ('profile.validate_prefill_batch_coverage', 'passed'), ('profile.lookup_decode_batch', 'passed')]
+inputs files: ['config.json', 'workload.json', 'compute_profile.json', 'binding_plan.json']
+ns-3 end-to-end runs: 0 (blocked)

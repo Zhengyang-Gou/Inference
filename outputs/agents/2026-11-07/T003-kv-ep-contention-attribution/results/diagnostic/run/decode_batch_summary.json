@@ -1,0 +1,14 @@
+{
+  "max_batch_size": 64,
+  "started_batches": 542,
+  "completed_batches": 542,
+  "completed_batch_size_histogram": {
+    "1": 542
+  },
+  "context_model": "padded_max_context",
+  "timing_model": "profile_batch_and_context_interpolation",
+  "active_batches_at_end": {},
+  "execution": "layerwise_nonexpert_compute_then_corresponding_MoE",
+  "layers_per_step": 61,
+  "active_layer_indices": {}
+}

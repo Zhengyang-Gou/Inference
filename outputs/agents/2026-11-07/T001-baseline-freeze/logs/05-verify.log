@@ -1,0 +1,3 @@
+checks: 47 / 47 passed; failures: 0
+binding sha256: 6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5
+config diff keys: ['evaluation.output_dir', 'feedback.compute_profile_path', 'feedback.state_observation_enabled', 'kv_scheduler.collective_protection_enabled', 'kv_scheduler.decode_admission_limit', 'kv_scheduler.policy', 'kv_scheduler.slo_priority_enabled', 'runtime.kv_transfer_mode', 'runtime.workload_path']

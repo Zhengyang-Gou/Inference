@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "method": "Server-only static archive integrity validation; no simulation",
+  "historical_files_validated": 323,
+  "historical_bytes": 400004988.0,
+  "historical_selected": 262,
+  "all_selected_and_migration_paths": 281,
+  "raw_archive_sha256": "5ea2d7c640e060c32b259a0d8a94f97b758f05b29bf562c11611f8704fc18a8a",
+  "task_states": {
+    "T001-baseline-freeze": "accepted",
+    "T002-bounded-baseline-validation": "blocked",
+    "T002-bounded-baseline-validation-r02": "changes_requested",
+    "T002-bounded-baseline-validation-r03": "accepted",
+    "T003-kv-ep-contention-attribution": "submitted"
+  },
+  "historical_evidence_not_reclassified_as_server_run": true
+}

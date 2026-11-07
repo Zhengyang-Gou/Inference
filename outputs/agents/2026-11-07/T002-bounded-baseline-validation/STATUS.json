@@ -1,0 +1,11 @@
+{
+  "task_id": "T002",
+  "title": "有界样本的基础链路验收",
+  "agent": "WorkBuddy",
+  "status": "blocked",
+  "created_at": "2026-11-07T16:42:25.0142813+08:00",
+  "started_at": "2026-11-07T16:46:17+08:00",
+  "updated_at": "2026-11-07T16:50:49+08:00",
+  "parent_task": "T001",
+  "report": "REPORT.md"
+}

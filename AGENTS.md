@@ -41,7 +41,8 @@ outputs/agents/YYYY-MM-DD/T001-short-name/
 - 执行 agent 保留原始 TASK.md；遇到范围冲突或需扩大目标时写入报告，交指挥处理，不自行改写验收条件。
 - 临时草稿放 `work/agents/YYYY-MM-DD/T001-short-name/`。正式源码、配置和输入按任务边界写入所属模块；后端构建继续用 `joint_scheduling/artifacts/backend/`。
 - 不覆盖已有任务、日志或结果。返工使用新编号或 -r02 目录，并在 parent_task 记录来源。
-- 不维护多个 agent 共写的 latest 文件或全局结果汇总。
+- 不维护多个 agent 共写的 latest 文件或全局结果汇总。coordination/PROGRESS.md 由指挥独占维护，执行 agent 不共写总索引。
+- 任务书、状态、报告、审核意见、必要输入/身份清单、关键结果与分析脚本须按 coordination/ARCHIVING.md 纳入版本记录。outputs/work 默认忽略，新增记录需逐文件显式跟踪；不把整棵生成目录加入 Git。用户未授权提交时说明未提交清单，不自动 commit/push。大体积原始证据另存服务器并记录位置与 SHA256。
 
 ## 状态与所有权
 
@@ -78,4 +79,4 @@ STATUS.json 使用 coordination/templates/STATUS.json。指挥创建时填 creat
 - 指挥读取报告、原始结果及必要代码，按 REVIEW.md 模板写审核意见，再设置 accepted 或 changes_requested。
 - 只有审核通过后才规划下一项。报告中的下一步建议不是新授权，不能自动继续。
 
-流程与模板见 coordination/README.md。本次重置不附带新执行任务，不自动恢复已撤销的旧任务。
+流程与模板见 coordination/README.md，研究当前位置见 coordination/PROGRESS.md。迁移或归档不重置编号，不自动发布任务或恢复已撤销的任务。

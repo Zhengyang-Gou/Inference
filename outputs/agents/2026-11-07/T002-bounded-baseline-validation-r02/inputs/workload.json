@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "provenance": {
+    "source_file": "AzureLLMInferenceTrace_conv.csv",
+    "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv",
+    "source_sha256": "2f1e5b666d4e3055fdbba98598ce2ec307767b9064e03e2fa46676dbcc7d0bf8",
+    "source_format": "azure",
+    "source_request_count": 19366,
+    "source_origin_ns": 1700158546680590000,
+    "source_duration_ns": 3501721937001,
+    "source_synthetic": false,
+    "source_lengths": "unchanged paired observations",
+    "clipped_requests": 0,
+    "dropped_requests": 0,
+    "session_dependencies_modeled": false,
+    "prefix_reuse_enabled_by_import": false,
+    "synthetic": false,
+    "description": "Real-source paired lengths with original relative arrival timing; no simulation results.",
+    "arrival_time_scaled": false,
+    "full_scaled_duration_seconds": 3501.721937001,
+    "injection_start_seconds": 0.0,
+    "injection_duration_seconds": 3501.721937001,
+    "requested_full_trace_rate_rps": null,
+    "actual_selected_rate_rps": 5.53042198907025,
+    "time_scale": 1.0,
+    "source_window_end_seconds": 3501.721937001,
+    "selected_request_count": 19366,
+    "time_window_excluded_requests": 0,
+    "paired_lengths_sha256": "fd41716387b45b40107641e0f6b7df102c7edaa7a3335936fb8ae603fa0096a2",
+    "source_row_order_sha256": "e77001bf4a3b8457e28507fee7923ea5fe4013bc8e3ec44a6967d7378472f477",
+    "time_scale_changes_absolute_burst_duration": false,
+    "slo_origin": "not supplied by source"
+  },
+  "requests": [
+    {
+      "request_id": "azure-conv-000000000",
+      "arrival_seconds": 0.0,
+      "input_tokens": 374,
+      "output_tokens": 44
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "arrival_seconds": 4.314579,
+      "input_tokens": 396,
+      "output_tokens": 109
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "arrival_seconds": 4.541877,
+      "input_tokens": 879,
+      "output_tokens": 55
+    }
+  ]
+}

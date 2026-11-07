@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "policy": "balanced_random",
+  "seed": 7,
+  "request_order": "arrival_seconds_then_request_id",
+  "selection_time": "request_arrival",
+  "prefill_selection": "round_robin",
+  "decode_selection": "reshuffle_each_pool_cycle",
+  "bindings_sha256": "f674f52e79c042008d0f44f79b1146ba5ec1f3a826147f5d18d607a2cf892b89",
+  "request_count": 8,
+  "prefill_counts": {
+    "p0": 1,
+    "p1": 1,
+    "p2": 1,
+    "p3": 1,
+    "p4": 1,
+    "p5": 1,
+    "p6": 1,
+    "p7": 1,
+    "p8": 0,
+    "p9": 0,
+    "p10": 0,
+    "p11": 0,
+    "p12": 0,
+    "p13": 0,
+    "p14": 0,
+    "p15": 0
+  },
+  "decode_counts": {
+    "d0": 0,
+    "d1": 0,
+    "d2": 0,
+    "d3": 1,
+    "d4": 1,
+    "d5": 1,
+    "d6": 0,
+    "d7": 1,
+    "d8": 0,
+    "d9": 1,
+    "d10": 0,
+    "d11": 1,
+    "d12": 0,
+    "d13": 1,
+    "d14": 1,
+    "d15": 0
+  },
+  "cross_leaf_requests": 4,
+  "cross_leaf_fraction": 0.5,
+  "bindings": [
+    {
+      "request_id": "azure-conv-000000000",
+      "prefill_instance_id": "p0",
+      "decode_instance_id": "d3",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        0
+      ],
+      "cross_leaf": false
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "prefill_instance_id": "p1",
+      "decode_instance_id": "d14",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        1
+      ],
+      "cross_leaf": true
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "prefill_instance_id": "p2",
+      "decode_instance_id": "d7",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        0
+      ],
+      "cross_leaf": false
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "prefill_instance_id": "p3",
+      "decode_instance_id": "d9",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        1
+      ],
+      "cross_leaf": true
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "prefill_instance_id": "p4",
+      "decode_instance_id": "d13",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        1
+      ],
+      "cross_leaf": true
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "prefill_instance_id": "p5",
+      "decode_instance_id": "d11",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        1
+      ],
+      "cross_leaf": true
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "prefill_instance_id": "p6",
+      "decode_instance_id": "d4",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        0
+      ],
+      "cross_leaf": false
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "prefill_instance_id": "p7",
+      "decode_instance_id": "d5",
+      "prefill_leaf_ids": [
+        0
+      ],
+      "decode_leaf_ids": [
+        0
+      ],
+      "cross_leaf": false
+    }
+  ]
+}

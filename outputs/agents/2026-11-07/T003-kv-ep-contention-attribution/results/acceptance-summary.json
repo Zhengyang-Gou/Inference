@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "task_id": "T003",
+  "status": "submitted",
+  "all_passed": true,
+  "items": [
+    {
+      "id": "A1",
+      "status": "passed",
+      "note": "Frozen manifest 811cc296..., 8 original requests, parent binding projection, only permitted config diffs; source/backend identical to accepted T002-r03.",
+      "evidence": [
+        "results/identity-check.json",
+        "results/environment-check.json",
+        "inputs/sample-manifest.json"
+      ]
+    },
+    {
+      "id": "A2",
+      "status": "passed",
+      "note": "8 requests / 550 tokens completed, 11 chunks / 542 decode steps / 32074 EP calls, KV logical payload 274974336 B, 32 memory domains empty, EP audit passed.",
+      "evidence": [
+        "results/mechanism-checks.json",
+        "results/live-stage.json",
+        "results/metrics-summary.json",
+        "results/diagnostic/run"
+      ]
+    },
+    {
+      "id": "A3",
+      "status": "passed",
+      "note": "Both replay drained; per-flow and per-EP-stage error <=1 ns; separate-by-class and port cooldown checks retained; native TIMER/LOCAL/LOCAL_PORTS skeleton preserved.",
+      "evidence": [
+        "results/replay-fidelity.json",
+        "results/diagnostic/replay-both"
+      ]
+    },
+    {
+      "id": "A4",
+      "status": "passed",
+      "note": "Two removal replays with signed flow/stage deltas, four EP phase/kind groups and directed-NIC/1 ms port sharing evidence. Absence of contention would also be a valid result.",
+      "evidence": [
+        "results/contention-summary.json",
+        "results/flow-comparison.csv",
+        "results/stage-comparison.csv",
+        "results/port-intervals.csv"
+      ]
+    },
+    {
+      "id": "A5",
+      "status": "passed",
+      "note": "All 8 KV admission gates and all 550 token final-layer combine stages mapped by real identity; conditional exposure alongside actual metrics; end-to-end counterfactual explicitly not measured.",
+      "evidence": [
+        "results/event-links.jsonl",
+        "results/request-impact.csv",
+        "results/request-impact-summary.json"
+      ]
+    },
+    {
+      "id": "A6",
+      "status": "passed",
+      "note": "Budget and scope recorded; single seed, no algorithm comparison, no scale-out, no full trace; negative results allowed.",
+      "evidence": [
+        "REPORT.md",
+        "results/acceptance-summary.json",
+        "logs/commands.md"
+      ]
+    }
+  ],
+  "wall_clock_seconds": {
+    "both": 96.51582810500008,
+    "collective": 86.65089997500013,
+    "kv": 46.93216686200003,
+    "live": 911.9064795220002
+  },
+  "ns3_simulation_time_limit_seconds": 30.0,
+  "network_replay_deadline_rule": "max(30 s, last baseline ACK + 1 s)",
+  "errors": [],
+  "limitations": [
+    "8 requests, all batches size 1; no sustained load or batch>1 coverage.",
+    "Single seed 7; no confidence interval.",
+    "End-to-end counterfactual SLO/goodput change not measured.",
+    "Estimated profile, synthetic routing, artificial SLO."
+  ]
+}

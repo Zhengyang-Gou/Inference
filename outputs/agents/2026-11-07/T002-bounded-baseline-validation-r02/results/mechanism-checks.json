@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "task": "T002-r02",
+  "evidence_type": "two real ns-3 end-to-end runs, essential recording, read-only RuntimeHooks",
+  "expected": {
+    "requests": 3,
+    "tokens": 208,
+    "tokens_by_request": {
+      "azure-conv-000000000": 44,
+      "azure-conv-000000001": 109,
+      "azure-conv-000000002": 55
+    },
+    "input_tokens": 1649,
+    "prefill_chunks": 4,
+    "decode_steps": 205,
+    "ep_calls": 12122,
+    "prefill_ep_calls": 232,
+    "decode_ep_calls": 11890,
+    "kv_logical_bytes": 115878528,
+    "kv_logical_messages": 244,
+    "compute_steps": 12749,
+    "layers_per_step": 61,
+    "endpoints": {
+      "azure-conv-000000000": [
+        "p0",
+        "d3"
+      ],
+      "azure-conv-000000001": [
+        "p1",
+        "d14"
+      ],
+      "azure-conv-000000002": [
+        "p2",
+        "d7"
+      ]
+    }
+  },
+  "checks_total": 38,
+  "passed": 38,
+  "failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "run": "run-a",
+      "check": "three_requests_all_completed",
+      "status": "passed",
+      "detail": "requests=3 cohort={\"arrived_count\": 3, \"completed_by_observation_end\": 3, \"failed_count\": 0, \"incomplete_count\": 0, \"slo_met_completed_count\": 3, \"completed_and_slo_fraction\": 1.0, \"slo_attainment_among_completed\": 1.0}"
+    },
+    {
+      "run": "run-a",
+      "check": "token_counts_44_109_55_total_208",
+      "status": "passed",
+      "detail": "total=208 by_request={'azure-conv-000000000': 44, 'azure-conv-000000001': 109, 'azure-conv-000000002': 55}"
+    },
+    {
+      "run": "run-a",
+      "check": "token_indices_continuous_and_times_nondecreasing",
+      "status": "passed",
+      "detail": "monotone=True continuous=True"
+    },
+    {
+      "run": "run-a",
+      "check": "four_prefill_chunks_1649_query_tokens",
+      "status": "passed",
+      "detail": "chunks=4 query_tokens=1649"
+    },
+    {
+      "run": "run-a",
+      "check": "879_input_split_512_plus_367",
+      "status": "passed",
+      "detail": "{\"374\": 1, \"396\": 1, \"512\": 1, \"367\": 1}"
+    },
+    {
+      "run": "run-a",
+      "check": "205_decode_steps_and_61_layers",
+      "status": "passed",
+      "detail": "batches=205 layers=61 hist={\"1\": 205}"
+    },
+    {
+      "run": "run-a",
+      "check": "no_batch_greater_than_one_not_covered",
+      "status": "passed",
+      "detail": "all 205 Decode batches were single-member; large-batch behaviour is not covered"
+    },
+    {
+      "run": "run-a",
+      "check": "ep_calls_12122_started_and_completed",
+      "status": "passed",
+      "detail": "summary=12122/12122 audit=passed"
+    },
+    {
+      "run": "run-a",
+      "check": "ep_prefill_232_decode_11890",
+      "status": "passed",
+      "detail": "prefill=232 decode=11890"
+    },
+    {
+      "run": "run-a",
+      "check": "epflowaudit_no_active_residue",
+      "status": "passed",
+      "detail": "audit residue fields all zero; ep active maps empty"
+    },
+    {
+      "run": "run-a",
+      "check": "decode_61_layer_ep_dependencies_audited",
+      "status": "passed",
+      "detail": "checked_logical_flows=141968 execution=layerwise_nonexpert_compute_then_corresponding_MoE"
+    },
+    {
+      "run": "run-a",
+      "check": "kv_logical_payload_115878528_bytes",
+      "status": "passed",
+      "detail": "logical started/completed bytes=115878528 messages=244 (not port bytes)"
+    },
+    {
+      "run": "run-a",
+      "check": "layer_ready_precedes_transfers",
+      "status": "passed",
+      "detail": "chunk_layer_ready=244 layer_ready=183 transfer=142212/142212 compute_steps=12749"
+    },
+    {
+      "run": "run-a",
+      "check": "decode_admission_after_prefill_and_all_kv",
+      "status": "passed",
+      "detail": "prefill_started <= kv_all_received <= decode_started, first token after prefill start for all 3 requests"
+    },
+    {
+      "run": "run-a",
+      "check": "final_memory_all_zero",
+      "status": "passed",
+      "detail": "domains=32 all occupied/reserved=0"
+    },
+    {
+      "run": "run-a",
+      "check": "exports_complete",
+      "status": "passed",
+      "detail": "summary/requests/tokens/timeseries + backend/compute/EP/Prefill/Decode/resource exports present"
+    },
+    {
+      "run": "run-a",
+      "check": "backend_is_ns3",
+      "status": "passed",
+      "detail": "{\"backend\": \"simai_ns3_rdma\", \"protocol_version\": 4, \"endpoint_model\": \"per_gpu\"}"
+    },
+    {
+      "run": "run-a",
+      "check": "run_exported_binding_plan_matches_inputs_and_parent",
+      "status": "passed",
+      "detail": "sha=459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3 endpoints={'azure-conv-000000000': ('p0', 'd3'), 'azure-conv-000000001': ('p1', 'd14'), 'azure-conv-000000002': ('p2', 'd7')}"
+    },
+    {
+      "run": "run-a",
+      "check": "hooks_are_observational_only",
+      "status": "passed",
+      "detail": "event_total=814151"
+    },
+    {
+      "run": "run-b",
+      "check": "three_requests_all_completed",
+      "status": "passed",
+      "detail": "requests=3 cohort={\"arrived_count\": 3, \"completed_by_observation_end\": 3, \"failed_count\": 0, \"incomplete_count\": 0, \"slo_met_completed_count\": 3, \"completed_and_slo_fraction\": 1.0, \"slo_attainment_among_completed\": 1.0}"
+    },
+    {
+      "run": "run-b",
+      "check": "token_counts_44_109_55_total_208",
+      "status": "passed",
+      "detail": "total=208 by_request={'azure-conv-000000000': 44, 'azure-conv-000000001': 109, 'azure-conv-000000002': 55}"
+    },
+    {
+      "run": "run-b",
+      "check": "token_indices_continuous_and_times_nondecreasing",
+      "status": "passed",
+      "detail": "monotone=True continuous=True"
+    },
+    {
+      "run": "run-b",
+      "check": "four_prefill_chunks_1649_query_tokens",
+      "status": "passed",
+      "detail": "chunks=4 query_tokens=1649"
+    },
+    {
+      "run": "run-b",
+      "check": "879_input_split_512_plus_367",
+      "status": "passed",
+      "detail": "{\"374\": 1, \"396\": 1, \"512\": 1, \"367\": 1}"
+    },
+    {
+      "run": "run-b",
+      "check": "205_decode_steps_and_61_layers",
+      "status": "passed",
+      "detail": "batches=205 layers=61 hist={\"1\": 205}"
+    },
+    {
+      "run": "run-b",
+      "check": "no_batch_greater_than_one_not_covered",
+      "status": "passed",
+      "detail": "all 205 Decode batches were single-member; large-batch behaviour is not covered"
+    },
+    {
+      "run": "run-b",
+      "check": "ep_calls_12122_started_and_completed",
+      "status": "passed",
+      "detail": "summary=12122/12122 audit=passed"
+    },
+    {
+      "run": "run-b",
+      "check": "ep_prefill_232_decode_11890",
+      "status": "passed",
+      "detail": "prefill=232 decode=11890"
+    },
+    {
+      "run": "run-b",
+      "check": "epflowaudit_no_active_residue",
+      "status": "passed",
+      "detail": "audit residue fields all zero; ep active maps empty"
+    },
+    {
+      "run": "run-b",
+      "check": "decode_61_layer_ep_dependencies_audited",
+      "status": "passed",
+      "detail": "checked_logical_flows=141968 execution=layerwise_nonexpert_compute_then_corresponding_MoE"
+    },
+    {
+      "run": "run-b",
+      "check": "kv_logical_payload_115878528_bytes",
+      "status": "passed",
+      "detail": "logical started/completed bytes=115878528 messages=244 (not port bytes)"
+    },
+    {
+      "run": "run-b",
+      "check": "layer_ready_precedes_transfers",
+      "status": "passed",
+      "detail": "chunk_layer_ready=244 layer_ready=183 transfer=142212/142212 compute_steps=12749"
+    },
+    {
+      "run": "run-b",
+      "check": "decode_admission_after_prefill_and_all_kv",
+      "status": "passed",
+      "detail": "prefill_started <= kv_all_received <= decode_started, first token after prefill start for all 3 requests"
+    },
+    {
+      "run": "run-b",
+      "check": "final_memory_all_zero",
+      "status": "passed",
+      "detail": "domains=32 all occupied/reserved=0"
+    },
+    {
+      "run": "run-b",
+      "check": "exports_complete",
+      "status": "passed",
+      "detail": "summary/requests/tokens/timeseries + backend/compute/EP/Prefill/Decode/resource exports present"
+    },
+    {
+      "run": "run-b",
+      "check": "backend_is_ns3",
+      "status": "passed",
+      "detail": "{\"backend\": \"simai_ns3_rdma\", \"protocol_version\": 4, \"endpoint_model\": \"per_gpu\"}"
+    },
+    {
+      "run": "run-b",
+      "check": "run_exported_binding_plan_matches_inputs_and_parent",
+      "status": "passed",
+      "detail": "sha=459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3 endpoints={'azure-conv-000000000': ('p0', 'd3'), 'azure-conv-000000001': ('p1', 'd14'), 'azure-conv-000000002': ('p2', 'd7')}"
+    },
+    {
+      "run": "run-b",
+      "check": "hooks_are_observational_only",
+      "status": "passed",
+      "detail": "event_total=814151"
+    }
+  ],
+  "note": "Batch sizes were 1 for all Prefill/Decode batches; large-batch and saturated behaviour is not covered"
+}

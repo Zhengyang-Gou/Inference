@@ -1,0 +1,24 @@
+{
+  "backend": "simai_ns3_rdma",
+  "protocol_version": 4,
+  "ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+  "build_fingerprint": "23ec96146135d0706e39",
+  "completion_semantics": "all_bytes_acknowledged_at_sender",
+  "endpoint_model": "per_gpu",
+  "congestion_control": "dcqcn",
+  "nic_bandwidth_gbps_per_node": 3200,
+  "nic_bandwidth_gbps_per_endpoint": 400.0,
+  "local_model": "gpu_ports",
+  "local_bandwidth_scope": "per_gpu_tx_rx_port",
+  "packet_bytes": 8000,
+  "switch_buffer_bytes": 16777216,
+  "seed": 7,
+  "ns3_seed": 8,
+  "network_priority_enabled": false,
+  "priority_mapping": {
+    "0": "urgent_kv",
+    "1": "collective",
+    "2": "normal_kv",
+    "3": "loose_kv"
+  }
+}

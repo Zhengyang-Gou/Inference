@@ -1,0 +1,94 @@
+[
+  {
+    "name": "01-python",
+    "argv": [
+      "./scripts/simai-python",
+      "-V"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 2.371824307832867,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/01-python.log"
+  },
+  {
+    "name": "02-dependencies",
+    "argv": [
+      "/home/s223/miniconda3/envs/simai/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 0.36529043037444353,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/02-dependencies.log"
+  },
+  {
+    "name": "03-backend-doctor",
+    "argv": [
+      "./inference",
+      "backend",
+      "doctor"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 2.8713247440755367,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/03-backend-doctor.log"
+  },
+  {
+    "name": "04-smoke-config",
+    "argv": [
+      "./inference",
+      "--config",
+      "joint_scheduling/configs/baseline_smoke.json",
+      "validate"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 2.671664754860103,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/04-smoke-config.log"
+  },
+  {
+    "name": "05-frozen-config",
+    "argv": [
+      "./inference",
+      "--config",
+      "/home/s223/m0nesy/Inference/artifacts/inputs/T001-baseline-freeze/config.json",
+      "validate"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 2.470434984192252,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/05-frozen-config.log"
+  },
+  {
+    "name": "06-targeted-tests",
+    "argv": [
+      "./scripts/simai-python",
+      "-m",
+      "unittest",
+      "joint_scheduling.backend.tests.test_module_boundaries",
+      "joint_scheduling.backend.tests.test_rpc_batching",
+      "joint_scheduling.backend.tests.test_vendored_source"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 6.930772560182959,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/06-targeted-tests.log"
+  },
+  {
+    "name": "07-smoke",
+    "argv": [
+      "./inference",
+      "--config",
+      "joint_scheduling/configs/baseline_smoke.json",
+      "run-baseline",
+      "--output",
+      "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/results/smoke"
+    ],
+    "cwd": "/home/s223/m0nesy/Inference",
+    "returncode": 0,
+    "wall_seconds": 8.988139494787902,
+    "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/07-smoke.log"
+  }
+]

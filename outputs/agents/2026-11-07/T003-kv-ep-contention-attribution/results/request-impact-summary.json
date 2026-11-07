@@ -1,0 +1,417 @@
+{
+  "schema_version": 1,
+  "actual_end_to_end": {
+    "completion_window": {
+      "completed_count": 8,
+      "slo_met_count": 8,
+      "slo_attainment": 1.0,
+      "completion_throughput_rps": 0.26666666666666666,
+      "slo_goodput_rps": 0.26666666666666666,
+      "carry_in_completed_count": 0
+    },
+    "arrival_cohort": {
+      "arrived_count": 8,
+      "completed_by_observation_end": 8,
+      "failed_count": 0,
+      "incomplete_count": 0,
+      "slo_met_completed_count": 8,
+      "completed_and_slo_fraction": 1.0,
+      "slo_attainment_among_completed": 1.0
+    },
+    "latencies": {
+      "ttft_seconds": {
+        "count": 8,
+        "mean": 0.11720852987499977,
+        "min": 0.05672286699999951,
+        "max": 0.2800098010000003,
+        "quantiles": {
+          "0.5": 0.0852593899999996,
+          "0.95": 0.2506388376999999,
+          "0.99": 0.27413560834000017
+        }
+      },
+      "handoff_seconds": {
+        "count": 8,
+        "mean": 0.01759357924999988,
+        "min": 0.01672258400000004,
+        "max": 0.01950480100000007,
+        "quantiles": {
+          "0.5": 0.01742967300000009,
+          "0.95": 0.0190258823499998,
+          "0.99": 0.019409017270000016
+        }
+      },
+      "later_max_itl_seconds": {
+        "count": 8,
+        "mean": 0.018782200375000085,
+        "min": 0.016948987999999998,
+        "max": 0.019935878000000073,
+        "quantiles": {
+          "0.5": 0.01847789199999994,
+          "0.95": 0.019912212750000123,
+          "0.99": 0.019931144950000083
+        }
+      },
+      "max_itl_seconds": {
+        "count": 8,
+        "mean": 0.018782200375000085,
+        "min": 0.016948987999999998,
+        "max": 0.019935878000000073,
+        "quantiles": {
+          "0.5": 0.01847789199999994,
+          "0.95": 0.019912212750000123,
+          "0.99": 0.019931144950000083
+        }
+      },
+      "mean_tpot_seconds": {
+        "count": 8,
+        "mean": 0.0178343327260447,
+        "min": 0.016775008744186047,
+        "max": 0.0194213528,
+        "quantiles": {
+          "0.5": 0.01791608335285587,
+          "0.95": 0.0190355834987037,
+          "0.99": 0.01934419893974074
+        }
+      },
+      "e2e_seconds": {
+        "count": 8,
+        "mean": 1.3120417589999998,
+        "min": 0.32648924499999943,
+        "max": 2.7497221209999996,
+        "quantiles": {
+          "0.5": 1.3334042219999995,
+          "0.95": 2.4929013753499993,
+          "0.99": 2.6983579718699993
+        }
+      }
+    },
+    "pressure": {
+      "measurement_start_seconds": 0.0,
+      "measurement_end_seconds": 30.0,
+      "observed_until_seconds": 30.0,
+      "measured_arrivals": 8,
+      "measured_completions": 8,
+      "measured_good_completions": 8,
+      "measured_failures": 0,
+      "offered_rps": 0.26666666666666666,
+      "completion_rps": 0.26666666666666666,
+      "goodput_rps": 0.26666666666666666,
+      "output_tokens_per_second": 18.333333333333332,
+      "decode_tokens_per_second": 18.066666666666666,
+      "backlog_start": 0,
+      "backlog_end": 0,
+      "backlog_change": 0,
+      "backlog_growth_rps": 0.0,
+      "mean_outstanding": 0.34987780239999994,
+      "peak_outstanding": 3,
+      "cohort_count": 8,
+      "cohort_slo_passed": 8,
+      "cohort_slo_missed": 0,
+      "cohort_slo_unknown": 0,
+      "cohort_slo_fraction_lower": 1.0,
+      "cohort_slo_fraction_upper": 1.0
+    },
+    "per_request": "results/request-impact.csv"
+  },
+  "layer1_observed_network_slowdown": {
+    "supported": true,
+    "classes": {
+      "collective": {
+        "flow_count": 201006,
+        "logical_payload_bytes": 16977795072,
+        "full_flow_latency_us": {
+          "count": 201006,
+          "mean": 19.98381282648279,
+          "p50": 8.794,
+          "p95": 47.379,
+          "p99": 334.96455000000054,
+          "minimum": 8.362,
+          "maximum": 468.709
+        },
+        "isolated_flow_latency_us": {
+          "count": 201006,
+          "mean": 19.983811184740755,
+          "p50": 8.794,
+          "p95": 47.379,
+          "p99": 334.96455000000054,
+          "minimum": 8.362,
+          "maximum": 468.709
+        },
+        "added_latency_us": {
+          "count": 201006,
+          "mean": 1.641742037551118e-06,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": -0.127,
+          "maximum": 0.136
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "negative_delta": {
+          "count": 1,
+          "minimum_us": -0.127,
+          "sum_magnitude_us": 0.127
+        },
+        "positive_delta": {
+          "count": 5,
+          "maximum_us": 0.136,
+          "sum_us": 0.457
+        }
+      },
+      "kv": {
+        "flow_count": 671,
+        "logical_payload_bytes": 274974336,
+        "full_flow_latency_us": {
+          "count": 671,
+          "mean": 13.8939478390462,
+          "p50": 13.158,
+          "p95": 17.424,
+          "p99": 17.424,
+          "minimum": 10.353,
+          "maximum": 17.424
+        },
+        "isolated_flow_latency_us": {
+          "count": 671,
+          "mean": 13.893727272727272,
+          "p50": 13.158,
+          "p95": 17.424,
+          "p99": 17.424,
+          "minimum": 10.353,
+          "maximum": 17.424
+        },
+        "added_latency_us": {
+          "count": 671,
+          "mean": 0.00022056631892697465,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.144
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "negative_delta": {
+          "count": 0,
+          "minimum_us": 0.0,
+          "sum_magnitude_us": 0
+        },
+        "positive_delta": {
+          "count": 3,
+          "maximum_us": 0.144,
+          "sum_us": 0.148
+        }
+      }
+    },
+    "ep_stage_groups": {
+      "decode.ep_combine": {
+        "count": 31436,
+        "added_latency_us": {
+          "count": 31436,
+          "mean": 2.862959664079399e-07,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.009
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      },
+      "decode.ep_dispatch": {
+        "count": 31436,
+        "added_latency_us": {
+          "count": 31436,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      },
+      "decode.final_layer_combine": {
+        "count": 542,
+        "added_latency_us": {
+          "count": 542,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      },
+      "other_layers": {
+        "count": 63595,
+        "added_latency_us": {
+          "count": 63595,
+          "mean": 1.4152055979243651e-07,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.009
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      },
+      "prefill.ep_combine": {
+        "count": 638,
+        "added_latency_us": {
+          "count": 638,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      },
+      "prefill.ep_dispatch": {
+        "count": 638,
+        "added_latency_us": {
+          "count": 638,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      },
+      "prefill.final_layer_combine": {
+        "count": 11,
+        "added_latency_us": {
+          "count": 11,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "delayed_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "improved_by_over_1us": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "note": "Frozen-submission transport counterfactual; not end-to-end request causality."
+  },
+  "layer2_exposed_to_request_necessary_boundary": {
+    "d_admission_gate": {
+      "delta_G_us": {
+        "count": 8,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "requests_with_nonzero": 0,
+      "requests_masked_by_prefill": 0
+    },
+    "final_layer_combine": {
+      "prefill_final_stages": 8,
+      "decode_token_stages": 542,
+      "expected_decode_token_stages": 542,
+      "first_decode_token_stages": 8,
+      "following_decode_token_stages": 534,
+      "added_latency_us": {
+        "count": 550,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "stages_delayed_over_1us": 0,
+      "stages_improved_over_1us": 0
+    },
+    "requests_with_any_boundary_exposure_over_1us": 0,
+    "tokens_with_final_combine_exposure_over_1us": 0,
+    "mapping_identity": {
+      "decode_token_errors": 0,
+      "first_token_errors": 0,
+      "all_8_requests_mapped": true,
+      "all_decode_tokens_mapped": true
+    }
+  },
+  "layer3_quantified_end_to_end_slo_change": {
+    "status": "not_measured",
+    "reason": "No counterfactual request trajectory was re-executed: replay freezes submissions and never reruns Prefill/Decode/scheduler. Therefore no counterfactual goodput, TTFT, handoff or ITL exists, and none may be inferred from flow/stage deltas."
+  },
+  "magnitude_vs_actual_ms": {
+    "actual_ttft_mean_ms": 117.20852987499977,
+    "actual_handoff_mean_ms": 17.59357924999988,
+    "actual_later_max_itl_mean_ms": 18.782200375000084,
+    "max_boundary_exposure_us": 0.0,
+    "max_delta_G_us": 0.0
+  },
+  "errors": [],
+  "all_checks_passed": true
+}

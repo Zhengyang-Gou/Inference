@@ -1,0 +1,5 @@
+replay kv submitted 305 completed 305
+replay kv submitted 669 completed 669
+replay kv submitted 671 completed 671
+REPLAY COMPLETE kv 671
+{"stage": "kv", "status": "completed", "wall_clock_seconds": 46.932, "selected": 671, "completed": 671, "port_cooldown_checks": 0, "native_submission_matches": true}

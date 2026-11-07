@@ -1,0 +1,11 @@
+{
+  "python": "3.12.16",
+  "python_executable": "/home/s223/miniconda3/envs/simai/bin/python",
+  "vendored_source_present": true,
+  "upstream_ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+  "pinned_source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6",
+  "backend_ready": true,
+  "executable": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current/source/build/bin/joint-scheduling-ns3",
+  "fingerprint": "f1a48f36b6a4ebb9cf8c",
+  "compiler": "g++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0"
+}

@@ -1,0 +1,14 @@
+你是 Inference 仓库 T003 的执行 agent，当前聊天是指挥 agent。
+仓库：/home/m0nesy/Postgraduate/Inference
+
+先完整阅读根目录 AGENTS.md，再执行唯一任务书：
+/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/TASK.md
+
+本轮目标：确认固定 P/D 绑定下 KV/EP 的实际网络竞争，并把影响连接到请求必要依赖边界和实际请求指标。沿用 T001 冻结条件，取原始前8请求；最多1次端到端基线、3次冻结网络重放，网络墙钟合计上限70分钟。先验证 both 重放≤1ns保真，再运行移除对照；低竞争/无明显影响也如实提交，不自行加压或扩容。
+
+保留任务原文，更新同目录 STATUS.json，保存执行前Git状态及全部原始证据。只写任务目录和指定work草稿，不修改正式源码、冻结条件或旧任务。网络重放差值与实际端到端指标分别报告，不冒称SLO收益。任一停止条件触发则保留现场并报告，不自行补跑。
+
+完成或失败/阻塞均写 REPORT.md；提交后停止，等待审核，不启动下一项、不提交推送、不派发其他agent。
+
+最后回复报告绝对路径、结论、实际运行/验证及需指挥决定事项：
+/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/REPORT.md

@@ -1,5 +1,7 @@
 # Inference
 
+研究当前状态、T001～T003任务记录及下一步位置见 [研究推进记录](coordination/PROGRESS.md)；归档方法见 [版本归档规则](coordination/ARCHIVING.md)。
+
 Inference 是面向大模型 Prefill–Decode 分离推理的调度研究仓库，研究 P/D 实例联合绑定、KV 传输与集合通信竞争，以及请求级 SLO 达标完成吞吐。
 
 **本仓库只做仿真。** 请求、计算、容量和通信事件均在 CPU 上推进；H800 等设备名称用于标识离线计算代价，节点与网络由显式参数建模。

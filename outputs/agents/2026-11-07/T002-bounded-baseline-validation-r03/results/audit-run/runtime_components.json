@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "request_state": "immutable_inputs_with_named_progress_and_legacy_mapping",
+  "components": {
+    "lifecycle": [
+      "request_counts",
+      "requests"
+    ],
+    "instances": [
+      "active_by_instance",
+      "busy",
+      "decodes",
+      "instances",
+      "prefills",
+      "queues"
+    ],
+    "prefill": [
+      "active_prefill_batches",
+      "pending_prefill_ticks",
+      "prefill_admission_sequence",
+      "prefill_batch_stats",
+      "prefill_batching",
+      "prefill_chunk_completed_count",
+      "prefill_chunk_query_tokens",
+      "prefill_chunk_started_count"
+    ],
+    "decode": [
+      "active_decode_batches",
+      "active_decode_steps",
+      "decode_batch_completed",
+      "decode_batch_counter",
+      "decode_batch_histogram"
+    ],
+    "kv": [
+      "dispatch_at",
+      "dispatch_generation",
+      "kv_mode",
+      "mlu_enabled",
+      "network_monitor",
+      "scheduler"
+    ],
+    "compute": [
+      "compute_active"
+    ],
+    "network": [
+      "collective_counter",
+      "collective_demands",
+      "transfer_counter"
+    ],
+    "memory": [
+      "ledger",
+      "prefix_cache"
+    ],
+    "budgets": [
+      "slo_budget_cache"
+    ],
+    "telemetry": [
+      "binding_report"
+    ],
+    "binding": [
+      "binding_active",
+      "binding_commit_sequence",
+      "binding_cursor",
+      "binding_known",
+      "binding_model",
+      "binding_phase",
+      "binding_rounds",
+      "binding_snapshot_ns",
+      "binding_snapshot_wall",
+      "binding_wall",
+      "binding_window",
+      "fast_predictor",
+      "joint_enabled",
+      "joint_policy",
+      "prediction_call_count",
+      "prediction_history",
+      "prediction_records",
+      "prediction_visible",
+      "predictor"
+    ],
+    "expert": [
+      "ep_calls",
+      "ep_counter",
+      "ep_enabled",
+      "ep_groups",
+      "ep_lane_active",
+      "ep_lanes",
+      "ep_stats"
+    ]
+  }
+}

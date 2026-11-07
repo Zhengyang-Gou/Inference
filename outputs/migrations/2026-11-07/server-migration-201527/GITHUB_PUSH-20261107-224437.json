@@ -1,0 +1,15 @@
+{
+  "commit": "e9b447df7f118661b9b0e4ab2ce13483e7dd9b2a",
+  "repository": "https://github.com/Zhengyang-Gou/Inference.git",
+  "branch": "main",
+  "push_status": "succeeded",
+  "executed_from": "Windows PowerShell using existing local Git credential",
+  "remote_main_verified": "e9b447df7f118661b9b0e4ab2ce13483e7dd9b2a",
+  "server_github_https": "failed: no noninteractive username/credential",
+  "server_github_ssh": "dry-run denied: current SSH GitHub identity YunqingChai lacks repository write permission",
+  "server_credentials_modified": false,
+  "T003_results_tracked_in_git": false,
+  "T003_status": "submitted; awaiting commander review",
+  "T003_location": "local WSL historical outputs; not migrated as server evidence",
+  "new_tasks_published": false
+}

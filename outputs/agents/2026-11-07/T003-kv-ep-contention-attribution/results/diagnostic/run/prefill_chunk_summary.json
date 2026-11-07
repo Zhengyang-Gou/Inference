@@ -1,0 +1,7 @@
+{
+  "chunk_tokens": 512,
+  "started_chunks": 11,
+  "completed_chunks": 11,
+  "completed_query_tokens": 3913,
+  "scheduling": "within_token_budget_batch"
+}

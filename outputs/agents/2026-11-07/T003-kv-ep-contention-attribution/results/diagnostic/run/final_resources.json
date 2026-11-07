@@ -1,0 +1,194 @@
+{
+  "gpu-0": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-1": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-2": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-3": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-4": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-5": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-6": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-7": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-8": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-9": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-10": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-11": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-12": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-13": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-14": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-15": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-16": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-17": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-18": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-19": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-20": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-21": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-22": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-23": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-24": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-25": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-26": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-27": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-28": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-29": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-30": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  },
+  "gpu-31": {
+    "capacity_bytes": 21855834448,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 21855834448
+  }
+}

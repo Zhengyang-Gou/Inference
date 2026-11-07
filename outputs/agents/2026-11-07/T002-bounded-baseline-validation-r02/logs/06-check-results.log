@@ -1,0 +1,5 @@
+checks: 38 / 38 passed; failures: 0
+reproducibility all identical: True
+acceptance all passed: True
+total wall clock: 568.338
+kv logical bytes: 115878528 ep calls: 12122

@@ -1,0 +1,53 @@
+{
+  "started_batches": 4,
+  "completed_batches": 4,
+  "completed_query_tokens": 1649,
+  "batch_size_histogram": {
+    "1": 4
+  },
+  "total_token_histogram": {
+    "374": 1,
+    "396": 1,
+    "512": 1,
+    "367": 1
+  },
+  "memory_deferred_admissions": 0,
+  "peak_running_requests": {
+    "p0": 1,
+    "p1": 1,
+    "p2": 1
+  },
+  "by_instance": {
+    "p0": {
+      "completed_batches": 1,
+      "query_tokens": 374,
+      "modeled_compute_seconds": 0.016004738026442745,
+      "busy_seconds": 0.084032526,
+      "communication_wait_seconds": 0.06802778797355725
+    },
+    "p1": {
+      "completed_batches": 1,
+      "query_tokens": 396,
+      "modeled_compute_seconds": 0.016820850293946026,
+      "busy_seconds": 0.08660367099999977,
+      "communication_wait_seconds": 0.06978282070605374
+    },
+    "p2": {
+      "completed_batches": 2,
+      "query_tokens": 879,
+      "modeled_compute_seconds": 0.03876582869456214,
+      "busy_seconds": 0.18524406100000057,
+      "communication_wait_seconds": 0.14647823230543844
+    }
+  },
+  "enabled": true,
+  "max_requests": 16,
+  "token_budget": 2048,
+  "per_request_chunk_cap": 512,
+  "scheduling": "running_first_waiting_fcfs",
+  "timing": "packed_total_query_linear_plus_sum_independent_attention",
+  "coalescing_tick_ns": 1,
+  "active_batches_at_end": {},
+  "pending_scheduling_ticks": [],
+  "utilization_interpretation": "Simulation compute/busy/communication durations. Active cut-off batches are listed separately and excluded from completed aggregates."
+}

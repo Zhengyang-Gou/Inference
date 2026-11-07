@@ -1,0 +1,9 @@
+{
+  "checks_total": 60,
+  "passed": 60,
+  "failed": [],
+  "KV_pairs": 244,
+  "request_pairs": 3,
+  "decode_token_pairs": 205,
+  "all_checked_conditions_passed": true
+}

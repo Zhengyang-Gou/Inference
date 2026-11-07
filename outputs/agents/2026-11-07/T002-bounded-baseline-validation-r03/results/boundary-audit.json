@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "task": "T002-r03",
+  "evidence_type": "read-only RuntimeHooks boundary capture + essential lifecycle events",
+  "inputs_sha256": {
+    "config.json": "c4db2484734941defac63b7a39d7233c9aa9d0c2763e2dd049fdf049df06ba2a",
+    "workload.json": "625bf0a51b258590c4f58ca67c8b121aa184931e1fb35ddd351d2086a392822c",
+    "compute_profile.json": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+    "binding_plan.json": "461ba02d62e87d493b288879ed94cec7834e5e81f13b8714d44d78a05898cad2"
+  },
+  "wall_clock_seconds": 282.633725359,
+  "ep_flow_audit": "passed",
+  "boundaries": {
+    "kv_ready_to_send": {
+      "description": "each KV logical transfer starts at or after the corresponding chunk-layer readiness event; block.ready_at_seconds is carried in the same event",
+      "ready_events": 244,
+      "kv_transfer_started": 244,
+      "paired": 244,
+      "violations": 0,
+      "violation_rows": [],
+      "send_minus_ready_seconds": {
+        "count": 244,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "logical_payload_bytes": 115878528,
+      "logical_payload_matches_expected": true,
+      "missing_ready_at_seconds": 0,
+      "samples": [
+        {
+          "request_id": "azure-conv-000000000",
+          "layer_id": 0,
+          "chunk_index": 0,
+          "block_id": "azure-conv-000000000:l0:r0:b0",
+          "ready_event_seconds": 0.000472621,
+          "block_ready_at_seconds": 0.000472621,
+          "transfer_started_seconds": 0.000472621,
+          "size_bytes": 430848,
+          "passed": true
+        },
+        {
+          "request_id": "azure-conv-000000000",
+          "layer_id": 1,
+          "chunk_index": 0,
+          "block_id": "azure-conv-000000000:l1:r0:b0",
+          "ready_event_seconds": 0.000945241,
+          "block_ready_at_seconds": 0.000945241,
+          "transfer_started_seconds": 0.000945241,
+          "size_bytes": 430848,
+          "passed": true
+        },
+        {
+          "request_id": "azure-conv-000000000",
+          "layer_id": 2,
+          "chunk_index": 0,
+          "block_id": "azure-conv-000000000:l2:r0:b0",
+          "ready_event_seconds": 0.001417861,
+          "block_ready_at_seconds": 0.001417861,
+          "transfer_started_seconds": 0.001417861,
+          "size_bytes": 430848,
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "full_prefill_end_to_first_decode": {
+      "description": "last prefill_chunk_completed <= kv_all_received <= first decode_batch_started for each request",
+      "prefill_chunk_completed_events": 4,
+      "decode_batch_started_events": 205,
+      "paired": 3,
+      "violations": 0,
+      "decode_minus_prefill_seconds": {
+        "count": 3,
+        "min": 1.2670999999464527e-05,
+        "max": 1.742400000015465e-05,
+        "mean": 1.4309666666540802e-05
+      },
+      "rows": [
+        {
+          "request_id": "azure-conv-000000000",
+          "last_prefill_chunk_completed_seconds": 0.084032527,
+          "prefill_chunk_index": 0,
+          "kv_all_received_seconds": 0.084045361,
+          "first_decode_batch_started_seconds": 0.084045361,
+          "first_decode_batch_id": "decode-batch-1",
+          "decode_first_token_index": 2,
+          "passed": true
+        },
+        {
+          "request_id": "azure-conv-000000001",
+          "last_prefill_chunk_completed_seconds": 4.401182672,
+          "prefill_chunk_index": 0,
+          "kv_all_received_seconds": 4.401200096,
+          "first_decode_batch_started_seconds": 4.401200096,
+          "first_decode_batch_id": "decode-batch-44",
+          "decode_first_token_index": 2,
+          "passed": true
+        },
+        {
+          "request_id": "azure-conv-000000002",
+          "last_prefill_chunk_completed_seconds": 4.727121063,
+          "prefill_chunk_index": 1,
+          "kv_all_received_seconds": 4.727133734,
+          "first_decode_batch_started_seconds": 4.727133734,
+          "first_decode_batch_id": "decode-batch-63",
+          "decode_first_token_index": 2,
+          "passed": true
+        }
+      ],
+      "violation_rows": [],
+      "passed": true
+    },
+    "sixty_one_layers_to_token": {
+      "description": "compute_step_completed(phase=decode, layer_id=60) <= token_returned(token_index>=2), paired per request in time order",
+      "layer_60_completed_events": 205,
+      "decode_token_events": 205,
+      "decode_compute_steps_total": 12505,
+      "per_request": {
+        "azure-conv-000000000": {
+          "layer60_events": 43,
+          "decode_tokens": 43,
+          "expected": 43
+        },
+        "azure-conv-000000001": {
+          "layer60_events": 108,
+          "decode_tokens": 108,
+          "expected": 108
+        },
+        "azure-conv-000000002": {
+          "layer60_events": 54,
+          "decode_tokens": 54,
+          "expected": 54
+        }
+      },
+      "paired": 205,
+      "violations": 0,
+      "violation_rows": [],
+      "token_minus_layer60_seconds": {
+        "count": 205,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "samples": [
+        {
+          "request_id": "azure-conv-000000000",
+          "batch_id": "decode-batch-1",
+          "layer_60_completed_seconds": 0.100857298,
+          "token_index": 2,
+          "token_returned_seconds": 0.100857298,
+          "passed": true
+        },
+        {
+          "request_id": "azure-conv-000000000",
+          "batch_id": "decode-batch-2",
+          "layer_60_completed_seconds": 0.117629524,
+          "token_index": 3,
+          "token_returned_seconds": 0.117629524,
+          "passed": true
+        },
+        {
+          "request_id": "azure-conv-000000000",
+          "batch_id": "decode-batch-3",
+          "layer_60_completed_seconds": 0.134360473,
+          "token_index": 4,
+          "token_returned_seconds": 0.134360473,
+          "passed": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  "equivalence_with_preserved_r02_run_a": {
+    "fields": {
+      "token_times": true,
+      "arrival_cohort": true,
+      "completion_window": true,
+      "latencies": true,
+      "ep_summary": true,
+      "logical_communication": true,
+      "final_resources": true,
+      "binding_plan": true,
+      "hook_event_counts": true
+    },
+    "all_identical": true,
+    "note": "the capture run used byte-identical inputs and the same run_baseline/EPFlowAudit path; only the hooks callback retained more fields"
+  },
+  "all_boundaries_passed": true,
+  "r02_results_preserved": true
+}

@@ -1,0 +1,98 @@
+{
+  "gpu-0": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-1": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-2": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-3": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-4": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-5": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-6": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-7": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-8": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-9": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-10": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-11": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-12": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-13": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-14": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  },
+  "gpu-15": {
+    "capacity_bytes": 80530636800,
+    "occupied_bytes": 0,
+    "reserved_bytes": 0,
+    "available_bytes": 80530636800
+  }
+}

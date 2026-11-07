@@ -1,0 +1,260 @@
+{
+  "run-a": {
+    "completion_window": {
+      "completed_count": 3,
+      "slo_met_count": 3,
+      "slo_attainment": 1.0,
+      "completion_throughput_rps": 0.1,
+      "slo_goodput_rps": 0.1,
+      "carry_in_completed_count": 0
+    },
+    "arrival_cohort": {
+      "arrived_count": 3,
+      "completed_by_observation_end": 3,
+      "failed_count": 0,
+      "incomplete_count": 0,
+      "slo_met_completed_count": 3,
+      "completed_and_slo_fraction": 1.0,
+      "slo_attainment_among_completed": 1.0
+    },
+    "latencies": {
+      "ttft_seconds": {
+        "count": 3,
+        "mean": 0.11862675399999989,
+        "min": 0.084032527,
+        "max": 0.18524406299999985,
+        "quantiles": {
+          "0.5": 0.08660367199999985,
+          "0.95": 0.17538002389999985,
+          "0.99": 0.18327125517999984
+        }
+      },
+      "handoff_seconds": {
+        "count": 3,
+        "mean": 0.017003699999999913,
+        "min": 0.01672258400000004,
+        "max": 0.017463744999999697,
+        "quantiles": {
+          "0.5": 0.016824771000000002,
+          "0.95": 0.017399847599999727,
+          "0.99": 0.017450965519999702
+        }
+      },
+      "later_max_itl_seconds": {
+        "count": 3,
+        "mean": 0.01824014999999979,
+        "min": 0.016948987999999998,
+        "max": 0.019045818999999575,
+        "quantiles": {
+          "0.5": 0.018725642999999792,
+          "0.95": 0.019013801399999596,
+          "0.99": 0.01903941547999958
+        }
+      },
+      "max_itl_seconds": {
+        "count": 3,
+        "mean": 0.01824014999999979,
+        "min": 0.016948987999999998,
+        "max": 0.019045818999999575,
+        "quantiles": {
+          "0.5": 0.018725642999999792,
+          "0.95": 0.019013801399999596,
+          "0.99": 0.01903941547999958
+        }
+      },
+      "mean_tpot_seconds": {
+        "count": 3,
+        "mean": 0.017404412544358306,
+        "min": 0.016775008744186047,
+        "max": 0.017937049185185176,
+        "quantiles": {
+          "0.5": 0.0175011797037037,
+          "0.95": 0.017893462237037028,
+          "0.99": 0.017928331795555547
+        }
+      },
+      "e2e_seconds": {
+        "count": 3,
+        "mean": 1.3119779006666663,
+        "min": 0.805357903,
+        "max": 1.9767310799999995,
+        "quantiles": {
+          "0.5": 1.1538447189999994,
+          "0.95": 1.8944424438999996,
+          "0.99": 1.9602733527799994
+        }
+      }
+    },
+    "per_request": [
+      {
+        "request_id": "azure-conv-000000000",
+        "status": "completed",
+        "output_tokens": "44",
+        "ttft_seconds": "0.084032527",
+        "handoff_seconds": "0.016824771000000002",
+        "later_max_itl_seconds": "0.016948987999999998",
+        "e2e_seconds": "0.805357903",
+        "slo_met": "True",
+        "ttft_slo_seconds": "1.0",
+        "itl_slo_seconds": "0.1"
+      },
+      {
+        "request_id": "azure-conv-000000001",
+        "status": "completed",
+        "output_tokens": "109",
+        "ttft_seconds": "0.08660367199999985",
+        "handoff_seconds": "0.01672258400000004",
+        "later_max_itl_seconds": "0.019045818999999575",
+        "e2e_seconds": "1.9767310799999995",
+        "slo_met": "True",
+        "ttft_slo_seconds": "1.0",
+        "itl_slo_seconds": "0.1"
+      },
+      {
+        "request_id": "azure-conv-000000002",
+        "status": "completed",
+        "output_tokens": "55",
+        "ttft_seconds": "0.18524406299999985",
+        "handoff_seconds": "0.017463744999999697",
+        "later_max_itl_seconds": "0.018725642999999792",
+        "e2e_seconds": "1.1538447189999994",
+        "slo_met": "True",
+        "ttft_slo_seconds": "1.0",
+        "itl_slo_seconds": "0.1"
+      }
+    ],
+    "wall_clock_seconds": 280.673291007,
+    "hook_event_total": 814151,
+    "ep_calls": 12122,
+    "kv_logical_bytes": 115878528
+  },
+  "run-b": {
+    "completion_window": {
+      "completed_count": 3,
+      "slo_met_count": 3,
+      "slo_attainment": 1.0,
+      "completion_throughput_rps": 0.1,
+      "slo_goodput_rps": 0.1,
+      "carry_in_completed_count": 0
+    },
+    "arrival_cohort": {
+      "arrived_count": 3,
+      "completed_by_observation_end": 3,
+      "failed_count": 0,
+      "incomplete_count": 0,
+      "slo_met_completed_count": 3,
+      "completed_and_slo_fraction": 1.0,
+      "slo_attainment_among_completed": 1.0
+    },
+    "latencies": {
+      "ttft_seconds": {
+        "count": 3,
+        "mean": 0.11862675399999989,
+        "min": 0.084032527,
+        "max": 0.18524406299999985,
+        "quantiles": {
+          "0.5": 0.08660367199999985,
+          "0.95": 0.17538002389999985,
+          "0.99": 0.18327125517999984
+        }
+      },
+      "handoff_seconds": {
+        "count": 3,
+        "mean": 0.017003699999999913,
+        "min": 0.01672258400000004,
+        "max": 0.017463744999999697,
+        "quantiles": {
+          "0.5": 0.016824771000000002,
+          "0.95": 0.017399847599999727,
+          "0.99": 0.017450965519999702
+        }
+      },
+      "later_max_itl_seconds": {
+        "count": 3,
+        "mean": 0.01824014999999979,
+        "min": 0.016948987999999998,
+        "max": 0.019045818999999575,
+        "quantiles": {
+          "0.5": 0.018725642999999792,
+          "0.95": 0.019013801399999596,
+          "0.99": 0.01903941547999958
+        }
+      },
+      "max_itl_seconds": {
+        "count": 3,
+        "mean": 0.01824014999999979,
+        "min": 0.016948987999999998,
+        "max": 0.019045818999999575,
+        "quantiles": {
+          "0.5": 0.018725642999999792,
+          "0.95": 0.019013801399999596,
+          "0.99": 0.01903941547999958
+        }
+      },
+      "mean_tpot_seconds": {
+        "count": 3,
+        "mean": 0.017404412544358306,
+        "min": 0.016775008744186047,
+        "max": 0.017937049185185176,
+        "quantiles": {
+          "0.5": 0.0175011797037037,
+          "0.95": 0.017893462237037028,
+          "0.99": 0.017928331795555547
+        }
+      },
+      "e2e_seconds": {
+        "count": 3,
+        "mean": 1.3119779006666663,
+        "min": 0.805357903,
+        "max": 1.9767310799999995,
+        "quantiles": {
+          "0.5": 1.1538447189999994,
+          "0.95": 1.8944424438999996,
+          "0.99": 1.9602733527799994
+        }
+      }
+    },
+    "per_request": [
+      {
+        "request_id": "azure-conv-000000000",
+        "status": "completed",
+        "output_tokens": "44",
+        "ttft_seconds": "0.084032527",
+        "handoff_seconds": "0.016824771000000002",
+        "later_max_itl_seconds": "0.016948987999999998",
+        "e2e_seconds": "0.805357903",
+        "slo_met": "True",
+        "ttft_slo_seconds": "1.0",
+        "itl_slo_seconds": "0.1"
+      },
+      {
+        "request_id": "azure-conv-000000001",
+        "status": "completed",
+        "output_tokens": "109",
+        "ttft_seconds": "0.08660367199999985",
+        "handoff_seconds": "0.01672258400000004",
+        "later_max_itl_seconds": "0.019045818999999575",
+        "e2e_seconds": "1.9767310799999995",
+        "slo_met": "True",
+        "ttft_slo_seconds": "1.0",
+        "itl_slo_seconds": "0.1"
+      },
+      {
+        "request_id": "azure-conv-000000002",
+        "status": "completed",
+        "output_tokens": "55",
+        "ttft_seconds": "0.18524406299999985",
+        "handoff_seconds": "0.017463744999999697",
+        "later_max_itl_seconds": "0.018725642999999792",
+        "e2e_seconds": "1.1538447189999994",
+        "slo_met": "True",
+        "ttft_slo_seconds": "1.0",
+        "itl_slo_seconds": "0.1"
+      }
+    ],
+    "wall_clock_seconds": 287.66477151699996,
+    "hook_event_total": 814151,
+    "ep_calls": 12122,
+    "kv_logical_bytes": 115878528
+  }
+}

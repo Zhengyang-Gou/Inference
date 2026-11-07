@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "phase": "live-baseline",
+  "all_passed": true,
+  "checks": [
+    {
+      "name": "requests_completed",
+      "expected": 8,
+      "actual": 8,
+      "passed": true
+    },
+    {
+      "name": "output_tokens",
+      "expected": 550,
+      "actual": 550,
+      "passed": true
+    },
+    {
+      "name": "failed_requests",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "incomplete_requests",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "prefill_chunks",
+      "expected": 11,
+      "actual": 11,
+      "passed": true
+    },
+    {
+      "name": "prefill_chunks_completed",
+      "expected": 11,
+      "actual": 11,
+      "passed": true
+    },
+    {
+      "name": "prefill_query_tokens",
+      "expected": 3913,
+      "actual": 3913,
+      "passed": true
+    },
+    {
+      "name": "decode_steps",
+      "expected": 542,
+      "actual": 542,
+      "passed": true
+    },
+    {
+      "name": "decode_steps_completed",
+      "expected": 542,
+      "actual": 542,
+      "passed": true
+    },
+    {
+      "name": "layers_per_decode_step",
+      "expected": 61,
+      "actual": 61,
+      "passed": true
+    },
+    {
+      "name": "ep_calls",
+      "expected": 32074,
+      "actual": 32074,
+      "passed": true
+    },
+    {
+      "name": "ep_calls_completed",
+      "expected": 32074,
+      "actual": 32074,
+      "passed": true
+    },
+    {
+      "name": "kv_logical_payload_bytes",
+      "expected": 274974336,
+      "actual": 274974336,
+      "passed": true
+    },
+    {
+      "name": "kv_logical_payload_completed_bytes",
+      "expected": 274974336,
+      "actual": 274974336,
+      "passed": true
+    },
+    {
+      "name": "kv_messages",
+      "expected": 671,
+      "actual": 671,
+      "passed": true
+    },
+    {
+      "name": "kv_messages_completed",
+      "expected": 671,
+      "actual": 671,
+      "passed": true
+    },
+    {
+      "name": "memory_domains",
+      "expected": 32,
+      "actual": 32,
+      "passed": true
+    },
+    {
+      "name": "memory_occupied_zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "memory_reserved_zero",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "active_ep_calls_at_end",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "active_decode_batches_at_end",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "active_logical_flows",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "active_local_collective",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "all_stage_acks_after_start",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "ep_flow_audit_passed",
+      "expected": "passed",
+      "actual": "passed",
+      "passed": true
+    },
+    {
+      "name": "endpoint_pairs_separate_by_class",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "unfinished_kv_transfers",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "name": "workload_request_count",
+      "expected": 8,
+      "actual": 8,
+      "passed": true
+    },
+    {
+      "name": "exported_binding_plan_identical",
+      "expected": "f674f52e79c042008d0f44f79b1146ba5ec1f3a826147f5d18d607a2cf892b89",
+      "actual": "f674f52e79c042008d0f44f79b1146ba5ec1f3a826147f5d18d607a2cf892b89",
+      "passed": true
+    },
+    {
+      "name": "all_cross_node_flows_acked",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "name": "resource_guards",
+      "expected": "<=1e6 flows and <=2e6 native",
+      "actual": {
+        "flows": 201677,
+        "native": 675175
+      },
+      "passed": true
+    }
+  ],
+  "counts": {
+    "flows": 201677,
+    "stages": 64148,
+    "native_registrations": 675175,
+    "hook_events": 2157012
+  }
+}

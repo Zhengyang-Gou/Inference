@@ -1,0 +1,9 @@
+基线运行完成：/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/results/smoke
+{
+  "completed_count": 12,
+  "slo_met_count": 12,
+  "slo_attainment": 1.0,
+  "completion_throughput_rps": 120.0,
+  "slo_goodput_rps": 120.0,
+  "carry_in_completed_count": 0
+}

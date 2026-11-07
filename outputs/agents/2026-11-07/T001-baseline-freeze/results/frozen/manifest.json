@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "task": "T001-baseline-freeze",
+  "purpose": "static freeze of stage-one baseline conditions; no simulation executed",
+  "sources": [
+    {
+      "role": "base_config",
+      "path": "joint_scheduling\\configs\\research\\base.json",
+      "sha256": "1c645b97768ec120e5c47229eb114f63e4a1fbed5f2d9fc2625583f10e23d0bd",
+      "bytes": 7778
+    },
+    {
+      "role": "workload",
+      "path": "data\\azure\\conv_original.json",
+      "sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+      "bytes": 2882369
+    },
+    {
+      "role": "compute_profile",
+      "path": "joint_scheduling\\profiles\\deepseek_v3_h800_tp1_ep16_ep16_estimated.json",
+      "sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "bytes": 578530
+    },
+    {
+      "role": "azure_manifest",
+      "path": "data\\azure\\manifest.json",
+      "sha256": "fd065c6c899fb1424bf07855face6782b86830c15a9270d8cdc02381d29bd196",
+      "bytes": 1559
+    }
+  ],
+  "frozen_files": [
+    {
+      "path": "results/frozen/config.json",
+      "sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+      "bytes": 8136
+    },
+    {
+      "path": "results/frozen/compute_profile.json",
+      "sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "bytes": 578530
+    },
+    {
+      "path": "results/frozen/workload.json",
+      "sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+      "bytes": 2882369
+    },
+    {
+      "path": "results/frozen/binding_plan.json",
+      "sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+      "bytes": 4983010
+    }
+  ],
+  "byte_identical_copies": {
+    "compute_profile.json": true,
+    "workload.json": true
+  },
+  "config_field_diff_from_base": {
+    "kv_scheduler.policy": {
+      "base": "slo_mlu",
+      "frozen": "ready_immediate",
+      "base_field_present": true
+    },
+    "kv_scheduler.slo_priority_enabled": {
+      "base": true,
+      "frozen": false,
+      "base_field_present": true
+    },
+    "kv_scheduler.collective_protection_enabled": {
+      "base": true,
+      "frozen": false,
+      "base_field_present": true
+    },
+    "kv_scheduler.decode_admission_limit": {
+      "base": null,
+      "frozen": 0,
+      "base_field_present": false
+    },
+    "runtime.kv_transfer_mode": {
+      "base": "layer_ready_slo",
+      "frozen": "layer_ready_immediate",
+      "base_field_present": true
+    },
+    "feedback.state_observation_enabled": {
+      "base": false,
+      "frozen": true,
+      "base_field_present": true
+    },
+    "feedback.compute_profile_path": {
+      "base": "../../profiles/deepseek_v3_h800_tp1_ep16_ep16_estimated.json",
+      "frozen": "compute_profile.json",
+      "base_field_present": true
+    },
+    "runtime.workload_path": {
+      "base": "../../../data/azure/conv_original.json",
+      "frozen": "workload.json",
+      "base_field_present": true
+    },
+    "evaluation.output_dir": {
+      "base": "../../artifacts/evaluation",
+      "frozen": "evaluation",
+      "base_field_present": true
+    }
+  },
+  "explicitly_verified_unchanged_switches": {
+    "binding.window_enabled": false,
+    "binding.prediction_enabled": false,
+    "binding.joint_selection_enabled": false,
+    "binding.decision_overhead_us": 0.0,
+    "binding.policy": "balanced_random",
+    "binding.seed": 7,
+    "prefix_cache.enabled": false,
+    "runtime.network_priority_enabled": false,
+    "runtime.seed": 7,
+    "runtime.prefill_chunk_tokens": 512,
+    "runtime.prefill_batch_token_budget": 2048,
+    "runtime.prefill_batch_size": 16,
+    "runtime.decode_batch_size": 64,
+    "feedback.network_observation_enabled": true,
+    "feedback.network_observation_interval_us": 1000,
+    "feedback.observation_delay_us": 100,
+    "feedback.scheduling_overhead_us": 10.0,
+    "feedback.time_authority": "ns3",
+    "feedback.network_backend": "ns3_alibabacloud",
+    "recording.mode": "essential",
+    "evaluation.default_ttft_slo_seconds": 1.0,
+    "evaluation.default_itl_slo_seconds": 0.1
+  },
+  "git": {
+    "head": "91cf1e2a16b8ff59b595619a7d0c02c4dd5df8dc",
+    "baseline_status_file": "logs/baseline-status.txt",
+    "baseline_status_sha256": "08c3de8deac9ec57391ba23b3ffa708c6c7b45bb59b8f4e557907cc9bde21d94",
+    "dirty_entry_count": 71,
+    "note": "pre-existing dirty state preserved; not reset, not cleaned, not committed"
+  },
+  "model_assumptions": {
+    "profile_kind": "estimated_simulation_profile",
+    "device": "NVIDIA H800",
+    "model": "deepseek-ai/DeepSeek-V3",
+    "tp_size": 1,
+    "ep_groups": 2,
+    "ep_size_per_group": 16,
+    "layers": 61,
+    "dense_layers": 3,
+    "moe_layers": 58,
+    "routing": "deterministic synthetic layerwise routing; no real expert activation trace",
+    "slo": "manual experiment assumption; Azure trace supplies no business SLO",
+    "local_expert_combine_extra_cost": "explicitly zero in the profile",
+    "no_double_microbatch_or_deepep_node_aggregation": true
+  },
+  "parameter_scope": {
+    "active_in_layer_ready_immediate": [
+      "runtime.kv_transfer_mode",
+      "runtime.prefill_chunk_tokens",
+      "runtime.prefill_batch_token_budget",
+      "runtime.prefill_batch_size",
+      "runtime.decode_batch_size",
+      "kv_scheduler.max_block_bytes",
+      "feedback.state_observation_enabled",
+      "feedback.network_observation_enabled",
+      "feedback.network_observation_interval_us",
+      "feedback.observation_delay_us",
+      "expert_parallel.*",
+      "reservations.*",
+      "evaluation.*",
+      "recording.mode"
+    ],
+    "inactive_when_no_gated_kv": [
+      "kv_scheduler.policy (ready_immediate selects no FIFO/MLU gate)",
+      "kv_scheduler.slo_priority_enabled",
+      "kv_scheduler.collective_protection_enabled",
+      "kv_scheduler.decode_admission_limit",
+      "kv_scheduler.max_concurrent_transfers",
+      "kv_scheduler.max_inflight_bytes",
+      "kv_scheduler.max_resource_inflight_bytes",
+      "kv_scheduler.safety_margin_fraction",
+      "kv_scheduler.control_interval_us",
+      "kv_scheduler.collective_guard_us",
+      "kv_scheduler.collective_reserve_fraction",
+      "kv_scheduler.pause_on_collective",
+      "kv_scheduler.queue_target_bytes",
+      "kv_scheduler.inflight_budget_mode",
+      "kv_scheduler.collective_max_blocking_us",
+      "kv_scheduler.completion_feedback_alpha",
+      "kv_scheduler.mlu_*",
+      "feedback.scheduling_overhead_us (configured 10 us, no controlled KV decision)"
+    ],
+    "observation_is_not_optimization": true
+  },
+  "claims": {
+    "source_archive": false,
+    "backend_binary_archive": false,
+    "end_to_end_simulation": false,
+    "algorithm_comparison_or_scaling_experiment": false,
+    "note": "TASK.md forbids these; only static validation is claimed"
+  }
+}

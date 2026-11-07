@@ -1,0 +1,97 @@
+{
+  "started_batches": 11,
+  "completed_batches": 11,
+  "completed_query_tokens": 3913,
+  "batch_size_histogram": {
+    "1": 11
+  },
+  "total_token_histogram": {
+    "374": 1,
+    "396": 1,
+    "512": 3,
+    "367": 1,
+    "91": 2,
+    "381": 1,
+    "289": 1,
+    "388": 1
+  },
+  "memory_deferred_admissions": 0,
+  "peak_running_requests": {
+    "p0": 1,
+    "p1": 1,
+    "p2": 1,
+    "p3": 1,
+    "p4": 1,
+    "p5": 1,
+    "p6": 1,
+    "p7": 1
+  },
+  "by_instance": {
+    "p0": {
+      "completed_batches": 1,
+      "query_tokens": 374,
+      "modeled_compute_seconds": 0.016004738026442745,
+      "busy_seconds": 0.084032526,
+      "communication_wait_seconds": 0.06802778797355725
+    },
+    "p1": {
+      "completed_batches": 1,
+      "query_tokens": 396,
+      "modeled_compute_seconds": 0.016820850293946026,
+      "busy_seconds": 0.08660367099999977,
+      "communication_wait_seconds": 0.06978282070605374
+    },
+    "p2": {
+      "completed_batches": 2,
+      "query_tokens": 879,
+      "modeled_compute_seconds": 0.03876582869456214,
+      "busy_seconds": 0.19609276100000006,
+      "communication_wait_seconds": 0.15732693230543793
+    },
+    "p3": {
+      "completed_batches": 1,
+      "query_tokens": 91,
+      "modeled_compute_seconds": 0.011220999999999998,
+      "busy_seconds": 0.06368782799999995,
+      "communication_wait_seconds": 0.05246682799999995
+    },
+    "p4": {
+      "completed_batches": 1,
+      "query_tokens": 91,
+      "modeled_compute_seconds": 0.011220999999999998,
+      "busy_seconds": 0.056722866000000316,
+      "communication_wait_seconds": 0.04550186600000032
+    },
+    "p5": {
+      "completed_batches": 1,
+      "query_tokens": 381,
+      "modeled_compute_seconds": 0.016264410111557426,
+      "busy_seconds": 0.08485166299999936,
+      "communication_wait_seconds": 0.06858725288844193
+    },
+    "p6": {
+      "completed_batches": 3,
+      "query_tokens": 1313,
+      "modeled_compute_seconds": 0.060733025979971045,
+      "busy_seconds": 0.2800097980000009,
+      "communication_wait_seconds": 0.21927677202002985
+    },
+    "p7": {
+      "completed_batches": 1,
+      "query_tokens": 388,
+      "modeled_compute_seconds": 0.016524082196672105,
+      "busy_seconds": 0.08566711499999968,
+      "communication_wait_seconds": 0.06914303280332758
+    }
+  },
+  "enabled": true,
+  "max_requests": 16,
+  "token_budget": 2048,
+  "per_request_chunk_cap": 512,
+  "scheduling": "running_first_waiting_fcfs",
+  "timing": "packed_total_query_linear_plus_sum_independent_attention",
+  "coalescing_tick_ns": 1,
+  "active_batches_at_end": {},
+  "pending_scheduling_ticks": [],
+  "utilization_interpretation": "Simulation compute/busy/communication durations. Active cut-off batches are listed separately and excluded from completed aggregates."
+}

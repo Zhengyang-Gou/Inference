@@ -1,0 +1,4 @@
+wsl: Failed to translate '\\wsl.localhost\Ubunt\Users\33199\AppData\Local\Programs\WorkBuddy\resources\app.asar.unpacked\cli\vendor\shim\safe-bin'
+wsl: Failed to translate '\\wsl.localhost\Ubunt\Users\33199\AppData\Local\Programs\WorkBuddy\resources\app.asar.unpacked\cli\vendor\shim\safe-bin'
+{"all_passed": true, "source_identical": true, "research_core_identical": true, "backend_fingerprint_identical": true, "backend_executable_identical": true, "backend_ready": true, "source_snapshot_created_this_step": false, "research_core_python_files": 155}
+IDENTITY_EXIT=0

@@ -1,0 +1,5 @@
+配置有效：基础模块与 evaluation 的结构和约束检查通过。
+说明：run-baseline 支持整份、分块、逐层立即和动态 SLO/FIFO KV 门控；逐层模式需 schema 2，可选有界 P/D 联合选择。
+说明：前缀缓存已关闭；开启后使用 prefix_blocks 与显式 cached_points，支持 P/D 独立命中。
+说明：绑定窗口已关闭，完整方案诊断已关闭，实际 P/D 选择为 轮询。
+说明：记录模式为 essential：必要请求轨迹与汇总始终保留，高频明细仅在 debug 模式写盘。

@@ -1,0 +1,149 @@
+{
+  "status": "experimental_ep_round_robin",
+  "config_path": "\\\\wsl.localhost\\Ubuntu\\home\\m0nesy\\Postgraduate\\Inference\\outputs\\agents\\2026-11-07\\T001-baseline-freeze\\results\\frozen\\config.json",
+  "topology": {
+    "leaves": 2,
+    "spines": 4,
+    "nodes": 4,
+    "gpus": 32,
+    "prefill_instances": 16,
+    "decode_instances": 16,
+    "routing": "ecmp"
+  },
+  "binding_policy": "balanced_random",
+  "binding": {
+    "policy": "balanced_random",
+    "seed": 7,
+    "window_ms": 1.0,
+    "early_trigger_margin_ms": 0.5,
+    "max_wait_ms": 10.0,
+    "joint_selection_enabled": false,
+    "candidate_count": 4,
+    "max_requests_per_round": 16,
+    "max_pending_scan": 64,
+    "max_pair_checks": 64,
+    "max_score_work": 16384,
+    "max_state_requests": 256,
+    "max_state_objects": 4096,
+    "starvation_ms": 10,
+    "wall_clock_diagnostics": true,
+    "prediction_sample_every": 0,
+    "window_enabled": false,
+    "prediction_enabled": false,
+    "decision_overhead_us": 0.0,
+    "prediction_decode_steps": 8,
+    "prediction_max_events": 100000,
+    "prediction_time_limit_seconds": 10.0
+  },
+  "effective_endpoint_selection": "round_robin",
+  "kv_policy": "ready_immediate",
+  "time_authority": "ns3",
+  "evaluation": {
+    "window_start_seconds": 60.0,
+    "window_end_seconds": 3501.721937001,
+    "time_bin_seconds": 1.0,
+    "default_ttft_slo_seconds": 1.0,
+    "default_itl_slo_seconds": 0.1,
+    "output_dir": "evaluation",
+    "plot_dpi": 160,
+    "percentiles": [
+      0.5,
+      0.95,
+      0.99
+    ],
+    "plot_formats": [
+      "png",
+      "pdf"
+    ],
+    "charts": [
+      "latency_cdf",
+      "latency_percentiles",
+      "slo_throughput",
+      "throughput_timeseries"
+    ]
+  },
+  "runtime": {
+    "seed": 7,
+    "workload_path": "workload.json",
+    "time_limit_seconds": 4101.721937001,
+    "congestion_control": "dcqcn",
+    "packet_payload_bytes": 8000,
+    "switch_buffer_bytes": 16777216,
+    "rpc_timeout_seconds": 60.0,
+    "prefill_batch_size": 16,
+    "prefill_batch_token_budget": 2048,
+    "prefill_chunk_tokens": 512,
+    "decode_batch_size": 64,
+    "network_priority_enabled": false,
+    "kv_transfer_mode": "layer_ready_immediate",
+    "rpc_submission_batch_size": 128
+  },
+  "prefix_cache": {
+    "enabled": false,
+    "prefill_reuse_enabled": true,
+    "decode_reuse_enabled": true,
+    "max_bytes_per_instance": 67108864,
+    "eviction_enabled": true
+  },
+  "recording": {
+    "mode": "essential"
+  },
+  "expert_parallel": {
+    "enabled": true,
+    "groups": [
+      [
+        "p0",
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10",
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15"
+      ],
+      [
+        "d0",
+        "d1",
+        "d2",
+        "d3",
+        "d4",
+        "d5",
+        "d6",
+        "d7",
+        "d8",
+        "d9",
+        "d10",
+        "d11",
+        "d12",
+        "d13",
+        "d14",
+        "d15"
+      ]
+    ],
+    "rank_unit": "gpu"
+  },
+  "feature_switches": {
+    "binding_window_enabled": false,
+    "binding_prediction_enabled": false,
+    "slo_priority_enabled": false,
+    "collective_protection_enabled": false,
+    "inflight_budget_mode": "adaptive",
+    "network_observation_enabled": true,
+    "state_observation_enabled": true
+  },
+  "notes": [
+    "run-baseline 支持整份、分块、逐层立即和动态 SLO/FIFO KV 门控；逐层模式需 schema 2，可选有界 P/D 联合选择。",
+    "前缀缓存已关闭；开启后使用 prefix_blocks 与显式 cached_points，支持 P/D 独立命中。",
+    "绑定窗口已关闭，完整方案诊断已关闭，实际 P/D 选择为 P 轮询、D 固定种子均衡随机。",
+    "记录模式为 essential：必要请求轨迹与汇总始终保留，高频明细仅在 debug 模式写盘。",
+    "实验性 EP 已开启：节点内 TP、显式专家路由及共享专家队列；当前不支持 EP 联合选择或绑定预测。"
+  ]
+}

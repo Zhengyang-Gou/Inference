@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "\\wsl.localhost\Ubuntu\home\m0nesy\Postgraduate\Inference\work\agents\2026-11-07\T001-baseline-freeze\verify.py", line 62, in <module>
+    record("frozen_sha256:" + entry["path"], sha256(ROOT / entry["path"]) == entry["sha256"],
+                                             ~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "\\wsl.localhost\Ubuntu\home\m0nesy\Postgraduate\Inference\work\agents\2026-11-07\T001-baseline-freeze\verify.py", line 25, in sha256
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                          ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\33199\.workbuddy\binaries\python\versions\3.13.12\Lib\pathlib\_abc.py", line 625, in read_bytes
+    with self.open(mode='rb') as f:
+         ~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\33199\.workbuddy\binaries\python\versions\3.13.12\Lib\pathlib\_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '\\\\wsl.localhost\\Ubuntu\\home\\m0nesy\\Postgraduate\\Inference\\results\\frozen\\config.json'

@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "task": "T001-baseline-freeze",
+  "evidence_type": "static_input_audit_only_no_simulation",
+  "workload": {
+    "path": "data\\azure\\conv_original.json",
+    "sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+    "manifest_expected_sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+    "identity_match": true,
+    "request_count": 19366,
+    "manifest_request_count": 19366,
+    "arrival_min_seconds": 0.0,
+    "arrival_max_seconds": 3501.721937,
+    "manifest_duration_seconds": 3501.721937001,
+    "input_tokens_min": 2,
+    "input_tokens_max": 14050,
+    "output_tokens_min": 7,
+    "output_tokens_max": 1000,
+    "max_decode_context_tokens": 14088,
+    "duplicate_request_ids": 0,
+    "request_field_counts": {
+      "request_id": 19366,
+      "arrival_seconds": 19366,
+      "input_tokens": 19366,
+      "output_tokens": 19366
+    },
+    "request_level_slo_overrides": {
+      "ttft_slo_seconds": 0,
+      "itl_slo_seconds": 0
+    },
+    "prefix_blocks_requests": 0,
+    "max_output_tokens_requests": 0,
+    "provenance_selected": {
+      "source_file": "AzureLLMInferenceTrace_conv.csv",
+      "source_sha256": "2f1e5b666d4e3055fdbba98598ce2ec307767b9064e03e2fa46676dbcc7d0bf8",
+      "source_request_count": 19366,
+      "source_synthetic": false,
+      "synthetic": false,
+      "source_lengths": "unchanged paired observations",
+      "clipped_requests": 0,
+      "dropped_requests": 0,
+      "arrival_time_scaled": false,
+      "time_scale": 1.0,
+      "injection_duration_seconds": 3501.721937001,
+      "selected_request_count": 19366,
+      "slo_origin": "not supplied by source"
+    }
+  },
+  "profile": {
+    "path": "joint_scheduling\\profiles\\deepseek_v3_h800_tp1_ep16_ep16_estimated.json",
+    "sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+    "schema_version": 2,
+    "provenance_profile_kind": "estimated_simulation_profile",
+    "provenance_synthetic": true,
+    "prefill_layers": 61,
+    "decode_layers": 61,
+    "decode_dense_layers": 3,
+    "decode_moe_layers": 58,
+    "decode_batch_sizes": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "decode_point_max_tokens": 16384,
+    "prefill_chunk_groups": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512
+    ],
+    "prefill_linear_max_tokens": 2048,
+    "prefill_layer0_point_max_tokens": 16384,
+    "kv_bytes_per_token": 70272,
+    "weights_bytes_per_gpu": 59748544176,
+    "network_communication_excluded": true,
+    "coverage_checks": [
+      {
+        "check": "validate_prefill_batch_coverage(max_input=14050, query_cap=512, budget=2048, tp=1)",
+        "status": "passed",
+        "detail": "None"
+      },
+      {
+        "check": "lookup_decode_batch(64 x 14088 tokens)",
+        "status": "passed",
+        "detail": "{'compute_seconds': 0.064119080078125, 'collective_bytes': 917504, 'collectives_per_step': 122}"
+      },
+      {
+        "check": "lookup_decode_batch(1 x 14088 tokens)",
+        "status": "passed",
+        "detail": "{'compute_seconds': 0.011867391876220703, 'collective_bytes': 14336, 'collectives_per_step': 122}"
+      },
+      {
+        "check": "expert_profile.validate_profile(frozen_config, frozen_profile)",
+        "status": "passed",
+        "detail": "None"
+      }
+    ]
+  },
+  "binding": {
+    "request_count": 19366,
+    "seed": 7,
+    "policy": "balanced_random",
+    "bindings_sha256": "6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5",
+    "prefill_counts": {
+      "p0": 1211,
+      "p1": 1211,
+      "p2": 1211,
+      "p3": 1211,
+      "p4": 1211,
+      "p5": 1211,
+      "p6": 1210,
+      "p7": 1210,
+      "p8": 1210,
+      "p9": 1210,
+      "p10": 1210,
+      "p11": 1210,
+      "p12": 1210,
+      "p13": 1210,
+      "p14": 1210,
+      "p15": 1210
+    },
+    "decode_counts": {
+      "d0": 1211,
+      "d1": 1211,
+      "d2": 1211,
+      "d3": 1210,
+      "d4": 1211,
+      "d5": 1211,
+      "d6": 1210,
+      "d7": 1210,
+      "d8": 1210,
+      "d9": 1210,
+      "d10": 1210,
+      "d11": 1210,
+      "d12": 1211,
+      "d13": 1210,
+      "d14": 1210,
+      "d15": 1210
+    },
+    "cross_leaf_requests": 9663,
+    "cross_leaf_fraction": 0.49896726221212434,
+    "regenerated_identical": true
+  },
+  "slo": {
+    "default_ttft_slo_seconds": 1.0,
+    "default_itl_slo_seconds": 0.1,
+    "origin": "manual_experiment_assumption_not_from_trace",
+    "all_requests_use_defaults": true
+  },
+  "gaps": []
+}

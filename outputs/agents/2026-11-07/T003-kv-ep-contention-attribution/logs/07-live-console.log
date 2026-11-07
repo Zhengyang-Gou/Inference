@@ -1,0 +1,28 @@
+LIVE2_START=2026-11-07T19:42:41+0800
+LIVE2_EXIT=0
+LIVE2_END=2026-11-07T19:57:58+0800
+baseline progress 8.087419538 seconds; 122522 inter-node flows
+baseline progress 8.255505986 seconds; 126119 inter-node flows
+baseline progress 8.36090287 seconds; 129566 inter-node flows
+baseline progress 8.45027328 seconds; 133092 inter-node flows
+baseline progress 8.540463392 seconds; 136687 inter-node flows
+baseline progress 8.63175047 seconds; 140292 inter-node flows
+baseline progress 8.714113834 seconds; 143530 inter-node flows
+baseline progress 8.791839694 seconds; 146626 inter-node flows
+baseline progress 8.870670858 seconds; 149771 inter-node flows
+baseline progress 8.952404691 seconds; 152951 inter-node flows
+baseline progress 9.035240986 seconds; 156206 inter-node flows
+baseline progress 9.111381606 seconds; 159235 inter-node flows
+baseline progress 9.190545321 seconds; 162387 inter-node flows
+baseline progress 9.270331322 seconds; 165529 inter-node flows
+baseline progress 9.352326345 seconds; 168763 inter-node flows
+baseline progress 9.429878732 seconds; 171836 inter-node flows
+baseline progress 9.509092237 seconds; 174977 inter-node flows
+baseline progress 9.592237347 seconds; 178249 inter-node flows
+baseline progress 9.675537315 seconds; 181493 inter-node flows
+baseline progress 9.757857293 seconds; 184745 inter-node flows
+baseline progress 9.870105981 seconds; 188437 inter-node flows
+baseline progress 10.048684316 seconds; 192200 inter-node flows
+baseline progress 10.230121333 seconds; 196019 inter-node flows
+baseline progress 10.405046597 seconds; 199751 inter-node flows
+{"status": "completed", "wall_clock_seconds": 911.9064795220002, "mechanism_all_passed": true, "checks_passed": 31, "checks_total": 31, "flows": 201677, "stages": 64148, "native_registrations": 675175}

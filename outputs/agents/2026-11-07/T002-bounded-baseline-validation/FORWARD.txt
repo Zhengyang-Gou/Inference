@@ -1,0 +1,14 @@
+你是 Inference 仓库 T002 的执行 agent。
+
+仓库：/home/m0nesy/Postgraduate/Inference
+先完整阅读根目录 AGENTS.md、T001的REPORT.md和REVIEW.md，再执行唯一任务书：
+/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T002-bounded-baseline-validation/TASK.md
+
+本轮是有界样本的基础链路验收：沿用T001冻结条件，取Azure输入前3个原始请求，保持原到达时间和父绑定计划端点。共208个输出token；最多两次相同运行，每次30秒仿真、15分钟墙钟。具体输入、允许差异、审计和停止条件均以TASK.md为准。
+
+使用WSL的simai环境实际运行现有ns-3链路。保留TASK原文，更新STATUS.json，保存执行前Git状态、实际命令、退出码及原始运行目录。不得修改正式源码、T001冻结件或原始输入，不运行算法对比、扩容或完整轨迹。
+
+首轮失败或超时应保留证据并停止，不自动调参、改样本、补跑或修算法。完成或失败/阻塞均须写：
+/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T002-bounded-baseline-validation/REPORT.md
+
+最后回复报告绝对路径、结论、实际验证情况和需指挥决定事项。提交后停止，等待指挥审核，不自行开始下一轮。

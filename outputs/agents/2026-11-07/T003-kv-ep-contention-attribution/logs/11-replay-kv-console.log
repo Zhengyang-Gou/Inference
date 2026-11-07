@@ -1,0 +1,8 @@
+REPLAY_KV_START=2026-11-07T20:02:36+0800
+REPLAY_KV_EXIT=0
+REPLAY_KV_END=2026-11-07T20:03:27+0800
+replay kv submitted 305 completed 305
+replay kv submitted 669 completed 669
+replay kv submitted 671 completed 671
+REPLAY COMPLETE kv 671
+{"stage": "kv", "status": "completed", "wall_clock_seconds": 46.932, "selected": 671, "completed": 671, "port_cooldown_checks": 0, "native_submission_matches": true}

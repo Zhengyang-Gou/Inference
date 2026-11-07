@@ -1,0 +1,408 @@
+{
+  "schema_version": 1,
+  "task_id": "T003",
+  "baseline": "T001-baseline-freeze/results/frozen",
+  "frozen_manifest_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78",
+  "frozen_file_hashes": {
+    "config.json": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+    "compute_profile.json": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+    "workload.json": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+    "binding_plan.json": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091"
+  },
+  "parent_binding_plan_sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+  "parent_bindings_content_sha256": "6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5",
+  "input_selection": {
+    "method": "first N requests of the frozen workload in original order",
+    "n": 8,
+    "time_shift_seconds": 0.0,
+    "duplication": false,
+    "provenance_note": "workload.provenance is copied verbatim from the frozen full 19366-request source; it describes the original full trace, NOT the 8 requests used in this task"
+  },
+  "requests": [
+    {
+      "request_id": "azure-conv-000000000",
+      "arrival_seconds": 0.0,
+      "input_tokens": 374,
+      "output_tokens": 44,
+      "parent_prefill": "p0",
+      "parent_decode": "d3"
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "arrival_seconds": 4.314579,
+      "input_tokens": 396,
+      "output_tokens": 109,
+      "parent_prefill": "p1",
+      "parent_decode": "d14"
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "arrival_seconds": 4.541877,
+      "input_tokens": 879,
+      "output_tokens": 55,
+      "parent_prefill": "p2",
+      "parent_decode": "d7"
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "arrival_seconds": 4.710427,
+      "input_tokens": 91,
+      "output_tokens": 16,
+      "parent_prefill": "p3",
+      "parent_decode": "d9"
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "arrival_seconds": 5.892655,
+      "input_tokens": 91,
+      "output_tokens": 16,
+      "parent_prefill": "p4",
+      "parent_decode": "d13"
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "arrival_seconds": 6.311529,
+      "input_tokens": 381,
+      "output_tokens": 84,
+      "parent_prefill": "p5",
+      "parent_decode": "d11"
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "arrival_seconds": 7.745497,
+      "input_tokens": 1313,
+      "output_tokens": 142,
+      "parent_prefill": "p6",
+      "parent_decode": "d4"
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "arrival_seconds": 8.251431,
+      "input_tokens": 388,
+      "output_tokens": 84,
+      "parent_prefill": "p7",
+      "parent_decode": "d5"
+    }
+  ],
+  "actual_statistics": {
+    "request_count": 8,
+    "input_tokens": 3913,
+    "output_tokens": 550,
+    "decode_token_steps": 542,
+    "unique_decode_instances": [
+      "d11",
+      "d13",
+      "d14",
+      "d3",
+      "d4",
+      "d5",
+      "d7",
+      "d9"
+    ],
+    "unique_prefill_instances": [
+      "p0",
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "p5",
+      "p6",
+      "p7"
+    ]
+  },
+  "expected_by_task": {
+    "prefill_chunks": 11,
+    "query_tokens": 3913,
+    "decode_steps": 542,
+    "layers_per_step": 61,
+    "ep_calls": 32074,
+    "kv_logical_payload_bytes": 274974336,
+    "kv_messages": 671
+  },
+  "binding_projection": [
+    {
+      "request_id": "azure-conv-000000000",
+      "parent": {
+        "request_id": "azure-conv-000000000",
+        "prefill_instance_id": "p0",
+        "decode_instance_id": "d3",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "child": {
+        "request_id": "azure-conv-000000000",
+        "prefill_instance_id": "p0",
+        "decode_instance_id": "d3",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "parent": {
+        "request_id": "azure-conv-000000001",
+        "prefill_instance_id": "p1",
+        "decode_instance_id": "d14",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "child": {
+        "request_id": "azure-conv-000000001",
+        "prefill_instance_id": "p1",
+        "decode_instance_id": "d14",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "parent": {
+        "request_id": "azure-conv-000000002",
+        "prefill_instance_id": "p2",
+        "decode_instance_id": "d7",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "child": {
+        "request_id": "azure-conv-000000002",
+        "prefill_instance_id": "p2",
+        "decode_instance_id": "d7",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "parent": {
+        "request_id": "azure-conv-000000003",
+        "prefill_instance_id": "p3",
+        "decode_instance_id": "d9",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "child": {
+        "request_id": "azure-conv-000000003",
+        "prefill_instance_id": "p3",
+        "decode_instance_id": "d9",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "parent": {
+        "request_id": "azure-conv-000000004",
+        "prefill_instance_id": "p4",
+        "decode_instance_id": "d13",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "child": {
+        "request_id": "azure-conv-000000004",
+        "prefill_instance_id": "p4",
+        "decode_instance_id": "d13",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "parent": {
+        "request_id": "azure-conv-000000005",
+        "prefill_instance_id": "p5",
+        "decode_instance_id": "d11",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "child": {
+        "request_id": "azure-conv-000000005",
+        "prefill_instance_id": "p5",
+        "decode_instance_id": "d11",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          1
+        ],
+        "cross_leaf": true
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "parent": {
+        "request_id": "azure-conv-000000006",
+        "prefill_instance_id": "p6",
+        "decode_instance_id": "d4",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "child": {
+        "request_id": "azure-conv-000000006",
+        "prefill_instance_id": "p6",
+        "decode_instance_id": "d4",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "parent": {
+        "request_id": "azure-conv-000000007",
+        "prefill_instance_id": "p7",
+        "decode_instance_id": "d5",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "child": {
+        "request_id": "azure-conv-000000007",
+        "prefill_instance_id": "p7",
+        "decode_instance_id": "d5",
+        "prefill_leaf_ids": [
+          0
+        ],
+        "decode_leaf_ids": [
+          0
+        ],
+        "cross_leaf": false
+      },
+      "endpoints_equal": true,
+      "full_row_equal": true
+    }
+  ],
+  "config_diff_vs_frozen": [
+    {
+      "path": "evaluation.window_end_seconds",
+      "from_value": 3501.721937001,
+      "to_value": 30.0
+    },
+    {
+      "path": "evaluation.window_start_seconds",
+      "from_value": 60.0,
+      "to_value": 0.0
+    },
+    {
+      "path": "runtime.time_limit_seconds",
+      "from_value": 4101.721937001,
+      "to_value": 30.0
+    }
+  ],
+  "diagnostic_config_diff_vs_frozen": [
+    {
+      "path": "evaluation.window_end_seconds",
+      "from_value": 3501.721937001,
+      "to_value": 30.0
+    },
+    {
+      "path": "evaluation.window_start_seconds",
+      "from_value": 60.0,
+      "to_value": 0.0
+    },
+    {
+      "path": "feedback.compute_profile_path",
+      "from_value": "compute_profile.json",
+      "to_value": "inputs/compute_profile.json"
+    },
+    {
+      "path": "runtime.time_limit_seconds",
+      "from_value": 4101.721937001,
+      "to_value": 30.0
+    },
+    {
+      "path": "runtime.workload_path",
+      "from_value": "workload.json",
+      "to_value": "inputs/workload.json"
+    }
+  ],
+  "input_hashes": {
+    "config.json": "4752ff14a63d5625da7d31fc9d89a66cf87d64c6134c7b367c6f297af2d755b7",
+    "workload.json": "bac5a8df2c5f5d74693fe967674ebdc9f27f707264efb13e25dec50c17ec20b4",
+    "compute_profile.json": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+    "binding_plan.json": "1c59fbfbbf09fd0ed834e73748413a0734d7a963ca5c62fed970658a706445d1"
+  },
+  "diagnostic_root": "results/diagnostic",
+  "diagnostic_config_hash": "9ce5cc40ed07fbf95f4cdc41c3bcd1bb2edeb6c03f651cbd1af870345b54b3fe"
+}

@@ -1,0 +1,8 @@
+{
+  "submission_batch_size": 128,
+  "submission_commands": 675175,
+  "submission_batches": 201214,
+  "barrier_commands": 705177,
+  "synchronous_exchanges": 906391,
+  "time_ns": 30000000000
+}

@@ -69,4 +69,4 @@ outputs/agents/YYYY-MM-DD/T001-short-name/
 最后回复本轮 REPORT.md 的完整绝对路径、结论和实际验证情况。
 ```
 
-旧任务和旧结论不构成当前的派发或验收状态。新任务编号从 T001 开始；本规范没有创建任何 ready 或 in_progress 的任务。
+研究进度见 [PROGRESS.md](PROGRESS.md)，任务文件版本归档见 [ARCHIVING.md](ARCHIVING.md)。新编号续接现有序列；历史状态保留，迁移服务器不从 T001 重新编号。本说明不自动创建 ready 或 in_progress 任务。

@@ -1,0 +1,70 @@
+{
+  "phase": "live-baseline",
+  "started_at": "2026-11-07T19:42:43+08:00",
+  "wall_clock_seconds": 911.9064795220002,
+  "ep_flow_audit": {
+    "status": "passed",
+    "started_calls": 32074,
+    "completed_calls": 32074,
+    "incomplete_calls": 0,
+    "checked_logical_flows": 376340,
+    "active_logical_flows": 0,
+    "active_compute_steps": 0,
+    "active_decode_batches": 0,
+    "phase_started_call_payloads": {
+      "prefill": {
+        "dispatch": {
+          "direct_bytes": 12201197568,
+          "direct_inter_node_bytes": 6507225088,
+          "distinct_rank_bytes": 9239702528,
+          "distinct_rank_inter_node_bytes": 4975444992,
+          "single_copy_per_remote_node_bytes": 1603510272,
+          "modeled_bytes": 9239702528,
+          "modeled_inter_node_bytes": 4975444992
+        },
+        "combine": {
+          "direct_bytes": 24402395136,
+          "direct_inter_node_bytes": 13014450176,
+          "distinct_rank_bytes": 18479405056,
+          "distinct_rank_inter_node_bytes": 9950889984,
+          "single_copy_per_remote_node_bytes": 3207020544,
+          "modeled_bytes": 18479405056,
+          "modeled_inter_node_bytes": 9950889984
+        },
+        "calls": 638,
+        "assignments": 1815632
+      },
+      "decode": {
+        "dispatch": {
+          "direct_bytes": 1689927680,
+          "direct_inter_node_bytes": 901433344,
+          "distinct_rank_bytes": 1280204800,
+          "distinct_rank_inter_node_bytes": 683820032,
+          "single_copy_per_remote_node_bytes": 222129152,
+          "modeled_bytes": 1280204800,
+          "modeled_inter_node_bytes": 683820032
+        },
+        "combine": {
+          "direct_bytes": 3379855360,
+          "direct_inter_node_bytes": 1802866688,
+          "distinct_rank_bytes": 2560409600,
+          "distinct_rank_inter_node_bytes": 1367640064,
+          "single_copy_per_remote_node_bytes": 444258304,
+          "modeled_bytes": 2560409600,
+          "modeled_inter_node_bytes": 1367640064
+        },
+        "calls": 31436,
+        "assignments": 251488
+      }
+    },
+    "scope": "declared routing and communication model; incomplete calls are not counted as completed"
+  },
+  "status": "completed",
+  "mechanism_all_passed": true,
+  "checks_passed": 31,
+  "checks_total": 31,
+  "flows": 201677,
+  "stages": 64148,
+  "native_registrations": 675175,
+  "simulation_time_limit_seconds": 30.0
+}

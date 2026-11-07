@@ -1,0 +1,11 @@
+{
+  "task_id": "T001",
+  "title": "冻结第一阶段唯一基线条件",
+  "agent": "WorkBuddy",
+  "status": "accepted",
+  "created_at": "2026-11-07T16:18:38.4345403+08:00",
+  "started_at": "2026-11-07T16:21:01+08:00",
+  "updated_at": "2026-11-07T16:37:56.5974355+08:00",
+  "parent_task": null,
+  "report": "REPORT.md"
+}

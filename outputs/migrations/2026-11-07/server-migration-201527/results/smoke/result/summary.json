@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "units": {
+    "time": "seconds",
+    "throughput": "requests/second"
+  },
+  "source_trace": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/results/smoke/events.jsonl",
+  "run": {
+    "schema_version": 1,
+    "strategy": "round_robin_fifo_ns3",
+    "seed": 7,
+    "metadata": {
+      "synthetic": true,
+      "backend": {
+        "backend": "simai_ns3_rdma",
+        "protocol_version": 4,
+        "ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+        "build_fingerprint": "f1a48f36b6a4ebb9cf8c",
+        "completion_semantics": "all_bytes_acknowledged_at_sender",
+        "endpoint_model": "shared_node",
+        "congestion_control": "dcqcn",
+        "nic_bandwidth_gbps_per_node": 200.0,
+        "nic_bandwidth_gbps_per_endpoint": 200.0,
+        "local_model": "shared_fifo",
+        "local_bandwidth_scope": "shared_node_fifo",
+        "packet_bytes": 1000,
+        "switch_buffer_bytes": 16777216,
+        "seed": 7,
+        "ns3_seed": 8,
+        "network_priority_enabled": false,
+        "priority_mapping": {
+          "0": "urgent_kv",
+          "1": "collective",
+          "2": "normal_kv",
+          "3": "loose_kv"
+        }
+      },
+      "compute_profile_provenance": {
+        "synthetic": true,
+        "description": "Deterministic integration fixture; not measurements of any GPU/model."
+      },
+      "workload_provenance": {
+        "synthetic": true,
+        "description": "Small deterministic workload for backend regression only."
+      },
+      "effective_baseline": {
+        "endpoint_selection": "round_robin",
+        "prefill": "fifo",
+        "prefill_batch_size": 1,
+        "prefill_batch_token_budget": 0,
+        "prefill_chunk_tokens": 0,
+        "decode": "one_request_token_step_round_robin",
+        "decode_batch_size": 1,
+        "decode_context_model": "padded_max_context",
+        "kv": "whole_ready_immediate",
+        "prefill_model": "aggregate_step",
+        "kv_admission_control": false,
+        "network_telemetry": false,
+        "state_observation": true,
+        "prefix_cache": false,
+        "collective_protection": false,
+        "dynamic_inflight": false,
+        "decode_admission_limit": 0,
+        "kv_priority": "immediate",
+        "network_priority_enabled": false,
+        "kv_block_limit_bytes": null,
+        "collectives": "gpu_rank_ring_allreduce",
+        "expert_parallel": false,
+        "native_vidur_batching": false,
+        "binding_window": false,
+        "binding_prediction": false,
+        "joint_binding_optimization": false,
+        "binding_decision_overhead_us": 0.0,
+        "binding_prediction_use": "diagnostics_only",
+        "reservation_timing": "at_prefill_start"
+      },
+      "compute_profile_sha256": "a581b36ce080f6c7ed8ef5e580394ff2463fc581ea00c8d3a06d006c4a660e71",
+      "recording": {
+        "mode": "essential"
+      }
+    }
+  },
+  "observation_end_seconds": 0.1,
+  "evaluation_config": {
+    "window_start_seconds": 0.0,
+    "window_end_seconds": 0.1,
+    "time_bin_seconds": 0.01,
+    "default_ttft_slo_seconds": 0.02,
+    "default_itl_slo_seconds": 0.005,
+    "output_dir": "../artifacts/evaluation",
+    "plot_dpi": 160,
+    "percentiles": [
+      0.5,
+      0.95,
+      0.99
+    ],
+    "plot_formats": [
+      "png",
+      "pdf"
+    ],
+    "charts": [
+      "latency_cdf",
+      "latency_percentiles",
+      "slo_throughput",
+      "throughput_timeseries"
+    ]
+  },
+  "measurement": {
+    "start_seconds": 0.0,
+    "end_seconds": 0.1,
+    "duration_seconds": 0.1,
+    "interval": "[start, end)",
+    "latency_population": "arrival_cohort_completed"
+  },
+  "completion_window": {
+    "completed_count": 12,
+    "slo_met_count": 12,
+    "slo_attainment": 1.0,
+    "completion_throughput_rps": 120.0,
+    "slo_goodput_rps": 120.0,
+    "carry_in_completed_count": 0
+  },
+  "arrival_cohort": {
+    "arrived_count": 12,
+    "completed_by_observation_end": 12,
+    "failed_count": 0,
+    "incomplete_count": 0,
+    "slo_met_completed_count": 12,
+    "completed_and_slo_fraction": 1.0,
+    "slo_attainment_among_completed": 1.0
+  },
+  "latencies": {
+    "ttft_seconds": {
+      "count": 12,
+      "mean": 0.0022025039999999997,
+      "min": 0.000850628,
+      "max": 0.00305682,
+      "quantiles": {
+        "0.5": 0.0026428459999999995,
+        "0.95": 0.00305682,
+        "0.99": 0.00305682
+      }
+    },
+    "handoff_seconds": {
+      "count": 10,
+      "mean": 0.00014717180000000047,
+      "min": 0.0001268980000000003,
+      "max": 0.00016744999999999954,
+      "quantiles": {
+        "0.5": 0.00014041850000000083,
+        "0.95": 0.00016744100000000038,
+        "0.99": 0.00016744819999999972
+      }
+    },
+    "later_max_itl_seconds": {
+      "count": 7,
+      "mean": 0.00011180828571428551,
+      "min": 0.00010783399999999936,
+      "max": 0.00011541399999999945,
+      "quantiles": {
+        "0.5": 0.00011041300000000018,
+        "0.95": 0.00011541399999999945,
+        "0.99": 0.00011541399999999945
+      }
+    },
+    "max_itl_seconds": {
+      "count": 10,
+      "mean": 0.00014717180000000047,
+      "min": 0.0001268980000000003,
+      "max": 0.00016744999999999954,
+      "quantiles": {
+        "0.5": 0.00014041850000000083,
+        "0.95": 0.00016744100000000038,
+        "0.99": 0.00016744819999999972
+      }
+    },
+    "mean_tpot_seconds": {
+      "count": 10,
+      "mean": 0.00012728423809523826,
+      "min": 0.00011058557142857148,
+      "max": 0.0001674300000000014,
+      "quantiles": {
+        "0.5": 0.0001228045714285714,
+        "0.95": 0.00015527010000000068,
+        "0.99": 0.00016499802000000127
+      }
+    },
+    "e2e_seconds": {
+      "count": 12,
+      "mean": 0.0026052055000000004,
+      "min": 0.000850628,
+      "max": 0.003916461999999999,
+      "quantiles": {
+        "0.5": 0.0028233855,
+        "0.95": 0.003916451,
+        "0.99": 0.003916459799999999
+      }
+    }
+  },
+  "total_requests_recorded": 12,
+  "auxiliary_event_count": 54,
+  "comparison_tolerance": {
+    "relative": 1e-09,
+    "absolute_seconds": 1e-12
+  },
+  "recording": {
+    "mode": "essential",
+    "recorded_event_counts": {
+      "run_metadata": 1,
+      "request_arrived": 12,
+      "binding_committed": 12,
+      "prefill_started": 12,
+      "token_returned": 52,
+      "request_completed": 12,
+      "kv_all_received": 10,
+      "kv_ready": 10,
+      "decode_started": 10,
+      "run_end": 1
+    },
+    "omitted_event_counts": {
+      "queue_dequeued": 52,
+      "resources": 86,
+      "compute_step_started": 52,
+      "compute_segment_started": 64,
+      "compute_segment_completed": 64,
+      "collective_started": 64,
+      "transfer_started": 1576,
+      "transfer_completed": 1576,
+      "collective_completed": 64,
+      "compute_step_completed": 52,
+      "decode_batch_started": 40,
+      "decode_batch_completed": 40,
+      "decode_requeued": 30
+    }
+  },
+  "pressure": {
+    "measurement_start_seconds": 0.0,
+    "measurement_end_seconds": 0.1,
+    "observed_until_seconds": 0.1,
+    "measured_arrivals": 12,
+    "measured_completions": 12,
+    "measured_good_completions": 12,
+    "measured_failures": 0,
+    "offered_rps": 120.0,
+    "completion_rps": 120.0,
+    "goodput_rps": 120.0,
+    "output_tokens_per_second": 520.0,
+    "decode_tokens_per_second": 400.0,
+    "backlog_start": 0,
+    "backlog_end": 0,
+    "backlog_change": 0,
+    "backlog_growth_rps": 0.0,
+    "mean_outstanding": 0.31262466,
+    "peak_outstanding": 4,
+    "cohort_count": 12,
+    "cohort_slo_passed": 12,
+    "cohort_slo_missed": 0,
+    "cohort_slo_unknown": 0,
+    "cohort_slo_fraction_lower": 1.0,
+    "cohort_slo_fraction_upper": 1.0
+  },
+  "prefix_cache": {
+    "enabled": false,
+    "hit_tokens": 0,
+    "saved_kv_transfer_bytes": 0,
+    "resident_bytes": 0
+  },
+  "raw_trace_file": "../events.jsonl"
+}

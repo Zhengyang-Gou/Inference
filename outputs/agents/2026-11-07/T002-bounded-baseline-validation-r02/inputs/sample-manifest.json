@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "task": "T002-bounded-baseline-validation",
+  "evidence_type": "static_input_preparation_only_no_ns3_run",
+  "source": {
+    "t001_frozen_dir": "outputs\\agents\\2026-11-07\\T001-baseline-freeze\\results\\frozen",
+    "t001_frozen_files": {
+      "results/frozen/config.json": {
+        "expected_sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+        "actual_sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+        "match": true,
+        "bytes": 8136
+      },
+      "results/frozen/compute_profile.json": {
+        "expected_sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+        "actual_sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+        "match": true,
+        "bytes": 578530
+      },
+      "results/frozen/workload.json": {
+        "expected_sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+        "actual_sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+        "match": true,
+        "bytes": 2882369
+      },
+      "results/frozen/binding_plan.json": {
+        "expected_sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+        "actual_sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+        "match": true,
+        "bytes": 4983010
+      }
+    },
+    "t001_parent_binding_plan_sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+    "t001_parent_bindings_sha256": "6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5",
+    "t001_parent_plan_request_count": 19366,
+    "t001_parent_plan_seed": 7
+  },
+  "extraction": {
+    "rule": "first 3 requests in original order, request fields unchanged",
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "request_ids": [
+      "azure-conv-000000000",
+      "azure-conv-000000001",
+      "azure-conv-000000002"
+    ],
+    "arrival_times_preserved": true,
+    "input_token_sum": 1649,
+    "output_token_sum": 208,
+    "rows": [
+      {
+        "index": 0,
+        "actual": {
+          "request_id": "azure-conv-000000000",
+          "arrival_seconds": 0.0,
+          "input_tokens": 374,
+          "output_tokens": 44,
+          "p": "p0",
+          "d": "d3"
+        },
+        "expected": {
+          "request_id": "azure-conv-000000000",
+          "arrival_seconds": 0.0,
+          "input_tokens": 374,
+          "output_tokens": 44,
+          "p": "p0",
+          "d": "d3"
+        },
+        "match": true
+      },
+      {
+        "index": 1,
+        "actual": {
+          "request_id": "azure-conv-000000001",
+          "arrival_seconds": 4.314579,
+          "input_tokens": 396,
+          "output_tokens": 109,
+          "p": "p1",
+          "d": "d14"
+        },
+        "expected": {
+          "request_id": "azure-conv-000000001",
+          "arrival_seconds": 4.314579,
+          "input_tokens": 396,
+          "output_tokens": 109,
+          "p": "p1",
+          "d": "d14"
+        },
+        "match": true
+      },
+      {
+        "index": 2,
+        "actual": {
+          "request_id": "azure-conv-000000002",
+          "arrival_seconds": 4.541877,
+          "input_tokens": 879,
+          "output_tokens": 55,
+          "p": "p2",
+          "d": "d7"
+        },
+        "expected": {
+          "request_id": "azure-conv-000000002",
+          "arrival_seconds": 4.541877,
+          "input_tokens": 879,
+          "output_tokens": 55,
+          "p": "p2",
+          "d": "d7"
+        },
+        "match": true
+      }
+    ],
+    "matches_task_table": true
+  },
+  "binding_projection": {
+    "method": "binding_plan_document(first3, topology, binding) compared row-by-row with parent plan projection",
+    "rows": [
+      {
+        "request_id": "azure-conv-000000000",
+        "prefill_instance_id": "p0",
+        "decode_instance_id": "d3",
+        "parent_prefill_instance_id": "p0",
+        "parent_decode_instance_id": "d3",
+        "match": true
+      },
+      {
+        "request_id": "azure-conv-000000001",
+        "prefill_instance_id": "p1",
+        "decode_instance_id": "d14",
+        "parent_prefill_instance_id": "p1",
+        "parent_decode_instance_id": "d14",
+        "match": true
+      },
+      {
+        "request_id": "azure-conv-000000002",
+        "prefill_instance_id": "p2",
+        "decode_instance_id": "d7",
+        "parent_prefill_instance_id": "p2",
+        "parent_decode_instance_id": "d7",
+        "match": true
+      }
+    ],
+    "all_endpoints_match_parent": true,
+    "subset_plan_bindings_sha256": "459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3",
+    "subset_plan_request_count": 3,
+    "subset_plan_seed": 7,
+    "subset_prefill_counts": {
+      "p0": 1,
+      "p1": 1,
+      "p2": 1,
+      "p3": 0,
+      "p4": 0,
+      "p5": 0,
+      "p6": 0,
+      "p7": 0,
+      "p8": 0,
+      "p9": 0,
+      "p10": 0,
+      "p11": 0,
+      "p12": 0,
+      "p13": 0,
+      "p14": 0,
+      "p15": 0
+    },
+    "subset_decode_counts": {
+      "d0": 0,
+      "d1": 0,
+      "d2": 0,
+      "d3": 1,
+      "d4": 0,
+      "d5": 0,
+      "d6": 0,
+      "d7": 1,
+      "d8": 0,
+      "d9": 0,
+      "d10": 0,
+      "d11": 0,
+      "d12": 0,
+      "d13": 0,
+      "d14": 1,
+      "d15": 0
+    },
+    "subset_cross_leaf_requests": 1,
+    "note": "parent plan hash kept here only; binding_plan.json has no custom fields so runner equality check applies"
+  },
+  "config_diff_from_t001": {
+    "evaluation.window_start_seconds": {
+      "t001": 60.0,
+      "t002": 0.0
+    },
+    "evaluation.window_end_seconds": {
+      "t001": 3501.721937001,
+      "t002": 30.0
+    },
+    "runtime.time_limit_seconds": {
+      "t001": 4101.721937001,
+      "t002": 30.0
+    }
+  },
+  "unchanged_conditions": [
+    "topology / placements / EP groups / network / ns-3 backend",
+    "kv_transfer_mode=layer_ready_immediate, kv_scheduler.policy=ready_immediate",
+    "no FIFO/MLU gating, no collective protection, no decode admission, no network priority",
+    "no binding window/prediction/joint selection, no prefix cache",
+    "prefill chunk 512 / token budget 2048 / batch 16, decode batch 64",
+    "runtime.seed=7, binding.seed=7, policy=balanced_random",
+    "SLO TTFT 1.0s / ITL 0.1s, evaluation defaults, time_bin 1.0, percentiles",
+    "network observation 1000us + visibility 100us, state observation on, recording essential",
+    "compute profile byte-identical to T001; workload provenance preserved verbatim"
+  ],
+  "inputs_files": {
+    "config.json": {
+      "sha256": "c4db2484734941defac63b7a39d7233c9aa9d0c2763e2dd049fdf049df06ba2a",
+      "bytes": 8115
+    },
+    "workload.json": {
+      "sha256": "625bf0a51b258590c4f58ca67c8b121aa184931e1fb35ddd351d2086a392822c",
+      "bytes": 2035
+    },
+    "compute_profile.json": {
+      "sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "bytes": 578530
+    },
+    "binding_plan.json": {
+      "sha256": "461ba02d62e87d493b288879ed94cec7834e5e81f13b8714d44d78a05898cad2",
+      "bytes": 1757
+    }
+  }
+}

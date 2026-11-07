@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "experiment_type": "end_to_end",
+  "input_sha256": {
+    "config": "ff345e7557c1d6abd2e013cab16665e7a4eb945cf1ebd87e6798badf89239ecf",
+    "profile": "a581b36ce080f6c7ed8ef5e580394ff2463fc581ea00c8d3a06d006c4a660e71",
+    "workload": "9ab10df5d5c778d11de0b93a11f59c4e35b476e6d623e73cdc57b2126a1361fb"
+  },
+  "source": {
+    "git_head": "e9b447df7f118661b9b0e4ab2ce13483e7dd9b2a",
+    "source_tree_sha256": "2ec03712c8c95c19c61dea7de5c051e07f208a280388e7d6fb89c57042f26eba",
+    "archive_sha256": "486859559e087b3c4e68af49d0625ff6461d5541ad5373d85e9b850aeef9c831",
+    "manifest": "source/manifest.json",
+    "archive": "source/source.tar.gz"
+  },
+  "backend": {
+    "source": "/home/s223/m0nesy/Inference/third_party/ns3",
+    "revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+    "source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6",
+    "compiler": "/usr/bin/g++",
+    "compiler_version": "g++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0",
+    "cmake": "/home/s223/miniconda3/envs/simai/lib/python3.12/site-packages/cmake/data/bin/cmake",
+    "cmake_version": "cmake version 3.31.10",
+    "fingerprint": "f1a48f36b6a4ebb9cf8c",
+    "root": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current",
+    "source_copy": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current/source",
+    "build_dir": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current/cmake",
+    "executable": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current/source/build/bin/joint-scheduling-ns3",
+    "manifest": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current/build_manifest.json",
+    "protocol_version": 4,
+    "completion_semantics": "all_bytes_acknowledged_at_sender",
+    "executable_sha256": "61ca6b7175f7d37881864ec6f1cdb8f4e06eed81d44293d3085859fa348edfc7"
+  },
+  "profile_status": "synthetic_profile",
+  "profile_synthetic": true,
+  "execution_schema": "pd_profile_driven_v1",
+  "parallel_semantics": null,
+  "semantics": "Feedback affects future compute/communication submissions."
+}

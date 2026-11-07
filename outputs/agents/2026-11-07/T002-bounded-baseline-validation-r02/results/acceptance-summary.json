@@ -1,0 +1,45 @@
+{
+  "task": "T002-r02",
+  "status": "submitted",
+  "ns3_end_to_end_runs": 2,
+  "total_wall_clock_seconds": 568.338062524,
+  "items": [
+    {
+      "id": "A1",
+      "status": "passed",
+      "evidence": "inputs/sample-manifest.json, inputs/*, results/run-a/binding_plan.json, results/run-b/binding_plan.json",
+      "note": "T001 frozen hashes intact=True; subset endpoints equal parent projection=True; config diff keys=['evaluation.window_end_seconds', 'evaluation.window_start_seconds', 'runtime.time_limit_seconds']"
+    },
+    {
+      "id": "A2",
+      "status": "passed",
+      "evidence": "results/run-a, results/run-b, logs/04-run-a.log, logs/05-run-b.log",
+      "note": "two ns-3 runs exit 0; 3 requests completed, 208 tokens, 0 failed, 0 incomplete"
+    },
+    {
+      "id": "A3",
+      "status": "passed",
+      "evidence": "results/mechanism-checks.json, results/run-a-hooks.json, results/run-b-hooks.json",
+      "note": "4 chunks / 1649 query tokens, 205 Decode steps x 61 layers, 12122 EP calls, EPFlowAudit passed, KV readiness and D admission order verified"
+    },
+    {
+      "id": "A4",
+      "status": "passed",
+      "evidence": "results/run-*/observation/summary.json, results/run-*/final_resources.json",
+      "note": "logical KV payload 115878528 bytes with 244/244 messages; all 32 memory domains zero; no active calls/flows/steps"
+    },
+    {
+      "id": "A5",
+      "status": "passed",
+      "evidence": "results/reproducibility-check.json",
+      "note": "all 13 semantic fields identical across run-a/run-b"
+    },
+    {
+      "id": "A6",
+      "status": "passed",
+      "evidence": "results/metrics-summary.json, results/run-*/result/*",
+      "note": "summary/requests/tokens/timeseries and backend/EP/Prefill/Decode/resource exports present; functional sample only"
+    }
+  ],
+  "all_passed": true
+}

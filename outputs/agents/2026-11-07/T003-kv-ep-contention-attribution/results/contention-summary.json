@@ -1,0 +1,777 @@
+{
+  "schema_version": 1,
+  "experiment_type": "frozen_network_replay",
+  "baseline_flow_replay_max_ack_error_ns": 0,
+  "baseline_stage_replay_max_ack_error_ns": 0,
+  "stage_reconstruction_vs_live_max_error_ns": 0,
+  "traffic_classes": {
+    "collective": {
+      "flow_count": 201006,
+      "logical_payload_bytes": 16977795072,
+      "full_flow_latency_us": {
+        "count": 201006,
+        "mean": 19.98381282648279,
+        "p50": 8.794,
+        "p95": 47.379,
+        "p99": 334.96455000000054,
+        "minimum": 8.362,
+        "maximum": 468.709
+      },
+      "isolated_flow_latency_us": {
+        "count": 201006,
+        "mean": 19.983811184740755,
+        "p50": 8.794,
+        "p95": 47.379,
+        "p99": 334.96455000000054,
+        "minimum": 8.362,
+        "maximum": 468.709
+      },
+      "added_latency_us": {
+        "count": 201006,
+        "mean": 1.641742037551118e-06,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": -0.127,
+        "maximum": 0.136
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "negative_delta": {
+        "count": 1,
+        "minimum_us": -0.127,
+        "sum_magnitude_us": 0.127
+      },
+      "positive_delta": {
+        "count": 5,
+        "maximum_us": 0.136,
+        "sum_us": 0.457
+      }
+    },
+    "kv": {
+      "flow_count": 671,
+      "logical_payload_bytes": 274974336,
+      "full_flow_latency_us": {
+        "count": 671,
+        "mean": 13.8939478390462,
+        "p50": 13.158,
+        "p95": 17.424,
+        "p99": 17.424,
+        "minimum": 10.353,
+        "maximum": 17.424
+      },
+      "isolated_flow_latency_us": {
+        "count": 671,
+        "mean": 13.893727272727272,
+        "p50": 13.158,
+        "p95": 17.424,
+        "p99": 17.424,
+        "minimum": 10.353,
+        "maximum": 17.424
+      },
+      "added_latency_us": {
+        "count": 671,
+        "mean": 0.00022056631892697465,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.144
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "negative_delta": {
+        "count": 0,
+        "minimum_us": 0.0,
+        "sum_magnitude_us": 0
+      },
+      "positive_delta": {
+        "count": 3,
+        "maximum_us": 0.144,
+        "sum_us": 0.148
+      }
+    }
+  },
+  "ep_stage_groups": {
+    "decode.ep_combine": {
+      "count": 31436,
+      "added_latency_us": {
+        "count": 31436,
+        "mean": 2.862959664079399e-07,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.009
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    },
+    "decode.ep_dispatch": {
+      "count": 31436,
+      "added_latency_us": {
+        "count": 31436,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    },
+    "decode.final_layer_combine": {
+      "count": 542,
+      "added_latency_us": {
+        "count": 542,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    },
+    "other_layers": {
+      "count": 63595,
+      "added_latency_us": {
+        "count": 63595,
+        "mean": 1.4152055979243651e-07,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.009
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    },
+    "prefill.ep_combine": {
+      "count": 638,
+      "added_latency_us": {
+        "count": 638,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    },
+    "prefill.ep_dispatch": {
+      "count": 638,
+      "added_latency_us": {
+        "count": 638,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    },
+    "prefill.final_layer_combine": {
+      "count": 11,
+      "added_latency_us": {
+        "count": 11,
+        "mean": 0.0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0
+      },
+      "delayed_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      },
+      "improved_by_over_1us": {
+        "count": 0,
+        "fraction": 0.0
+      }
+    }
+  },
+  "shared_resource": {
+    "directed_endpoint_outstanding_overlap_seconds": {
+      "rx:25": 5.159e-06,
+      "rx:12": 1.1229e-05
+    },
+    "directed_endpoints_with_both_classes_in_flight": 2,
+    "any_directed_endpoint_overlap_seconds": 1.6388e-05,
+    "ports_with_both_traffic_classes": 24,
+    "ports_with_both_classes_detail": {
+      "0:1": {
+        "node_id": 0,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 26453016,
+        "collective_bytes": 478620844,
+        "tx_bytes": 512220580,
+        "mixed_1ms_samples": 42,
+        "active_1ms_samples": 85,
+        "peak_1ms_utilization": 0.18007416000000045,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.000976102688461439
+      },
+      "1:1": {
+        "node_id": 1,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 28011688,
+        "collective_bytes": 506858604,
+        "tx_bytes": 542437672,
+        "mixed_1ms_samples": 42,
+        "active_1ms_samples": 87,
+        "peak_1ms_utilization": 0.18941200000010497,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0010336852727822147
+      },
+      "2:1": {
+        "node_id": 2,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 62171932,
+        "collective_bytes": 1124909896,
+        "tx_bytes": 1203874508,
+        "mixed_1ms_samples": 77,
+        "active_1ms_samples": 193,
+        "peak_1ms_utilization": 0.24440775999991837,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.002294138872415068
+      },
+      "32:12": {
+        "node_id": 32,
+        "peer_id": 11,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 26453016,
+        "collective_bytes": 145165320,
+        "tx_bytes": 172656036,
+        "mixed_1ms_samples": 0,
+        "active_1ms_samples": 3777,
+        "peak_1ms_utilization": 0.01734624,
+        "peak_queue_bytes": 25552,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0003290184492756909
+      },
+      "32:13": {
+        "node_id": 32,
+        "peer_id": 12,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 92869816,
+        "collective_bytes": 395453840,
+        "tx_bytes": 490396116,
+        "mixed_1ms_samples": 27,
+        "active_1ms_samples": 5526,
+        "peak_1ms_utilization": 0.0241848800000134,
+        "peak_queue_bytes": 56096,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.000934513344306954
+      },
+      "32:14": {
+        "node_id": 32,
+        "peer_id": 13,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 27443168,
+        "collective_bytes": 247277780,
+        "tx_bytes": 276178168,
+        "mixed_1ms_samples": 0,
+        "active_1ms_samples": 4496,
+        "peak_1ms_utilization": 0.017995520000009972,
+        "peak_queue_bytes": 27216,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.000526293286144721
+      },
+      "32:16": {
+        "node_id": 32,
+        "peer_id": 15,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 62171932,
+        "collective_bytes": 173402740,
+        "tx_bytes": 236733392,
+        "mixed_1ms_samples": 85,
+        "active_1ms_samples": 2783,
+        "peak_1ms_utilization": 0.02389368000001324,
+        "peak_queue_bytes": 28880,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.00045112615424354035
+      },
+      "32:17": {
+        "node_id": 32,
+        "peer_id": 34,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 14877444,
+        "collective_bytes": 1467858108,
+        "tx_bytes": 1503683902,
+        "mixed_1ms_samples": 49,
+        "active_1ms_samples": 6674,
+        "peak_1ms_utilization": 0.031651600000017543,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007163661304561341
+      },
+      "32:18": {
+        "node_id": 32,
+        "peer_id": 35,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 15551964,
+        "collective_bytes": 1458717752,
+        "tx_bytes": 1495110992,
+        "mixed_1ms_samples": 45,
+        "active_1ms_samples": 6728,
+        "peak_1ms_utilization": 0.04278841000002371,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007122819327366
+      },
+      "32:19": {
+        "node_id": 32,
+        "peer_id": 36,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 17424612,
+        "collective_bytes": 1545501768,
+        "tx_bytes": 1585071494,
+        "mixed_1ms_samples": 55,
+        "active_1ms_samples": 6723,
+        "peak_1ms_utilization": 0.04354128000002413,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007551397811353995
+      },
+      "32:20": {
+        "node_id": 32,
+        "peer_id": 37,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 19984080,
+        "collective_bytes": 1502221748,
+        "tx_bytes": 1543670246,
+        "mixed_1ms_samples": 56,
+        "active_1ms_samples": 6712,
+        "peak_1ms_utilization": 0.03624348000002008,
+        "peak_queue_bytes": 16104,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.000735415920431453
+      },
+      "33:10": {
+        "node_id": 33,
+        "peer_id": 25,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 6439160,
+        "collective_bytes": 89037040,
+        "tx_bytes": 96483360,
+        "mixed_1ms_samples": 33,
+        "active_1ms_samples": 3825,
+        "peak_1ms_utilization": 0.0046412000000025724,
+        "peak_queue_bytes": 25552,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.00018386154474268266
+      },
+      "33:12": {
+        "node_id": 33,
+        "peer_id": 27,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 26948092,
+        "collective_bytes": 259494020,
+        "tx_bytes": 288160332,
+        "mixed_1ms_samples": 0,
+        "active_1ms_samples": 4923,
+        "peak_1ms_utilization": 0.02650632000001469,
+        "peak_queue_bytes": 19164,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0005491268522891852
+      },
+      "33:14": {
+        "node_id": 33,
+        "peer_id": 29,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 6439160,
+        "collective_bytes": 89463020,
+        "tx_bytes": 96916420,
+        "mixed_1ms_samples": 0,
+        "active_1ms_samples": 4077,
+        "peak_1ms_utilization": 0.006333599999997885,
+        "peak_queue_bytes": 12776,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.00018468679668836807
+      },
+      "33:15": {
+        "node_id": 33,
+        "peer_id": 30,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 28011688,
+        "collective_bytes": 322885620,
+        "tx_bytes": 352883248,
+        "mixed_1ms_samples": 0,
+        "active_1ms_samples": 4736,
+        "peak_1ms_utilization": 0.01836832000001018,
+        "peak_queue_bytes": 33604,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0006724647554883575
+      },
+      "34:2": {
+        "node_id": 34,
+        "peer_id": 33,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 14877444,
+        "collective_bytes": 1467858108,
+        "tx_bytes": 1503499862,
+        "mixed_1ms_samples": 49,
+        "active_1ms_samples": 6668,
+        "peak_1ms_utilization": 0.03149056000001745,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007162784524391828
+      },
+      "35:2": {
+        "node_id": 35,
+        "peer_id": 33,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 15551964,
+        "collective_bytes": 1458717752,
+        "tx_bytes": 1494924716,
+        "mixed_1ms_samples": 45,
+        "active_1ms_samples": 6718,
+        "peak_1ms_utilization": 0.042787505000023714,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007121931894727136
+      },
+      "36:2": {
+        "node_id": 36,
+        "peer_id": 33,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 17424612,
+        "collective_bytes": 1545501768,
+        "tx_bytes": 1584885390,
+        "mixed_1ms_samples": 55,
+        "active_1ms_samples": 6716,
+        "peak_1ms_utilization": 0.04354128000002413,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007550511198135851
+      },
+      "37:2": {
+        "node_id": 37,
+        "peer_id": 33,
+        "capacity_bps": 1600000000000,
+        "kv_bytes": 19984080,
+        "collective_bytes": 1502221748,
+        "tx_bytes": 1543486636,
+        "mixed_1ms_samples": 56,
+        "active_1ms_samples": 6705,
+        "peak_1ms_utilization": 0.036244980000020084,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0007353284472696814
+      },
+      "3:1": {
+        "node_id": 3,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 6439160,
+        "collective_bytes": 116515292,
+        "tx_bytes": 124703692,
+        "mixed_1ms_samples": 52,
+        "active_1ms_samples": 64,
+        "peak_1ms_utilization": 0.06802847999997728,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0002376390441443552
+      },
+      "4:1": {
+        "node_id": 4,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 6439160,
+        "collective_bytes": 116515292,
+        "tx_bytes": 124703692,
+        "mixed_1ms_samples": 56,
+        "active_1ms_samples": 57,
+        "peak_1ms_utilization": 0.08120047999997289,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0002376390441443552
+      },
+      "5:1": {
+        "node_id": 5,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 26948092,
+        "collective_bytes": 487624748,
+        "tx_bytes": 521856120,
+        "mixed_1ms_samples": 42,
+        "active_1ms_samples": 85,
+        "peak_1ms_utilization": 0.1835974399999387,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0009944644584996083
+      },
+      "6:1": {
+        "node_id": 6,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 92869816,
+        "collective_bytes": 1680322492,
+        "tx_bytes": 1798276808,
+        "mixed_1ms_samples": 123,
+        "active_1ms_samples": 280,
+        "peak_1ms_utilization": 0.24385279999991857,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0034268494774002535
+      },
+      "7:1": {
+        "node_id": 7,
+        "peer_id": 32,
+        "capacity_bps": 400000000000,
+        "kv_bytes": 27443168,
+        "collective_bytes": 496556868,
+        "tx_bytes": 531414296,
+        "mixed_1ms_samples": 43,
+        "active_1ms_samples": 87,
+        "peak_1ms_utilization": 0.18650751999977205,
+        "peak_queue_bytes": 0,
+        "pfc_pause_events": 0,
+        "mean_utilization_during_flow_span": 0.0010126788014109915
+      }
+    },
+    "one_ms_port_samples": {
+      "source": "results/port-intervals.csv (1 ms cumulative-counter differences)",
+      "rows_written": 243186,
+      "rows_omitted": 2156814,
+      "network_samples_seen": 30001,
+      "interval_samples": 30000,
+      "nonlocal_ports_per_sample": 80,
+      "omission_rule": "omit a (1 ms sample, port) row when delta_tx=delta_kv=delta_collective=0, queue_bytes=0 and delta_pfc=0",
+      "mixed_kv_and_ep_1ms_intervals": 1032,
+      "max_sampled_queue_bytes": 5346528,
+      "max_interval_utilization": 0.46067248,
+      "total_delta_pfc_pause": 29860,
+      "sum_delta_tx_bytes": 69574613944,
+      "sum_delta_kv_bytes": 689228264,
+      "sum_delta_collective_bytes": 68359888080
+    },
+    "granularity_note": "Endpoint overlap is exact event-based outstanding duration for one directed NIC (tx:/rx: endpoint); 1 ms port counters are cumulative-byte differences per sampled egress resource. Neither is per-packet service time."
+  },
+  "positive_transport_contribution_locations": {
+    "collective": {
+      "by_directed_nic": [
+        {
+          "key": "tx:gpu15(node1,leaf0)",
+          "count": 2,
+          "positive_added_us_sum": 0.2,
+          "positive_added_us_max": 0.136
+        },
+        {
+          "key": "rx:gpu30(node3,leaf1)",
+          "count": 2,
+          "positive_added_us_sum": 0.2,
+          "positive_added_us_max": 0.136
+        },
+        {
+          "key": "tx:gpu12(node1,leaf0)",
+          "count": 1,
+          "positive_added_us_sum": 0.127,
+          "positive_added_us_max": 0.127
+        },
+        {
+          "key": "rx:gpu27(node3,leaf1)",
+          "count": 1,
+          "positive_added_us_sum": 0.127,
+          "positive_added_us_max": 0.127
+        },
+        {
+          "key": "tx:gpu27(node3,leaf1)",
+          "count": 1,
+          "positive_added_us_sum": 0.077,
+          "positive_added_us_max": 0.077
+        },
+        {
+          "key": "rx:gpu12(node1,leaf0)",
+          "count": 1,
+          "positive_added_us_sum": 0.077,
+          "positive_added_us_max": 0.077
+        },
+        {
+          "key": "tx:gpu30(node3,leaf1)",
+          "count": 1,
+          "positive_added_us_sum": 0.053,
+          "positive_added_us_max": 0.053
+        },
+        {
+          "key": "rx:gpu8(node1,leaf0)",
+          "count": 1,
+          "positive_added_us_sum": 0.053,
+          "positive_added_us_max": 0.053
+        }
+      ],
+      "by_request": [
+        {
+          "key": "azure-conv-000000001",
+          "count": 3,
+          "positive_added_us_sum": 0.253,
+          "positive_added_us_max": 0.136
+        },
+        {
+          "key": "azure-conv-000000005",
+          "count": 2,
+          "positive_added_us_sum": 0.20400000000000001,
+          "positive_added_us_max": 0.127
+        }
+      ],
+      "by_stage_kind": [
+        {
+          "key": "decode.ep_combine",
+          "count": 3,
+          "positive_added_us_sum": 0.327,
+          "positive_added_us_max": 0.136
+        },
+        {
+          "key": "decode.ep_dispatch",
+          "count": 2,
+          "positive_added_us_sum": 0.13,
+          "positive_added_us_max": 0.077
+        }
+      ]
+    },
+    "kv": {
+      "by_directed_nic": [
+        {
+          "key": "tx:gpu6(node0,leaf0)",
+          "count": 1,
+          "positive_added_us_sum": 0.144,
+          "positive_added_us_max": 0.144
+        },
+        {
+          "key": "rx:gpu12(node1,leaf0)",
+          "count": 1,
+          "positive_added_us_sum": 0.144,
+          "positive_added_us_max": 0.144
+        },
+        {
+          "key": "tx:gpu2(node0,leaf0)",
+          "count": 2,
+          "positive_added_us_sum": 0.004,
+          "positive_added_us_max": 0.002
+        },
+        {
+          "key": "rx:gpu15(node1,leaf0)",
+          "count": 2,
+          "positive_added_us_sum": 0.004,
+          "positive_added_us_max": 0.002
+        }
+      ],
+      "by_request": [
+        {
+          "key": "azure-conv-000000006",
+          "count": 1,
+          "positive_added_us_sum": 0.144,
+          "positive_added_us_max": 0.144
+        },
+        {
+          "key": "azure-conv-000000002",
+          "count": 2,
+          "positive_added_us_sum": 0.004,
+          "positive_added_us_max": 0.002
+        }
+      ],
+      "by_stage_kind": [
+        {
+          "key": "kv",
+          "count": 3,
+          "positive_added_us_sum": 0.148,
+          "positive_added_us_max": 0.144
+        }
+      ]
+    }
+  },
+  "replays": {
+    "both": {
+      "status": "completed",
+      "wall_clock_seconds": 96.51582810500008,
+      "selected_flows": 201677,
+      "completed_flows": 201677,
+      "port_cooldown_checks": 0
+    },
+    "collective": {
+      "status": "completed",
+      "wall_clock_seconds": 86.65089997500013,
+      "selected_flows": 201006,
+      "completed_flows": 201006,
+      "port_cooldown_checks": 0
+    },
+    "kv": {
+      "status": "completed",
+      "wall_clock_seconds": 46.93216686200003,
+      "selected_flows": 671,
+      "completed_flows": 671,
+      "port_cooldown_checks": 0
+    }
+  },
+  "method": "Same frozen starts, payloads, priorities, per-endpoint order and native TIMER/LOCAL/LOCAL_PORTS skeleton; only cross-node SEND of the removed class is omitted. Flow delta = ACK_both - ACK_isolated (signed); EP stage gate = max(frozen local_ack, corresponding remote flow ACK). Negative deltas are retained.",
+  "limits": [
+    "Finite single-seed 8-request diagnostic; no confidence interval or full-load claim.",
+    "Replay freezes submissions: deltas are transport effects, not request/SLO gains.",
+    "1 ms mixed-byte samples do not resolve individual packet service or strict priority.",
+    "Endpoint outstanding overlap includes pacing/ACK wait, not just queueing delay.",
+    "EP/KV logical payloads are not interchangeable with port byte counters (headers/retransmission).",
+    "Estimated compute profile, synthetic routing and artificial SLO thresholds inherited."
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "task_id": "T002-r03",
+  "series": "T002",
+  "reviewer": "commander",
+  "status": "accepted",
+  "reviewed_at": "2026-11-07T19:11:16+08:00",
+  "scope": "Bounded functional baseline acceptance: 3 frozen requests; no load-capacity or algorithm-benefit conclusion",
+  "all_passed": true,
+  "review": "REVIEW.md",
+  "items": [
+    {
+      "id": "A1",
+      "status": "passed",
+      "evidence": [
+        "../T002-bounded-baseline-validation-r02/results/review-verification.json",
+        "results/review-verification.json"
+      ],
+      "note": "T001 freeze intact; 3-prefix input and parent binding projection; only permitted config changes."
+    },
+    {
+      "id": "A2",
+      "status": "passed",
+      "evidence": [
+        "../T002-bounded-baseline-validation-r02/results/run-a",
+        "../T002-bounded-baseline-validation-r02/results/run-b",
+        "results/audit-run"
+      ],
+      "note": "Two original ns-3 runs plus one boundary capture: each 3 completed requests, 208 tokens, 0 failed/incomplete."
+    },
+    {
+      "id": "A3",
+      "status": "passed",
+      "evidence": [
+        "results/boundary-events.json",
+        "results/review-verification.json",
+        "REVIEW.md"
+      ],
+      "note": "244 KV byte intervals, 3 full-P/first-D boundaries, 205 Decode batch/context/token identities; all 61 layers per step. First compute submission and KV completion flags also rely on verified frozen-code invariants explicitly documented in REVIEW."
+    },
+    {
+      "id": "A4",
+      "status": "passed",
+      "evidence": [
+        "results/audit-run/observation/summary.json",
+        "results/audit-run/final_resources.json",
+        "results/review-verification.json"
+      ],
+      "note": "KV payload 115878528 bytes, 244 completed messages, no resource or EP residue."
+    },
+    {
+      "id": "A5",
+      "status": "passed",
+      "evidence": [
+        "results/review-verification.json"
+      ],
+      "note": "Capture run matches BOTH original runs, including full EP simulated queue wait, CSVs, lifecycle events and logical statistics."
+    },
+    {
+      "id": "A6",
+      "status": "passed",
+      "evidence": [
+        "REPORT.md",
+        "REVIEW.md",
+        "results/audit-run/result/summary.json"
+      ],
+      "note": "Exports and provenance complete; metrics identical; bounded-sample and model limitations recorded."
+    }
+  ],
+  "counts": {
+    "completed_requests_per_run": 3,
+    "output_tokens_per_run": 208,
+    "failed_per_run": 0,
+    "incomplete_per_run": 0,
+    "KV_messages_per_run": 244,
+    "KV_logical_payload_bytes_per_run": 115878528,
+    "prefill_chunks_per_run": 4,
+    "decode_steps_per_run": 205,
+    "layers_per_step": 61,
+    "EP_calls_per_run": 12122
+  },
+  "functional_window": {
+    "start_seconds": 0,
+    "end_seconds": 30,
+    "slo_goodput_rps": 0.1
+  },
+  "independent_review": {
+    "checks": 60,
+    "passed": 60,
+    "simulation_starts_during_review": 0
+  },
+  "historical_states": {
+    "T002": "blocked; preserved",
+    "T002-r02": "changes_requested; preserved as historical review",
+    "T002-r03": "accepted; closes series via this merged acceptance"
+  },
+  "limitations": [
+    "All observed batches contain one request",
+    "No KV/EP interference attribution or algorithm comparison",
+    "Estimated compute profile, synthetic routing, artificial SLO thresholds",
+    "Individual KV completion timestamps/flags and compute-start events not separately retained; source-based inferences stated in REVIEW"
+  ]
+}

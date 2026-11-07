@@ -1,0 +1,568 @@
+{
+  "task": "T002-r02",
+  "reviewer": "commander",
+  "reviewed_at": "2026-11-07T18:49:05+08:00",
+  "method": "Read-only artifact, snapshot and checker review; no new simulation.",
+  "checks_total": 76,
+  "passed": 76,
+  "failed": [],
+  "checks": [
+    {
+      "check": "T001_frozen_hashes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "inputs_equal_blocked_round",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "requests_exact_parent_prefix",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "profile_exact_T001",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "only_three_permitted_config_changes",
+      "passed": true,
+      "detail": {
+        "evaluation.window_end_seconds": [
+          3501.721937001,
+          30.0
+        ],
+        "evaluation.window_start_seconds": [
+          60.0,
+          0.0
+        ],
+        "runtime.time_limit_seconds": [
+          4101.721937001,
+          30.0
+        ]
+      }
+    },
+    {
+      "check": "bindings_exact_parent_projection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "execution_git_status_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original_T002_still_blocked",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.run_config_matches_normalized_input",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "check": "run-a.input_exports_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.repro_input_hashes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.all_requests_completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.all_token_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000000.token_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000000.CSV_metrics_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000000.SLO_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000001.token_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000001.CSV_metrics_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000001.SLO_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000002.token_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000002.CSV_metrics_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.azure-conv-000000002.SLO_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.observable_coarse_boundary_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.goodput_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.EP_route_ACK_audit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.EP_active_tasks_empty",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.KV_logical_payload_and_messages",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.resources_all_zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.ns3_identity_and_end_time",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.source_archive_hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.source_tree_hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.source_archive_file_inventory",
+      "passed": true,
+      "detail": {
+        "files": 1929,
+        "mismatches": []
+      }
+    },
+    {
+      "check": "run-a.current_core_source_matches_snapshot",
+      "passed": true,
+      "detail": 258
+    },
+    {
+      "check": "run-a.prefill_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-a.decode_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.run_config_matches_normalized_input",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "check": "run-b.input_exports_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.repro_input_hashes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.all_requests_completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.all_token_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000000.token_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000000.CSV_metrics_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000000.SLO_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000001.token_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000001.CSV_metrics_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000001.SLO_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000002.token_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000002.CSV_metrics_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.azure-conv-000000002.SLO_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.observable_coarse_boundary_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.goodput_recomputed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.EP_route_ACK_audit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.EP_active_tasks_empty",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.KV_logical_payload_and_messages",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.resources_all_zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.ns3_identity_and_end_time",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.source_archive_hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.source_tree_hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.source_archive_file_inventory",
+      "passed": true,
+      "detail": {
+        "files": 1929,
+        "mismatches": []
+      }
+    },
+    {
+      "check": "run-b.current_core_source_matches_snapshot",
+      "passed": true,
+      "detail": 258
+    },
+    {
+      "check": "run-b.prefill_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "run-b.decode_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.events",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.tokens",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.requests",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.ep",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.observation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.resources",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.binding",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.prefill",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.decode",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.hook_audit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.hook_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.summary.completion_window",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.summary.arrival_cohort",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reproducibility.summary.latencies",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "run_details": {
+    "run-a": {
+      "per_request": [
+        {
+          "request_id": "azure-conv-000000000",
+          "ttft_seconds": 0.084032527,
+          "handoff_seconds": 0.016824771000000002,
+          "later_max_itl_seconds": 0.016948987999999998,
+          "e2e_seconds": 0.805357903
+        },
+        {
+          "request_id": "azure-conv-000000001",
+          "ttft_seconds": 0.08660367199999985,
+          "handoff_seconds": 0.01672258400000004,
+          "later_max_itl_seconds": 0.019045818999999575,
+          "e2e_seconds": 1.9767310799999995
+        },
+        {
+          "request_id": "azure-conv-000000002",
+          "ttft_seconds": 0.18524406299999985,
+          "handoff_seconds": 0.017463744999999697,
+          "later_max_itl_seconds": 0.018725642999999792,
+          "e2e_seconds": 1.1538447189999994
+        }
+      ],
+      "essential_event_counts": {
+        "run_metadata": 1,
+        "request_arrived": 3,
+        "binding_committed": 3,
+        "prefill_started": 3,
+        "token_returned": 208,
+        "kv_all_received": 3,
+        "kv_ready": 3,
+        "decode_started": 3,
+        "request_completed": 3,
+        "run_end": 1
+      },
+      "wall_clock_seconds": 280.673291007,
+      "source_tree_sha256": "427d8527d3ab3f5c637811d1c1d0eba6b6957d09248351515a1cbd128c15ddea",
+      "excluded_by_executor_compute_queue_wait_seconds": 0.20109058799996937,
+      "omitted_event_counts": {
+        "queue_dequeued": 208,
+        "prefill_chunk_started": 4,
+        "prefill_batch_started": 4,
+        "compute_step_started": 12749,
+        "compute_segment_started": 101245,
+        "compute_segment_completed": 101245,
+        "compute_step_completed": 12749,
+        "layer_ready": 183,
+        "prefill_chunk_layer_ready": 244,
+        "transfer_started": 142212,
+        "resources": 494,
+        "transfer_completed": 142212,
+        "ep_call_started": 12122,
+        "collective_started": 24244,
+        "collective_completed": 24244,
+        "ep_local_combine_started": 75747,
+        "ep_local_combine_completed": 75747,
+        "ep_expert_completed": 75747,
+        "ep_call_completed": 12122,
+        "prefill_chunk_completed": 4,
+        "prefill_batch_completed": 4,
+        "decode_batch_started": 205,
+        "decode_requeued": 202,
+        "decode_batch_completed": 205
+      }
+    },
+    "run-b": {
+      "per_request": [
+        {
+          "request_id": "azure-conv-000000000",
+          "ttft_seconds": 0.084032527,
+          "handoff_seconds": 0.016824771000000002,
+          "later_max_itl_seconds": 0.016948987999999998,
+          "e2e_seconds": 0.805357903
+        },
+        {
+          "request_id": "azure-conv-000000001",
+          "ttft_seconds": 0.08660367199999985,
+          "handoff_seconds": 0.01672258400000004,
+          "later_max_itl_seconds": 0.019045818999999575,
+          "e2e_seconds": 1.9767310799999995
+        },
+        {
+          "request_id": "azure-conv-000000002",
+          "ttft_seconds": 0.18524406299999985,
+          "handoff_seconds": 0.017463744999999697,
+          "later_max_itl_seconds": 0.018725642999999792,
+          "e2e_seconds": 1.1538447189999994
+        }
+      ],
+      "essential_event_counts": {
+        "run_metadata": 1,
+        "request_arrived": 3,
+        "binding_committed": 3,
+        "prefill_started": 3,
+        "token_returned": 208,
+        "kv_all_received": 3,
+        "kv_ready": 3,
+        "decode_started": 3,
+        "request_completed": 3,
+        "run_end": 1
+      },
+      "wall_clock_seconds": 287.66477151699996,
+      "source_tree_sha256": "427d8527d3ab3f5c637811d1c1d0eba6b6957d09248351515a1cbd128c15ddea",
+      "excluded_by_executor_compute_queue_wait_seconds": 0.20109058799996937,
+      "omitted_event_counts": {
+        "queue_dequeued": 208,
+        "prefill_chunk_started": 4,
+        "prefill_batch_started": 4,
+        "compute_step_started": 12749,
+        "compute_segment_started": 101245,
+        "compute_segment_completed": 101245,
+        "compute_step_completed": 12749,
+        "layer_ready": 183,
+        "prefill_chunk_layer_ready": 244,
+        "transfer_started": 142212,
+        "resources": 494,
+        "transfer_completed": 142212,
+        "ep_call_started": 12122,
+        "collective_started": 24244,
+        "collective_completed": 24244,
+        "ep_local_combine_started": 75747,
+        "ep_local_combine_completed": 75747,
+        "ep_expert_completed": 75747,
+        "ep_call_completed": 12122,
+        "prefill_chunk_completed": 4,
+        "prefill_batch_completed": 4,
+        "decode_batch_started": 205,
+        "decode_requeued": 202,
+        "decode_batch_completed": 205
+      }
+    }
+  },
+  "uncovered_required_evidence": [
+    {
+      "id": "A3-KV",
+      "requirement": "Every KV transfer starts after corresponding chunk/layer data is ready, and ACK completion releases dependencies.",
+      "evidence": "Only counts of prefill_chunk_layer_ready/transfer events retained; EPFlowAudit ignores KV transfers. No per-KV boundary checks or records."
+    },
+    {
+      "id": "A3-PD",
+      "requirement": "First token follows complete Prefill; first Decode compute follows Prefill completion and ALL KV.",
+      "evidence": "Checker compares prefill_started, not prefill completion; event counter retains no completed-chunk/first-compute timestamps."
+    },
+    {
+      "id": "A3-token",
+      "requirement": "Each returned Decode token follows all 61 corresponding layer dependencies.",
+      "evidence": "EPFlowAudit verifies layers before decode_batch_completed but sees no recorder.token_returned event. No batch-completion/layer-60 timestamps retained for CSV cross-check."
+    }
+  ],
+  "checker_findings": [
+    "A1 is unconditionally passed; t001_ok/projection_ok are only formatted into text and config_diff is trusted from manifest.",
+    "layer_ready_precedes_transfers compares counts, not causality or timestamps.",
+    "decode_admission_after_prefill_and_all_kv uses prefill_started; it does not check Prefill completion or first Decode compute.",
+    "hooks_are_observational_only merely checks completed status/event_total; source review supplies observational confirmation.",
+    "A5 excludes compute_queue_wait_seconds, which is simulated timing; independent comparison includes it and found exact equality."
+  ]
+}

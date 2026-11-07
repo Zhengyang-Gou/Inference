@@ -1,0 +1,40 @@
+=== validate (task inputs) ===
+配置有效：基础模块与 evaluation 的结构和约束检查通过。
+说明：run-baseline 支持整份、分块、逐层立即和动态 SLO/FIFO KV 门控；逐层模式需 schema 2，可选有界 P/D 联合选择。
+说明：前缀缓存已关闭；开启后使用 prefix_blocks 与显式 cached_points，支持 P/D 独立命中。
+说明：绑定窗口已关闭，完整方案诊断已关闭，实际 P/D 选择为 P 轮询、D 固定种子均衡随机。
+说明：记录模式为 essential：必要请求轨迹与汇总始终保留，高频明细仅在 debug 模式写盘。
+说明：实验性 EP 已开启：节点内 TP、显式专家路由及共享专家队列；当前不支持 EP 联合选择或绑定预测。
+VALIDATE_TaskInputs_EXIT=0
+=== validate (diagnostic root config) ===
+配置有效：基础模块与 evaluation 的结构和约束检查通过。
+说明：run-baseline 支持整份、分块、逐层立即和动态 SLO/FIFO KV 门控；逐层模式需 schema 2，可选有界 P/D 联合选择。
+说明：前缀缓存已关闭；开启后使用 prefix_blocks 与显式 cached_points，支持 P/D 独立命中。
+说明：绑定窗口已关闭，完整方案诊断已关闭，实际 P/D 选择为 P 轮询、D 固定种子均衡随机。
+说明：记录模式为 essential：必要请求轨迹与汇总始终保留，高频明细仅在 debug 模式写盘。
+说明：实验性 EP 已开启：节点内 TP、显式专家路由及共享专家队列；当前不支持 EP 联合选择或绑定预测。
+VALIDATE_Diag_EXIT=0
+=== backend doctor ===
+{
+  "python": "3.12.16",
+  "python_executable": "/home/m0nesy/miniconda3/envs/simai/bin/python",
+  "vendored_source_present": true,
+  "upstream_ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+  "pinned_source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6",
+  "backend_ready": true,
+  "executable": "/home/m0nesy/Postgraduate/Inference/joint_scheduling/artifacts/backend/current/source/build/bin/joint-scheduling-ns3",
+  "fingerprint": "23ec96146135d0706e39",
+  "compiler": "g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0"
+}
+DOCTOR_EXIT=0
+=== source/backend identity vs r03 ===
+Traceback (most recent call last):
+  File "/home/m0nesy/Postgraduate/Inference/work/agents/2026-11-07/T003-kv-ep-contention-attribution/check_environment.py", line 85, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/m0nesy/Postgraduate/Inference/work/agents/2026-11-07/T003-kv-ep-contention-attribution/check_environment.py", line 55, in main
+    "backend_ns3_revision_identical": backend["ns3_revision"] == expected_backend["ns3_revision"],
+                                      ~~~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'ns3_revision'
+ERROR conda.cli.main_run:execute(149): `conda run python work/agents/2026-11-07/T003-kv-ep-contention-attribution/check_environment.py` failed. (See above for error)
+IDENTITY_EXIT=1

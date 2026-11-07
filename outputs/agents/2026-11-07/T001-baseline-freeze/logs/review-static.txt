@@ -1,0 +1,12 @@
+{
+  "evidence_type": "independent_review_static_only_no_simulation",
+  "python": "3.12.16 (main, Oct 26 2026, 11:37:43) [GCC 15.3.0]",
+  "python_executable": "/home/m0nesy/miniconda3/envs/simai/bin/python",
+  "max_runtime_decode_context_tokens": 14087,
+  "reported_conservative_context_tokens": 14088,
+  "context_note": "Input audit uses input+output-1 (conservative final-KV extent); actual last Decode lookup uses input+output-2. Both are covered.",
+  "checks_total": 34,
+  "failures": [],
+  "frozen_config_sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+  "frozen_manifest_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78"
+}

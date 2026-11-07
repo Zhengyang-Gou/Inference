@@ -1,0 +1,544 @@
+{
+  "schema_version": 1,
+  "units": {
+    "time": "seconds",
+    "throughput": "requests/second"
+  },
+  "source_trace": "/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T002-bounded-baseline-validation-r02/results/run-b/events.jsonl",
+  "run": {
+    "schema_version": 1,
+    "strategy": "layer_ready_immediate_ns3",
+    "seed": 7,
+    "metadata": {
+      "synthetic": true,
+      "backend": {
+        "backend": "simai_ns3_rdma",
+        "protocol_version": 4,
+        "ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+        "build_fingerprint": "23ec96146135d0706e39",
+        "completion_semantics": "all_bytes_acknowledged_at_sender",
+        "endpoint_model": "per_gpu",
+        "congestion_control": "dcqcn",
+        "nic_bandwidth_gbps_per_node": 3200,
+        "nic_bandwidth_gbps_per_endpoint": 400.0,
+        "local_model": "gpu_ports",
+        "local_bandwidth_scope": "per_gpu_tx_rx_port",
+        "packet_bytes": 8000,
+        "switch_buffer_bytes": 16777216,
+        "seed": 7,
+        "ns3_seed": 8,
+        "network_priority_enabled": false,
+        "priority_mapping": {
+          "0": "urgent_kv",
+          "1": "collective",
+          "2": "normal_kv",
+          "3": "loose_kv"
+        }
+      },
+      "compute_profile_provenance": {
+        "synthetic": true,
+        "description": "Estimated H800 DeepSeek-V3 TP/EP simulation cost profile derived from attributable offline compute anchors.",
+        "profile_kind": "estimated_simulation_profile",
+        "target_model": "deepseek-ai/DeepSeek-V3",
+        "device": "NVIDIA H800",
+        "tensor_parallel_size": 1,
+        "model_config": {
+          "path": "/home/m0nesy/Postgraduate/Inference/third_party/vidur/data/hf_configs/deepseek_v3_config.json",
+          "sha256": "b9661c76f4b23d5fb1db1e00a6ec1fa3ffba940c54bbe8df01b8e32fa07fd0d7"
+        },
+        "model_shape": {
+          "model_type": "deepseek_v3",
+          "hidden_size": 7168,
+          "num_hidden_layers": 61,
+          "first_k_dense_replace": 3,
+          "num_routed_experts": 256,
+          "num_experts_per_tok": 8,
+          "moe_intermediate_size": 2048,
+          "intermediate_size": 18432,
+          "kv_lora_rank": 512,
+          "q_lora_rank": 1536,
+          "qk_nope_head_dim": 128,
+          "qk_rope_head_dim": 64,
+          "v_head_dim": 128,
+          "num_attention_heads": 128,
+          "num_shared_experts": 1,
+          "vocab_size": 129280,
+          "n_group": 8,
+          "topk_group": 4
+        },
+        "source_kind": "official_H800_CUDA_kernel_anchors",
+        "sources": [
+          {
+            "path": "/home/m0nesy/Documents/Codex/2026-11-01/home-m0nesy-postgraduate-inference/work/moe-profile-sources/prefill.json",
+            "sha256": "1078dd96ba9d28e23ca0a5e50107024850cc7a9722ac4b0a4ca35d960738dc79",
+            "source_url": "https://raw.githubusercontent.com/deepseek-ai/profile-data/449602428a1b023acb8a505d4f34fef536535db6/prefill.json"
+          },
+          {
+            "path": "/home/m0nesy/Documents/Codex/2026-11-01/home-m0nesy-postgraduate-inference/work/moe-profile-sources/decode.json",
+            "sha256": "6dd02bfb01ac2e0881f77003f8d8b20420c48d769df863e709623654e9ebfb62",
+            "source_url": "https://raw.githubusercontent.com/deepseek-ai/profile-data/449602428a1b023acb8a505d4f34fef536535db6/decode.json"
+          }
+        ],
+        "source_observations": {
+          "prefill": {
+            "tp_size": 1,
+            "expert_timing_tp": 1,
+            "ep_size": 32,
+            "tokens": 8192,
+            "context_tokens": 4096,
+            "expert_assignments": 65536,
+            "active_experts": 8,
+            "roles_seconds": {
+              "attention_projection": 0.0035824999999999997,
+              "attention_core": 0.002777,
+              "dense_mlp": 0.0052474999999999996,
+              "shared_mlp": 0.0007855,
+              "router": 0.000165,
+              "norm": 0.000423,
+              "expert": 0.006161
+            }
+          },
+          "decode": {
+            "tp_size": 1,
+            "expert_timing_tp": 1,
+            "ep_size": 128,
+            "tokens": 64,
+            "context_tokens": 4096,
+            "expert_assignments": 512,
+            "active_experts": 2,
+            "roles_seconds": {
+              "attention_projection": 0.00011999999999999999,
+              "attention_core": 0.000253,
+              "dense_mlp": 0.00022499999999999997,
+              "shared_mlp": 3.1e-05,
+              "router": 1.2e-05,
+              "norm": 9e-06,
+              "expert": 0.000126
+            }
+          }
+        },
+        "measurement_unit": "seconds",
+        "exported_unit": "seconds",
+        "timing_model": {
+          "linear": "max(prefill per-token compute branch, decode weight/launch branch, measured norm floor); matrix work scales source_TP/target_TP; norm/router replicated",
+          "prefill_attention": "Causal query/history pair count relative to source 4K prompts, plus a measured kernel floor",
+          "decode_attention": "Batch*context relative to source, divided by target TP, plus a two-kernel floor",
+          "experts": "Fit assignment work plus actual active-expert weight/launch work; divide work by target TP",
+          "expert_full_tp_seconds_per_assignment": 8.910345262096774e-08,
+          "expert_full_tp_seconds_per_active_expert": 4.018951612903226e-05
+        },
+        "kv_layout": "BF16 compressed MLA latent+rotary key replicated across TP ranks",
+        "routing": "explicit balanced group-limited periodic top-k",
+        "routing_policy": {
+          "kind": "layerwise_balanced_group_limited_periodic",
+          "n_group": 8,
+          "topk_group": 4,
+          "period_tokens": 2240,
+          "experts_per_selected_group": 2,
+          "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing",
+          "routing_seed": 7,
+          "layer_stride": 104729,
+          "communication_mode": "token_rank"
+        },
+        "coverage": {
+          "max_context": 16384,
+          "max_prefill_chunk_tokens": 512,
+          "max_prefill_batch_tokens": 2048,
+          "max_decode_batch_size": 64
+        },
+        "limitations": [
+          "Simulation TP/EP, context and batch grids are analytically scaled from source anchors; no statistical error bound is inferred.",
+          "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.",
+          "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.",
+          "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.",
+          "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.",
+          "Decode executes each layer's non-expert compute/TP before its routed MoE; intra-layer kernels are aggregate costs and two-microbatch overlap is not reproduced.",
+          "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.",
+          "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget.",
+          "Layer-specific deterministic rotations route each token independently of chunk/batch scheduling; learned gate scores are not modeled.",
+          "Activations are deduplicated per token/target GPU; local expert outputs combine before return. Local combine arithmetic has explicit zero uncalibrated cost; no inter-node aggregation/forwarding is modeled."
+        ],
+        "expert_parallel_sizes": {
+          "prefill": 16,
+          "decode": 16
+        },
+        "expert_rank_unit": "gpu",
+        "decode_execution": "layerwise_nonexpert_compute_then_corresponding_MoE"
+      },
+      "workload_provenance": {
+        "source_file": "AzureLLMInferenceTrace_conv.csv",
+        "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv",
+        "source_sha256": "2f1e5b666d4e3055fdbba98598ce2ec307767b9064e03e2fa46676dbcc7d0bf8",
+        "source_format": "azure",
+        "source_request_count": 19366,
+        "source_origin_ns": 1700158546680590000,
+        "source_duration_ns": 3501721937001,
+        "source_synthetic": false,
+        "source_lengths": "unchanged paired observations",
+        "clipped_requests": 0,
+        "dropped_requests": 0,
+        "session_dependencies_modeled": false,
+        "prefix_reuse_enabled_by_import": false,
+        "synthetic": false,
+        "description": "Real-source paired lengths with original relative arrival timing; no simulation results.",
+        "arrival_time_scaled": false,
+        "full_scaled_duration_seconds": 3501.721937001,
+        "injection_start_seconds": 0.0,
+        "injection_duration_seconds": 3501.721937001,
+        "requested_full_trace_rate_rps": null,
+        "actual_selected_rate_rps": 5.53042198907025,
+        "time_scale": 1.0,
+        "source_window_end_seconds": 3501.721937001,
+        "selected_request_count": 19366,
+        "time_window_excluded_requests": 0,
+        "paired_lengths_sha256": "fd41716387b45b40107641e0f6b7df102c7edaa7a3335936fb8ae603fa0096a2",
+        "source_row_order_sha256": "e77001bf4a3b8457e28507fee7923ea5fe4013bc8e3ec44a6967d7378472f477",
+        "time_scale_changes_absolute_burst_duration": false,
+        "slo_origin": "not supplied by source"
+      },
+      "effective_baseline": {
+        "endpoint_selection": "balanced_random",
+        "prefill": "token_budget_running_first_fcfs",
+        "prefill_batch_size": 16,
+        "prefill_batch_token_budget": 2048,
+        "prefill_chunk_tokens": 512,
+        "decode": "continuous_batching",
+        "decode_batch_size": 64,
+        "decode_context_model": "padded_max_context",
+        "kv": "layer_ready_immediate",
+        "prefill_model": "explicit_layers",
+        "kv_admission_control": false,
+        "network_telemetry": true,
+        "state_observation": true,
+        "prefix_cache": false,
+        "collective_protection": false,
+        "dynamic_inflight": false,
+        "decode_admission_limit": 0,
+        "kv_priority": "immediate",
+        "network_priority_enabled": false,
+        "kv_block_limit_bytes": 1048576,
+        "collectives": "ep_dispatch_combine_and_intra_node_tp_allreduce",
+        "expert_parallel": true,
+        "native_vidur_batching": false,
+        "binding_window": false,
+        "binding_prediction": false,
+        "joint_binding_optimization": false,
+        "binding_decision_overhead_us": 0.0,
+        "binding_prediction_use": "diagnostics_only",
+        "reservation_timing": "at_prefill_start",
+        "decode_model": "explicit_layers",
+        "binding_seed": 7,
+        "binding_plan_sha256": "459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3",
+        "ep_rank_unit": "gpu",
+        "attention_dp_instances": {
+          "prefill": 16,
+          "decode": 16
+        },
+        "ep_sizes_by_phase": {
+          "prefill": 16,
+          "decode": 16
+        }
+      },
+      "compute_profile_sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "recording": {
+        "mode": "essential"
+      }
+    }
+  },
+  "observation_end_seconds": 30.0,
+  "evaluation_config": {
+    "window_start_seconds": 0.0,
+    "window_end_seconds": 30.0,
+    "time_bin_seconds": 1.0,
+    "default_ttft_slo_seconds": 1.0,
+    "default_itl_slo_seconds": 0.1,
+    "output_dir": "evaluation",
+    "plot_dpi": 160,
+    "percentiles": [
+      0.5,
+      0.95,
+      0.99
+    ],
+    "plot_formats": [
+      "png",
+      "pdf"
+    ],
+    "charts": [
+      "latency_cdf",
+      "latency_percentiles",
+      "slo_throughput",
+      "throughput_timeseries"
+    ]
+  },
+  "measurement": {
+    "start_seconds": 0.0,
+    "end_seconds": 30.0,
+    "duration_seconds": 30.0,
+    "interval": "[start, end)",
+    "latency_population": "arrival_cohort_completed"
+  },
+  "completion_window": {
+    "completed_count": 3,
+    "slo_met_count": 3,
+    "slo_attainment": 1.0,
+    "completion_throughput_rps": 0.1,
+    "slo_goodput_rps": 0.1,
+    "carry_in_completed_count": 0
+  },
+  "arrival_cohort": {
+    "arrived_count": 3,
+    "completed_by_observation_end": 3,
+    "failed_count": 0,
+    "incomplete_count": 0,
+    "slo_met_completed_count": 3,
+    "completed_and_slo_fraction": 1.0,
+    "slo_attainment_among_completed": 1.0
+  },
+  "latencies": {
+    "ttft_seconds": {
+      "count": 3,
+      "mean": 0.11862675399999989,
+      "min": 0.084032527,
+      "max": 0.18524406299999985,
+      "quantiles": {
+        "0.5": 0.08660367199999985,
+        "0.95": 0.17538002389999985,
+        "0.99": 0.18327125517999984
+      }
+    },
+    "handoff_seconds": {
+      "count": 3,
+      "mean": 0.017003699999999913,
+      "min": 0.01672258400000004,
+      "max": 0.017463744999999697,
+      "quantiles": {
+        "0.5": 0.016824771000000002,
+        "0.95": 0.017399847599999727,
+        "0.99": 0.017450965519999702
+      }
+    },
+    "later_max_itl_seconds": {
+      "count": 3,
+      "mean": 0.01824014999999979,
+      "min": 0.016948987999999998,
+      "max": 0.019045818999999575,
+      "quantiles": {
+        "0.5": 0.018725642999999792,
+        "0.95": 0.019013801399999596,
+        "0.99": 0.01903941547999958
+      }
+    },
+    "max_itl_seconds": {
+      "count": 3,
+      "mean": 0.01824014999999979,
+      "min": 0.016948987999999998,
+      "max": 0.019045818999999575,
+      "quantiles": {
+        "0.5": 0.018725642999999792,
+        "0.95": 0.019013801399999596,
+        "0.99": 0.01903941547999958
+      }
+    },
+    "mean_tpot_seconds": {
+      "count": 3,
+      "mean": 0.017404412544358306,
+      "min": 0.016775008744186047,
+      "max": 0.017937049185185176,
+      "quantiles": {
+        "0.5": 0.0175011797037037,
+        "0.95": 0.017893462237037028,
+        "0.99": 0.017928331795555547
+      }
+    },
+    "e2e_seconds": {
+      "count": 3,
+      "mean": 1.3119779006666663,
+      "min": 0.805357903,
+      "max": 1.9767310799999995,
+      "quantiles": {
+        "0.5": 1.1538447189999994,
+        "0.95": 1.8944424438999996,
+        "0.99": 1.9602733527799994
+      }
+    }
+  },
+  "total_requests_recorded": 3,
+  "auxiliary_event_count": 15,
+  "comparison_tolerance": {
+    "relative": 1e-09,
+    "absolute_seconds": 1e-12
+  },
+  "recording": {
+    "mode": "essential",
+    "recorded_event_counts": {
+      "run_metadata": 1,
+      "request_arrived": 3,
+      "binding_committed": 3,
+      "prefill_started": 3,
+      "token_returned": 208,
+      "kv_all_received": 3,
+      "kv_ready": 3,
+      "decode_started": 3,
+      "request_completed": 3,
+      "run_end": 1
+    },
+    "omitted_event_counts": {
+      "queue_dequeued": 208,
+      "prefill_chunk_started": 4,
+      "prefill_batch_started": 4,
+      "compute_step_started": 12749,
+      "compute_segment_started": 101245,
+      "compute_segment_completed": 101245,
+      "compute_step_completed": 12749,
+      "layer_ready": 183,
+      "prefill_chunk_layer_ready": 244,
+      "transfer_started": 142212,
+      "resources": 494,
+      "transfer_completed": 142212,
+      "ep_call_started": 12122,
+      "collective_started": 24244,
+      "collective_completed": 24244,
+      "ep_local_combine_started": 75747,
+      "ep_local_combine_completed": 75747,
+      "ep_expert_completed": 75747,
+      "ep_call_completed": 12122,
+      "prefill_chunk_completed": 4,
+      "prefill_batch_completed": 4,
+      "decode_batch_started": 205,
+      "decode_requeued": 202,
+      "decode_batch_completed": 205
+    }
+  },
+  "pressure": {
+    "measurement_start_seconds": 0.0,
+    "measurement_end_seconds": 30.0,
+    "observed_until_seconds": 30.0,
+    "measured_arrivals": 3,
+    "measured_completions": 3,
+    "measured_good_completions": 3,
+    "measured_failures": 0,
+    "offered_rps": 0.1,
+    "completion_rps": 0.1,
+    "goodput_rps": 0.1,
+    "output_tokens_per_second": 6.933333333333334,
+    "decode_tokens_per_second": 6.833333333333333,
+    "backlog_start": 0,
+    "backlog_end": 0,
+    "backlog_change": 0,
+    "backlog_growth_rps": 0.0,
+    "mean_outstanding": 0.13119779006666663,
+    "peak_outstanding": 2,
+    "cohort_count": 3,
+    "cohort_slo_passed": 3,
+    "cohort_slo_missed": 0,
+    "cohort_slo_unknown": 0,
+    "cohort_slo_fraction_lower": 1.0,
+    "cohort_slo_fraction_upper": 1.0
+  },
+  "prefix_cache": {
+    "enabled": false,
+    "hit_tokens": 0,
+    "saved_kv_transfer_bytes": 0,
+    "resident_bytes": 0
+  },
+  "expert_parallel": {
+    "enabled": true,
+    "started_calls": 12122,
+    "completed_calls": 12122,
+    "dispatch_bytes": 4379203584,
+    "combine_bytes": 8758407168,
+    "inter_node_dispatch_bytes": 2354716672,
+    "inter_node_combine_bytes": 4709433344,
+    "routed_assignments": 860256,
+    "expert_assignments": {
+      "p0": 47825,
+      "p1": 47817,
+      "p2": 47826,
+      "p3": 47826,
+      "p4": 47844,
+      "p5": 47800,
+      "p6": 47846,
+      "p7": 47780,
+      "d0": 5951,
+      "d1": 5939,
+      "d2": 5943,
+      "d3": 5945,
+      "d4": 5931,
+      "d5": 5959,
+      "d6": 5919,
+      "d7": 5977,
+      "p8": 47792,
+      "p9": 47846,
+      "p10": 47831,
+      "p11": 47817,
+      "p12": 47907,
+      "p13": 47741,
+      "p14": 47802,
+      "p15": 47836,
+      "d8": 5940,
+      "d9": 5942,
+      "d10": 5906,
+      "d11": 5982,
+      "d12": 5967,
+      "d13": 5927,
+      "d14": 5946,
+      "d15": 5946
+    },
+    "modeled_expert_compute_seconds": 6.286414295866615,
+    "compute_queue_wait_seconds": 0.20109058799996937,
+    "peak_compute_queue": 1,
+    "local_combine_calls": 75747,
+    "local_combine_extra_assignments": 209046,
+    "modeled_local_combine_seconds": 0.0
+  },
+  "static_binding": {
+    "schema_version": 1,
+    "policy": "balanced_random",
+    "seed": 7,
+    "request_order": "arrival_seconds_then_request_id",
+    "selection_time": "request_arrival",
+    "prefill_selection": "round_robin",
+    "decode_selection": "reshuffle_each_pool_cycle",
+    "bindings_sha256": "459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3",
+    "request_count": 3,
+    "prefill_counts": {
+      "p0": 1,
+      "p1": 1,
+      "p2": 1,
+      "p3": 0,
+      "p4": 0,
+      "p5": 0,
+      "p6": 0,
+      "p7": 0,
+      "p8": 0,
+      "p9": 0,
+      "p10": 0,
+      "p11": 0,
+      "p12": 0,
+      "p13": 0,
+      "p14": 0,
+      "p15": 0
+    },
+    "decode_counts": {
+      "d0": 0,
+      "d1": 0,
+      "d2": 0,
+      "d3": 1,
+      "d4": 0,
+      "d5": 0,
+      "d6": 0,
+      "d7": 1,
+      "d8": 0,
+      "d9": 0,
+      "d10": 0,
+      "d11": 0,
+      "d12": 0,
+      "d13": 0,
+      "d14": 1,
+      "d15": 0
+    },
+    "cross_leaf_requests": 1,
+    "cross_leaf_fraction": 0.3333333333333333
+  },
+  "raw_trace_file": "../events.jsonl"
+}

@@ -1,0 +1,253 @@
+{
+  "checks_total": 47,
+  "passed": 47,
+  "failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "check": "source_sha256:base_config",
+      "status": "passed",
+      "detail": "1c645b97768ec120e5c47229eb114f63e4a1fbed5f2d9fc2625583f10e23d0bd"
+    },
+    {
+      "check": "source_sha256:workload",
+      "status": "passed",
+      "detail": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346"
+    },
+    {
+      "check": "source_sha256:compute_profile",
+      "status": "passed",
+      "detail": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554"
+    },
+    {
+      "check": "source_sha256:azure_manifest",
+      "status": "passed",
+      "detail": "fd065c6c899fb1424bf07855face6782b86830c15a9270d8cdc02381d29bd196"
+    },
+    {
+      "check": "frozen_sha256:results/frozen/config.json",
+      "status": "passed",
+      "detail": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1"
+    },
+    {
+      "check": "frozen_sha256:results/frozen/compute_profile.json",
+      "status": "passed",
+      "detail": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554"
+    },
+    {
+      "check": "frozen_sha256:results/frozen/workload.json",
+      "status": "passed",
+      "detail": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346"
+    },
+    {
+      "check": "frozen_sha256:results/frozen/binding_plan.json",
+      "status": "passed",
+      "detail": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091"
+    },
+    {
+      "check": "byte_copy:compute_profile",
+      "status": "passed",
+      "detail": "identical bytes"
+    },
+    {
+      "check": "byte_copy:workload",
+      "status": "passed",
+      "detail": "identical bytes"
+    },
+    {
+      "check": "config_diff_keys_match_manifest",
+      "status": "passed",
+      "detail": "actual=['evaluation.output_dir', 'feedback.compute_profile_path', 'feedback.state_observation_enabled', 'kv_scheduler.collective_protection_enabled', 'kv_scheduler.decode_admission_limit', 'kv_scheduler.policy', 'kv_scheduler.slo_priority_enabled', 'runtime.kv_transfer_mode', 'runtime.workload_path'] declared=['evaluation.output_dir', 'feedback.compute_profile_path', 'feedback.state_observation_enabled', 'kv_scheduler.collective_protection_enabled', 'kv_scheduler.decode_admission_limit', 'kv_scheduler.policy', 'kv_scheduler.slo_priority_enabled', 'runtime.kv_transfer_mode', 'runtime.workload_path']"
+    },
+    {
+      "check": "config_diff_is_task_scope_only",
+      "status": "passed",
+      "detail": [
+        "evaluation.output_dir",
+        "feedback.compute_profile_path",
+        "feedback.state_observation_enabled",
+        "kv_scheduler.collective_protection_enabled",
+        "kv_scheduler.decode_admission_limit",
+        "kv_scheduler.policy",
+        "kv_scheduler.slo_priority_enabled",
+        "runtime.kv_transfer_mode",
+        "runtime.workload_path"
+      ]
+    },
+    {
+      "check": "frozen_profile_path_resolves",
+      "status": "passed",
+      "detail": "\\\\wsl.localhost\\Ubuntu\\home\\m0nesy\\Postgraduate\\Inference\\outputs\\agents\\2026-11-07\\T001-baseline-freeze\\results\\frozen\\compute_profile.json"
+    },
+    {
+      "check": "frozen_evaluation_path_relative",
+      "status": "passed",
+      "detail": "evaluation"
+    },
+    {
+      "check": "frozen_workload_path_relative",
+      "status": "passed",
+      "detail": "workload.json"
+    },
+    {
+      "check": "backend_is_ns3",
+      "status": "passed",
+      "detail": "ns3 + ns3_alibabacloud"
+    },
+    {
+      "check": "switch:binding.window_enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:binding.prediction_enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:binding.joint_selection_enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:binding.decision_overhead_us",
+      "status": "passed",
+      "detail": "0.0 == 0"
+    },
+    {
+      "check": "switch:binding.policy",
+      "status": "passed",
+      "detail": "'balanced_random' == 'balanced_random'"
+    },
+    {
+      "check": "switch:binding.seed",
+      "status": "passed",
+      "detail": "7 == 7"
+    },
+    {
+      "check": "switch:prefix_cache.enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:runtime.kv_transfer_mode",
+      "status": "passed",
+      "detail": "'layer_ready_immediate' == 'layer_ready_immediate'"
+    },
+    {
+      "check": "switch:runtime.network_priority_enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:runtime.seed",
+      "status": "passed",
+      "detail": "7 == 7"
+    },
+    {
+      "check": "switch:kv_scheduler.policy",
+      "status": "passed",
+      "detail": "'ready_immediate' == 'ready_immediate'"
+    },
+    {
+      "check": "switch:kv_scheduler.slo_priority_enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:kv_scheduler.collective_protection_enabled",
+      "status": "passed",
+      "detail": "False == False"
+    },
+    {
+      "check": "switch:kv_scheduler.decode_admission_limit",
+      "status": "passed",
+      "detail": "0 == 0"
+    },
+    {
+      "check": "switch:feedback.state_observation_enabled",
+      "status": "passed",
+      "detail": "True == True"
+    },
+    {
+      "check": "switch:feedback.network_observation_enabled",
+      "status": "passed",
+      "detail": "True == True"
+    },
+    {
+      "check": "switch:feedback.network_observation_interval_us",
+      "status": "passed",
+      "detail": "1000 == 1000"
+    },
+    {
+      "check": "switch:feedback.observation_delay_us",
+      "status": "passed",
+      "detail": "100 == 100"
+    },
+    {
+      "check": "switch:feedback.scheduling_overhead_us",
+      "status": "passed",
+      "detail": "10.0 == 10.0"
+    },
+    {
+      "check": "switch:recording.mode",
+      "status": "passed",
+      "detail": "'essential' == 'essential'"
+    },
+    {
+      "check": "binding_plan_regeneration_identical",
+      "status": "passed",
+      "detail": "sha256=6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5"
+    },
+    {
+      "check": "binding_independent_of_kv_policy_and_network_seed",
+      "status": "passed",
+      "detail": "alt sha256=6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5"
+    },
+    {
+      "check": "binding_covers_all_requests",
+      "status": "passed",
+      "detail": "requests=19366 bindings=19366"
+    },
+    {
+      "check": "binding_counts_sum_to_requests",
+      "status": "passed",
+      "detail": "p=19366 d=19366"
+    },
+    {
+      "check": "coverage:prefill_batch_coverage",
+      "status": "passed",
+      "detail": "no extrapolation error"
+    },
+    {
+      "check": "coverage:decode_batch_64",
+      "status": "passed",
+      "detail": "no extrapolation error"
+    },
+    {
+      "check": "coverage:decode_batch_1",
+      "status": "passed",
+      "detail": "no extrapolation error"
+    },
+    {
+      "check": "coverage:expert_validate",
+      "status": "passed",
+      "detail": "no extrapolation error"
+    },
+    {
+      "check": "workload_identity_matches_manifest",
+      "status": "passed",
+      "detail": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346"
+    },
+    {
+      "check": "no_request_level_slo_overrides",
+      "status": "passed",
+      "detail": "{'ttft_slo_seconds': 0, 'itl_slo_seconds': 0}"
+    },
+    {
+      "check": "audit_gaps_empty",
+      "status": "passed",
+      "detail": "[]"
+    }
+  ]
+}

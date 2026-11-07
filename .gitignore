@@ -5,6 +5,7 @@ __pycache__/
 # Generated builds, experiment results and local scratch files
 /joint_scheduling/artifacts/
 /artifacts/
+# Task record allowlist: see coordination/ARCHIVING.md; large outputs remain ignored.
 /outputs/
 /bin/
 /work/

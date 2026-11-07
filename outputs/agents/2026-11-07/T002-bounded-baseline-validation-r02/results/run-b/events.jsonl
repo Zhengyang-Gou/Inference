@@ -1,0 +1,231 @@
+{"schema_version": 1, "strategy": "layer_ready_immediate_ns3", "seed": 7, "metadata": {"synthetic": true, "backend": {"backend": "simai_ns3_rdma", "protocol_version": 4, "ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437", "build_fingerprint": "23ec96146135d0706e39", "completion_semantics": "all_bytes_acknowledged_at_sender", "endpoint_model": "per_gpu", "congestion_control": "dcqcn", "nic_bandwidth_gbps_per_node": 3200, "nic_bandwidth_gbps_per_endpoint": 400.0, "local_model": "gpu_ports", "local_bandwidth_scope": "per_gpu_tx_rx_port", "packet_bytes": 8000, "switch_buffer_bytes": 16777216, "seed": 7, "ns3_seed": 8, "network_priority_enabled": false, "priority_mapping": {"0": "urgent_kv", "1": "collective", "2": "normal_kv", "3": "loose_kv"}}, "compute_profile_provenance": {"synthetic": true, "description": "Estimated H800 DeepSeek-V3 TP/EP simulation cost profile derived from attributable offline compute anchors.", "profile_kind": "estimated_simulation_profile", "target_model": "deepseek-ai/DeepSeek-V3", "device": "NVIDIA H800", "tensor_parallel_size": 1, "model_config": {"path": "/home/m0nesy/Postgraduate/Inference/third_party/vidur/data/hf_configs/deepseek_v3_config.json", "sha256": "b9661c76f4b23d5fb1db1e00a6ec1fa3ffba940c54bbe8df01b8e32fa07fd0d7"}, "model_shape": {"model_type": "deepseek_v3", "hidden_size": 7168, "num_hidden_layers": 61, "first_k_dense_replace": 3, "num_routed_experts": 256, "num_experts_per_tok": 8, "moe_intermediate_size": 2048, "intermediate_size": 18432, "kv_lora_rank": 512, "q_lora_rank": 1536, "qk_nope_head_dim": 128, "qk_rope_head_dim": 64, "v_head_dim": 128, "num_attention_heads": 128, "num_shared_experts": 1, "vocab_size": 129280, "n_group": 8, "topk_group": 4}, "source_kind": "official_H800_CUDA_kernel_anchors", "sources": [{"path": "/home/m0nesy/Documents/Codex/2026-11-01/home-m0nesy-postgraduate-inference/work/moe-profile-sources/prefill.json", "sha256": "1078dd96ba9d28e23ca0a5e50107024850cc7a9722ac4b0a4ca35d960738dc79", "source_url": "https://raw.githubusercontent.com/deepseek-ai/profile-data/449602428a1b023acb8a505d4f34fef536535db6/prefill.json"}, {"path": "/home/m0nesy/Documents/Codex/2026-11-01/home-m0nesy-postgraduate-inference/work/moe-profile-sources/decode.json", "sha256": "6dd02bfb01ac2e0881f77003f8d8b20420c48d769df863e709623654e9ebfb62", "source_url": "https://raw.githubusercontent.com/deepseek-ai/profile-data/449602428a1b023acb8a505d4f34fef536535db6/decode.json"}], "source_observations": {"prefill": {"tp_size": 1, "expert_timing_tp": 1, "ep_size": 32, "tokens": 8192, "context_tokens": 4096, "expert_assignments": 65536, "active_experts": 8, "roles_seconds": {"attention_projection": 0.0035824999999999997, "attention_core": 0.002777, "dense_mlp": 0.0052474999999999996, "shared_mlp": 0.0007855, "router": 0.000165, "norm": 0.000423, "expert": 0.006161}}, "decode": {"tp_size": 1, "expert_timing_tp": 1, "ep_size": 128, "tokens": 64, "context_tokens": 4096, "expert_assignments": 512, "active_experts": 2, "roles_seconds": {"attention_projection": 0.00011999999999999999, "attention_core": 0.000253, "dense_mlp": 0.00022499999999999997, "shared_mlp": 3.1e-05, "router": 1.2e-05, "norm": 9e-06, "expert": 0.000126}}}, "measurement_unit": "seconds", "exported_unit": "seconds", "timing_model": {"linear": "max(prefill per-token compute branch, decode weight/launch branch, measured norm floor); matrix work scales source_TP/target_TP; norm/router replicated", "prefill_attention": "Causal query/history pair count relative to source 4K prompts, plus a measured kernel floor", "decode_attention": "Batch*context relative to source, divided by target TP, plus a two-kernel floor", "experts": "Fit assignment work plus actual active-expert weight/launch work; divide work by target TP", "expert_full_tp_seconds_per_assignment": 8.910345262096774e-08, "expert_full_tp_seconds_per_active_expert": 4.018951612903226e-05}, "kv_layout": "BF16 compressed MLA latent+rotary key replicated across TP ranks", "routing": "explicit balanced group-limited periodic top-k", "routing_policy": {"kind": "layerwise_balanced_group_limited_periodic", "n_group": 8, "topk_group": 4, "period_tokens": 2240, "experts_per_selected_group": 2, "scope": "All four-of-eight group subsets and uniform expert marginals; no learned gate scores or real request routing", "routing_seed": 7, "layer_stride": 104729, "communication_mode": "token_rank"}, "coverage": {"max_context": 16384, "max_prefill_chunk_tokens": 512, "max_prefill_batch_tokens": 2048, "max_decode_batch_size": 64}, "limitations": ["Simulation TP/EP, context and batch grids are analytically scaled from source anchors; no statistical error bound is inferred.", "CPU scheduling, sampling and embedding/final vocabulary projection costs are outside this simulation model.", "Excluded unmatched CUDA setup/packing/casting kernels are not silently counted as network-free compute; extraction lists the exclusions.", "Balanced periodic routing obeys the official 8-group/4-selected-group constraint; group scores, within-group scores and request-dependent expert hotspots remain synthetic.", "MLA KV is BF16 and replicated per TP rank; this executor sends each copy rank-to-rank rather than deduplicating NIC payload.", "Decode executes each layer's non-expert compute/TP before its routed MoE; intra-layer kernels are aggregate costs and two-microbatch overlap is not reproduced.", "Affine expert costs omit cache residency, padding, launch saturation and interference; TP speedup is an estimate.", "FP8 allocation is a simulation estimate; workspace, activation buffers and MTP weights are outside the modeled capacity budget.", "Layer-specific deterministic rotations route each token independently of chunk/batch scheduling; learned gate scores are not modeled.", "Activations are deduplicated per token/target GPU; local expert outputs combine before return. Local combine arithmetic has explicit zero uncalibrated cost; no inter-node aggregation/forwarding is modeled."], "expert_parallel_sizes": {"prefill": 16, "decode": 16}, "expert_rank_unit": "gpu", "decode_execution": "layerwise_nonexpert_compute_then_corresponding_MoE"}, "workload_provenance": {"source_file": "AzureLLMInferenceTrace_conv.csv", "source_url": "https://github.com/Azure/AzurePublicDataset/blob/master/data/AzureLLMInferenceTrace_conv.csv", "source_sha256": "2f1e5b666d4e3055fdbba98598ce2ec307767b9064e03e2fa46676dbcc7d0bf8", "source_format": "azure", "source_request_count": 19366, "source_origin_ns": 1700158546680590000, "source_duration_ns": 3501721937001, "source_synthetic": false, "source_lengths": "unchanged paired observations", "clipped_requests": 0, "dropped_requests": 0, "session_dependencies_modeled": false, "prefix_reuse_enabled_by_import": false, "synthetic": false, "description": "Real-source paired lengths with original relative arrival timing; no simulation results.", "arrival_time_scaled": false, "full_scaled_duration_seconds": 3501.721937001, "injection_start_seconds": 0.0, "injection_duration_seconds": 3501.721937001, "requested_full_trace_rate_rps": null, "actual_selected_rate_rps": 5.53042198907025, "time_scale": 1.0, "source_window_end_seconds": 3501.721937001, "selected_request_count": 19366, "time_window_excluded_requests": 0, "paired_lengths_sha256": "fd41716387b45b40107641e0f6b7df102c7edaa7a3335936fb8ae603fa0096a2", "source_row_order_sha256": "e77001bf4a3b8457e28507fee7923ea5fe4013bc8e3ec44a6967d7378472f477", "time_scale_changes_absolute_burst_duration": false, "slo_origin": "not supplied by source"}, "effective_baseline": {"endpoint_selection": "balanced_random", "prefill": "token_budget_running_first_fcfs", "prefill_batch_size": 16, "prefill_batch_token_budget": 2048, "prefill_chunk_tokens": 512, "decode": "continuous_batching", "decode_batch_size": 64, "decode_context_model": "padded_max_context", "kv": "layer_ready_immediate", "prefill_model": "explicit_layers", "kv_admission_control": false, "network_telemetry": true, "state_observation": true, "prefix_cache": false, "collective_protection": false, "dynamic_inflight": false, "decode_admission_limit": 0, "kv_priority": "immediate", "network_priority_enabled": false, "kv_block_limit_bytes": 1048576, "collectives": "ep_dispatch_combine_and_intra_node_tp_allreduce", "expert_parallel": true, "native_vidur_batching": false, "binding_window": false, "binding_prediction": false, "joint_binding_optimization": false, "binding_decision_overhead_us": 0.0, "binding_prediction_use": "diagnostics_only", "reservation_timing": "at_prefill_start", "decode_model": "explicit_layers", "binding_seed": 7, "binding_plan_sha256": "459d8b3901fdd4a8e84859d7fe37192e710f803f4163f128e91b2d693abf32c3", "ep_rank_unit": "gpu", "attention_dp_instances": {"prefill": 16, "decode": 16}, "ep_sizes_by_phase": {"prefill": 16, "decode": 16}}, "compute_profile_sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554", "recording": {"mode": "essential"}}, "event": "run_metadata", "time_seconds": 0.0}
+{"request_id": "azure-conv-000000000", "ttft_slo_seconds": null, "itl_slo_seconds": null, "expected_output_tokens": 44, "event": "request_arrived", "time_seconds": 0.0}
+{"request_id": "azure-conv-000000000", "prefill_instance_id": "p0", "decode_instance_id": "d3", "event": "binding_committed", "time_seconds": 0.0}
+{"request_id": "azure-conv-000000000", "instance_id": "p0", "queue_wait_seconds": 1e-09, "event": "prefill_started", "time_seconds": 1e-09}
+{"request_id": "azure-conv-000000000", "token_index": 1, "event": "token_returned", "time_seconds": 0.084032527}
+{"request_id": "azure-conv-000000000", "event": "kv_all_received", "time_seconds": 0.084045361}
+{"request_id": "azure-conv-000000000", "event": "kv_ready", "time_seconds": 0.084045361}
+{"request_id": "azure-conv-000000000", "instance_id": "d3", "queue_wait_seconds": 0.0, "event": "decode_started", "time_seconds": 0.084045361}
+{"request_id": "azure-conv-000000000", "token_index": 2, "event": "token_returned", "time_seconds": 0.100857298}
+{"request_id": "azure-conv-000000000", "token_index": 3, "event": "token_returned", "time_seconds": 0.117629524}
+{"request_id": "azure-conv-000000000", "token_index": 4, "event": "token_returned", "time_seconds": 0.134360473}
+{"request_id": "azure-conv-000000000", "token_index": 5, "event": "token_returned", "time_seconds": 0.151172113}
+{"request_id": "azure-conv-000000000", "token_index": 6, "event": "token_returned", "time_seconds": 0.167901199}
+{"request_id": "azure-conv-000000000", "token_index": 7, "event": "token_returned", "time_seconds": 0.184729353}
+{"request_id": "azure-conv-000000000", "token_index": 8, "event": "token_returned", "time_seconds": 0.201335877}
+{"request_id": "azure-conv-000000000", "token_index": 9, "event": "token_returned", "time_seconds": 0.21826908}
+{"request_id": "azure-conv-000000000", "token_index": 10, "event": "token_returned", "time_seconds": 0.234877764}
+{"request_id": "azure-conv-000000000", "token_index": 11, "event": "token_returned", "time_seconds": 0.251649423}
+{"request_id": "azure-conv-000000000", "token_index": 12, "event": "token_returned", "time_seconds": 0.26837994}
+{"request_id": "azure-conv-000000000", "token_index": 13, "event": "token_returned", "time_seconds": 0.285029469}
+{"request_id": "azure-conv-000000000", "token_index": 14, "event": "token_returned", "time_seconds": 0.301935587}
+{"request_id": "azure-conv-000000000", "token_index": 15, "event": "token_returned", "time_seconds": 0.318702359}
+{"request_id": "azure-conv-000000000", "token_index": 16, "event": "token_returned", "time_seconds": 0.335651347}
+{"request_id": "azure-conv-000000000", "token_index": 17, "event": "token_returned", "time_seconds": 0.352336402}
+{"request_id": "azure-conv-000000000", "token_index": 18, "event": "token_returned", "time_seconds": 0.36923119}
+{"request_id": "azure-conv-000000000", "token_index": 19, "event": "token_returned", "time_seconds": 0.386039671}
+{"request_id": "azure-conv-000000000", "token_index": 20, "event": "token_returned", "time_seconds": 0.402852607}
+{"request_id": "azure-conv-000000000", "token_index": 21, "event": "token_returned", "time_seconds": 0.419622538}
+{"request_id": "azure-conv-000000000", "token_index": 22, "event": "token_returned", "time_seconds": 0.436315936}
+{"request_id": "azure-conv-000000000", "token_index": 23, "event": "token_returned", "time_seconds": 0.453142362}
+{"request_id": "azure-conv-000000000", "token_index": 24, "event": "token_returned", "time_seconds": 0.469831305}
+{"request_id": "azure-conv-000000000", "token_index": 25, "event": "token_returned", "time_seconds": 0.486698441}
+{"request_id": "azure-conv-000000000", "token_index": 26, "event": "token_returned", "time_seconds": 0.503305532}
+{"request_id": "azure-conv-000000000", "token_index": 27, "event": "token_returned", "time_seconds": 0.520237736}
+{"request_id": "azure-conv-000000000", "token_index": 28, "event": "token_returned", "time_seconds": 0.536847419}
+{"request_id": "azure-conv-000000000", "token_index": 29, "event": "token_returned", "time_seconds": 0.553619078}
+{"request_id": "azure-conv-000000000", "token_index": 30, "event": "token_returned", "time_seconds": 0.570309884}
+{"request_id": "azure-conv-000000000", "token_index": 31, "event": "token_returned", "time_seconds": 0.586960277}
+{"request_id": "azure-conv-000000000", "token_index": 32, "event": "token_returned", "time_seconds": 0.603865963}
+{"request_id": "azure-conv-000000000", "token_index": 33, "event": "token_returned", "time_seconds": 0.620593888}
+{"request_id": "azure-conv-000000000", "token_index": 34, "event": "token_returned", "time_seconds": 0.637542012}
+{"request_id": "azure-conv-000000000", "token_index": 35, "event": "token_returned", "time_seconds": 0.654267912}
+{"request_id": "azure-conv-000000000", "token_index": 36, "event": "token_returned", "time_seconds": 0.671162133}
+{"request_id": "azure-conv-000000000", "token_index": 37, "event": "token_returned", "time_seconds": 0.688011459}
+{"request_id": "azure-conv-000000000", "token_index": 38, "event": "token_returned", "time_seconds": 0.704823828}
+{"request_id": "azure-conv-000000000", "token_index": 39, "event": "token_returned", "time_seconds": 0.721635036}
+{"request_id": "azure-conv-000000000", "token_index": 40, "event": "token_returned", "time_seconds": 0.738367281}
+{"request_id": "azure-conv-000000000", "token_index": 41, "event": "token_returned", "time_seconds": 0.755193707}
+{"request_id": "azure-conv-000000000", "token_index": 42, "event": "token_returned", "time_seconds": 0.771882515}
+{"request_id": "azure-conv-000000000", "token_index": 43, "event": "token_returned", "time_seconds": 0.788750083}
+{"request_id": "azure-conv-000000000", "token_index": 44, "event": "token_returned", "time_seconds": 0.805357903}
+{"request_id": "azure-conv-000000000", "event": "request_completed", "time_seconds": 0.805357903}
+{"request_id": "azure-conv-000000001", "ttft_slo_seconds": null, "itl_slo_seconds": null, "expected_output_tokens": 109, "event": "request_arrived", "time_seconds": 4.314579}
+{"request_id": "azure-conv-000000001", "prefill_instance_id": "p1", "decode_instance_id": "d14", "event": "binding_committed", "time_seconds": 4.314579}
+{"request_id": "azure-conv-000000001", "instance_id": "p1", "queue_wait_seconds": 1.000000082740371e-09, "event": "prefill_started", "time_seconds": 4.314579001}
+{"request_id": "azure-conv-000000001", "token_index": 1, "event": "token_returned", "time_seconds": 4.401182672}
+{"request_id": "azure-conv-000000001", "event": "kv_all_received", "time_seconds": 4.401200096}
+{"request_id": "azure-conv-000000001", "event": "kv_ready", "time_seconds": 4.401200096}
+{"request_id": "azure-conv-000000001", "instance_id": "d14", "queue_wait_seconds": 0.0, "event": "decode_started", "time_seconds": 4.401200096}
+{"request_id": "azure-conv-000000001", "token_index": 2, "event": "token_returned", "time_seconds": 4.417905256}
+{"request_id": "azure-conv-000000001", "token_index": 3, "event": "token_returned", "time_seconds": 4.434753718}
+{"request_id": "azure-conv-000000001", "token_index": 4, "event": "token_returned", "time_seconds": 4.45138005}
+{"request_id": "azure-conv-000000001", "token_index": 5, "event": "token_returned", "time_seconds": 4.468308204}
+{"request_id": "azure-conv-000000001", "token_index": 6, "event": "token_returned", "time_seconds": 4.484917455}
+{"request_id": "azure-conv-000000001", "token_index": 7, "event": "token_returned", "time_seconds": 4.501686225}
+{"request_id": "azure-conv-000000001", "token_index": 8, "event": "token_returned", "time_seconds": 4.518374871}
+{"request_id": "azure-conv-000000001", "token_index": 9, "event": "token_returned", "time_seconds": 4.535022375}
+{"request_id": "azure-conv-000000002", "ttft_slo_seconds": null, "itl_slo_seconds": null, "expected_output_tokens": 55, "event": "request_arrived", "time_seconds": 4.541877}
+{"request_id": "azure-conv-000000002", "prefill_instance_id": "p2", "decode_instance_id": "d7", "event": "binding_committed", "time_seconds": 4.541877}
+{"request_id": "azure-conv-000000002", "instance_id": "p2", "queue_wait_seconds": 9.999991945619513e-10, "event": "prefill_started", "time_seconds": 4.541877001}
+{"request_id": "azure-conv-000000001", "token_index": 10, "event": "token_returned", "time_seconds": 4.552718621}
+{"request_id": "azure-conv-000000001", "token_index": 11, "event": "token_returned", "time_seconds": 4.571579475}
+{"request_id": "azure-conv-000000001", "token_index": 12, "event": "token_returned", "time_seconds": 4.589654036}
+{"request_id": "azure-conv-000000001", "token_index": 13, "event": "token_returned", "time_seconds": 4.608023022}
+{"request_id": "azure-conv-000000001", "token_index": 14, "event": "token_returned", "time_seconds": 4.627068841}
+{"request_id": "azure-conv-000000001", "token_index": 15, "event": "token_returned", "time_seconds": 4.645422069}
+{"request_id": "azure-conv-000000001", "token_index": 16, "event": "token_returned", "time_seconds": 4.663137186}
+{"request_id": "azure-conv-000000001", "token_index": 17, "event": "token_returned", "time_seconds": 4.680936811}
+{"request_id": "azure-conv-000000001", "token_index": 18, "event": "token_returned", "time_seconds": 4.698637964}
+{"request_id": "azure-conv-000000001", "token_index": 19, "event": "token_returned", "time_seconds": 4.716441853}
+{"request_id": "azure-conv-000000002", "token_index": 1, "event": "token_returned", "time_seconds": 4.727121063}
+{"request_id": "azure-conv-000000002", "event": "kv_all_received", "time_seconds": 4.727133734}
+{"request_id": "azure-conv-000000002", "event": "kv_ready", "time_seconds": 4.727133734}
+{"request_id": "azure-conv-000000002", "instance_id": "d7", "queue_wait_seconds": 0.0, "event": "decode_started", "time_seconds": 4.727133734}
+{"request_id": "azure-conv-000000001", "token_index": 20, "event": "token_returned", "time_seconds": 4.734140425}
+{"request_id": "azure-conv-000000002", "token_index": 2, "event": "token_returned", "time_seconds": 4.744584808}
+{"request_id": "azure-conv-000000001", "token_index": 21, "event": "token_returned", "time_seconds": 4.752413167}
+{"request_id": "azure-conv-000000002", "token_index": 3, "event": "token_returned", "time_seconds": 4.762855079}
+{"request_id": "azure-conv-000000001", "token_index": 22, "event": "token_returned", "time_seconds": 4.770343834}
+{"request_id": "azure-conv-000000002", "token_index": 4, "event": "token_returned", "time_seconds": 4.780959037}
+{"request_id": "azure-conv-000000001", "token_index": 23, "event": "token_returned", "time_seconds": 4.788790156}
+{"request_id": "azure-conv-000000002", "token_index": 5, "event": "token_returned", "time_seconds": 4.799664469}
+{"request_id": "azure-conv-000000001", "token_index": 24, "event": "token_returned", "time_seconds": 4.806505074}
+{"request_id": "azure-conv-000000002", "token_index": 6, "event": "token_returned", "time_seconds": 4.817284052}
+{"request_id": "azure-conv-000000001", "token_index": 25, "event": "token_returned", "time_seconds": 4.824325943}
+{"request_id": "azure-conv-000000002", "token_index": 7, "event": "token_returned", "time_seconds": 4.835701366}
+{"request_id": "azure-conv-000000001", "token_index": 26, "event": "token_returned", "time_seconds": 4.842268112}
+{"request_id": "azure-conv-000000002", "token_index": 8, "event": "token_returned", "time_seconds": 4.853646282}
+{"request_id": "azure-conv-000000001", "token_index": 27, "event": "token_returned", "time_seconds": 4.86047297}
+{"request_id": "azure-conv-000000002", "token_index": 9, "event": "token_returned", "time_seconds": 4.871617833}
+{"request_id": "azure-conv-000000001", "token_index": 28, "event": "token_returned", "time_seconds": 4.878238545}
+{"request_id": "azure-conv-000000002", "token_index": 10, "event": "token_returned", "time_seconds": 4.889487878}
+{"request_id": "azure-conv-000000001", "token_index": 29, "event": "token_returned", "time_seconds": 4.896196318}
+{"request_id": "azure-conv-000000002", "token_index": 11, "event": "token_returned", "time_seconds": 4.907123132}
+{"request_id": "azure-conv-000000001", "token_index": 30, "event": "token_returned", "time_seconds": 4.914846054}
+{"request_id": "azure-conv-000000002", "token_index": 12, "event": "token_returned", "time_seconds": 4.925720625}
+{"request_id": "azure-conv-000000001", "token_index": 31, "event": "token_returned", "time_seconds": 4.932850782}
+{"request_id": "azure-conv-000000002", "token_index": 13, "event": "token_returned", "time_seconds": 4.943432897}
+{"request_id": "azure-conv-000000001", "token_index": 32, "event": "token_returned", "time_seconds": 4.951302397}
+{"request_id": "azure-conv-000000002", "token_index": 14, "event": "token_returned", "time_seconds": 4.962001813}
+{"request_id": "azure-conv-000000001", "token_index": 33, "event": "token_returned", "time_seconds": 4.968992665}
+{"request_id": "azure-conv-000000002", "token_index": 15, "event": "token_returned", "time_seconds": 4.979812136}
+{"request_id": "azure-conv-000000001", "token_index": 34, "event": "token_returned", "time_seconds": 4.987211172}
+{"request_id": "azure-conv-000000002", "token_index": 16, "event": "token_returned", "time_seconds": 4.997984452}
+{"request_id": "azure-conv-000000001", "token_index": 35, "event": "token_returned", "time_seconds": 5.005135194}
+{"request_id": "azure-conv-000000002", "token_index": 17, "event": "token_returned", "time_seconds": 5.015793468}
+{"request_id": "azure-conv-000000001", "token_index": 36, "event": "token_returned", "time_seconds": 5.022835024}
+{"request_id": "azure-conv-000000002", "token_index": 18, "event": "token_returned", "time_seconds": 5.033252051}
+{"request_id": "azure-conv-000000001", "token_index": 37, "event": "token_returned", "time_seconds": 5.040552134}
+{"request_id": "azure-conv-000000002", "token_index": 19, "event": "token_returned", "time_seconds": 5.051003533}
+{"request_id": "azure-conv-000000001", "token_index": 38, "event": "token_returned", "time_seconds": 5.05834858}
+{"request_id": "azure-conv-000000002", "token_index": 20, "event": "token_returned", "time_seconds": 5.068766466}
+{"request_id": "azure-conv-000000001", "token_index": 39, "event": "token_returned", "time_seconds": 5.07611007}
+{"request_id": "azure-conv-000000002", "token_index": 21, "event": "token_returned", "time_seconds": 5.087094996}
+{"request_id": "azure-conv-000000001", "token_index": 40, "event": "token_returned", "time_seconds": 5.094438835}
+{"request_id": "azure-conv-000000002", "token_index": 22, "event": "token_returned", "time_seconds": 5.105225677}
+{"request_id": "azure-conv-000000001", "token_index": 41, "event": "token_returned", "time_seconds": 5.112712326}
+{"request_id": "azure-conv-000000002", "token_index": 23, "event": "token_returned", "time_seconds": 5.123158136}
+{"request_id": "azure-conv-000000001", "token_index": 42, "event": "token_returned", "time_seconds": 5.130375264}
+{"request_id": "azure-conv-000000002", "token_index": 24, "event": "token_returned", "time_seconds": 5.140922078}
+{"request_id": "azure-conv-000000001", "token_index": 43, "event": "token_returned", "time_seconds": 5.148547556}
+{"request_id": "azure-conv-000000002", "token_index": 25, "event": "token_returned", "time_seconds": 5.158985931}
+{"request_id": "azure-conv-000000001", "token_index": 44, "event": "token_returned", "time_seconds": 5.165963083}
+{"request_id": "azure-conv-000000002", "token_index": 26, "event": "token_returned", "time_seconds": 5.176605457}
+{"request_id": "azure-conv-000000001", "token_index": 45, "event": "token_returned", "time_seconds": 5.1841194}
+{"request_id": "azure-conv-000000002", "token_index": 27, "event": "token_returned", "time_seconds": 5.194636616}
+{"request_id": "azure-conv-000000001", "token_index": 46, "event": "token_returned", "time_seconds": 5.202343394}
+{"request_id": "azure-conv-000000002", "token_index": 28, "event": "token_returned", "time_seconds": 5.212875321}
+{"request_id": "azure-conv-000000001", "token_index": 47, "event": "token_returned", "time_seconds": 5.219908488}
+{"request_id": "azure-conv-000000002", "token_index": 29, "event": "token_returned", "time_seconds": 5.230895712}
+{"request_id": "azure-conv-000000001", "token_index": 48, "event": "token_returned", "time_seconds": 5.23861165}
+{"request_id": "azure-conv-000000002", "token_index": 30, "event": "token_returned", "time_seconds": 5.249075331}
+{"request_id": "azure-conv-000000001", "token_index": 49, "event": "token_returned", "time_seconds": 5.256258456}
+{"request_id": "azure-conv-000000002", "token_index": 31, "event": "token_returned", "time_seconds": 5.266546579}
+{"request_id": "azure-conv-000000001", "token_index": 50, "event": "token_returned", "time_seconds": 5.274693834}
+{"request_id": "azure-conv-000000002", "token_index": 32, "event": "token_returned", "time_seconds": 5.285272222}
+{"request_id": "azure-conv-000000001", "token_index": 51, "event": "token_returned", "time_seconds": 5.292820455}
+{"request_id": "azure-conv-000000002", "token_index": 33, "event": "token_returned", "time_seconds": 5.302871408}
+{"request_id": "azure-conv-000000001", "token_index": 52, "event": "token_returned", "time_seconds": 5.310896841}
+{"request_id": "azure-conv-000000002", "token_index": 34, "event": "token_returned", "time_seconds": 5.320528112}
+{"request_id": "azure-conv-000000001", "token_index": 53, "event": "token_returned", "time_seconds": 5.328413628}
+{"request_id": "azure-conv-000000002", "token_index": 35, "event": "token_returned", "time_seconds": 5.338211957}
+{"request_id": "azure-conv-000000001", "token_index": 54, "event": "token_returned", "time_seconds": 5.346202924}
+{"request_id": "azure-conv-000000002", "token_index": 36, "event": "token_returned", "time_seconds": 5.355768677}
+{"request_id": "azure-conv-000000001", "token_index": 55, "event": "token_returned", "time_seconds": 5.363859319}
+{"request_id": "azure-conv-000000002", "token_index": 37, "event": "token_returned", "time_seconds": 5.373672664}
+{"request_id": "azure-conv-000000001", "token_index": 56, "event": "token_returned", "time_seconds": 5.381724085}
+{"request_id": "azure-conv-000000002", "token_index": 38, "event": "token_returned", "time_seconds": 5.391403034}
+{"request_id": "azure-conv-000000001", "token_index": 57, "event": "token_returned", "time_seconds": 5.399600603}
+{"request_id": "azure-conv-000000002", "token_index": 39, "event": "token_returned", "time_seconds": 5.409528802}
+{"request_id": "azure-conv-000000001", "token_index": 58, "event": "token_returned", "time_seconds": 5.417435096}
+{"request_id": "azure-conv-000000002", "token_index": 40, "event": "token_returned", "time_seconds": 5.427068959}
+{"request_id": "azure-conv-000000001", "token_index": 59, "event": "token_returned", "time_seconds": 5.435194736}
+{"request_id": "azure-conv-000000002", "token_index": 41, "event": "token_returned", "time_seconds": 5.44503506}
+{"request_id": "azure-conv-000000001", "token_index": 60, "event": "token_returned", "time_seconds": 5.452931582}
+{"request_id": "azure-conv-000000002", "token_index": 42, "event": "token_returned", "time_seconds": 5.462961484}
+{"request_id": "azure-conv-000000001", "token_index": 61, "event": "token_returned", "time_seconds": 5.47117868}
+{"request_id": "azure-conv-000000002", "token_index": 43, "event": "token_returned", "time_seconds": 5.481312798}
+{"request_id": "azure-conv-000000001", "token_index": 62, "event": "token_returned", "time_seconds": 5.489230639}
+{"request_id": "azure-conv-000000002", "token_index": 44, "event": "token_returned", "time_seconds": 5.499365018}
+{"request_id": "azure-conv-000000001", "token_index": 63, "event": "token_returned", "time_seconds": 5.507362119}
+{"request_id": "azure-conv-000000002", "token_index": 45, "event": "token_returned", "time_seconds": 5.516870751}
+{"request_id": "azure-conv-000000001", "token_index": 64, "event": "token_returned", "time_seconds": 5.525029152}
+{"request_id": "azure-conv-000000002", "token_index": 46, "event": "token_returned", "time_seconds": 5.534894507}
+{"request_id": "azure-conv-000000001", "token_index": 65, "event": "token_returned", "time_seconds": 5.542708575}
+{"request_id": "azure-conv-000000002", "token_index": 47, "event": "token_returned", "time_seconds": 5.552751533}
+{"request_id": "azure-conv-000000001", "token_index": 66, "event": "token_returned", "time_seconds": 5.561099496}
+{"request_id": "azure-conv-000000002", "token_index": 48, "event": "token_returned", "time_seconds": 5.570964396}
+{"request_id": "azure-conv-000000001", "token_index": 67, "event": "token_returned", "time_seconds": 5.579102457}
+{"request_id": "azure-conv-000000002", "token_index": 49, "event": "token_returned", "time_seconds": 5.588588056}
+{"request_id": "azure-conv-000000001", "token_index": 68, "event": "token_returned", "time_seconds": 5.597102739}
+{"request_id": "azure-conv-000000002", "token_index": 50, "event": "token_returned", "time_seconds": 5.606687256}
+{"request_id": "azure-conv-000000001", "token_index": 69, "event": "token_returned", "time_seconds": 5.61536399}
+{"request_id": "azure-conv-000000002", "token_index": 51, "event": "token_returned", "time_seconds": 5.624894266}
+{"request_id": "azure-conv-000000001", "token_index": 70, "event": "token_returned", "time_seconds": 5.63353065}
+{"request_id": "azure-conv-000000002", "token_index": 52, "event": "token_returned", "time_seconds": 5.64250729}
+{"request_id": "azure-conv-000000001", "token_index": 71, "event": "token_returned", "time_seconds": 5.651120816}
+{"request_id": "azure-conv-000000002", "token_index": 53, "event": "token_returned", "time_seconds": 5.66020373}
+{"request_id": "azure-conv-000000001", "token_index": 72, "event": "token_returned", "time_seconds": 5.6688116}
+{"request_id": "azure-conv-000000002", "token_index": 54, "event": "token_returned", "time_seconds": 5.677893364}
+{"request_id": "azure-conv-000000001", "token_index": 73, "event": "token_returned", "time_seconds": 5.686456103}
+{"request_id": "azure-conv-000000002", "token_index": 55, "event": "token_returned", "time_seconds": 5.695721719}
+{"request_id": "azure-conv-000000002", "event": "request_completed", "time_seconds": 5.695721719}
+{"request_id": "azure-conv-000000001", "token_index": 74, "event": "token_returned", "time_seconds": 5.703819576}
+{"request_id": "azure-conv-000000001", "token_index": 75, "event": "token_returned", "time_seconds": 5.720667606}
+{"request_id": "azure-conv-000000001", "token_index": 76, "event": "token_returned", "time_seconds": 5.737276857}
+{"request_id": "azure-conv-000000001", "token_index": 77, "event": "token_returned", "time_seconds": 5.754164733}
+{"request_id": "azure-conv-000000001", "token_index": 78, "event": "token_returned", "time_seconds": 5.770733706}
+{"request_id": "azure-conv-000000001", "token_index": 79, "event": "token_returned", "time_seconds": 5.787542322}
+{"request_id": "azure-conv-000000001", "token_index": 80, "event": "token_returned", "time_seconds": 5.80427211}
+{"request_id": "azure-conv-000000001", "token_index": 81, "event": "token_returned", "time_seconds": 5.820936128}
+{"request_id": "azure-conv-000000001", "token_index": 82, "event": "token_returned", "time_seconds": 5.83778243}
+{"request_id": "azure-conv-000000001", "token_index": 83, "event": "token_returned", "time_seconds": 5.854567282}
+{"request_id": "azure-conv-000000001", "token_index": 84, "event": "token_returned", "time_seconds": 5.871493573}
+{"request_id": "azure-conv-000000001", "token_index": 85, "event": "token_returned", "time_seconds": 5.888302756}
+{"request_id": "azure-conv-000000001", "token_index": 86, "event": "token_returned", "time_seconds": 5.905150786}
+{"request_id": "azure-conv-000000001", "token_index": 87, "event": "token_returned", "time_seconds": 5.921964289}
+{"request_id": "azure-conv-000000001", "token_index": 88, "event": "token_returned", "time_seconds": 5.938814047}
+{"request_id": "azure-conv-000000001", "token_index": 89, "event": "token_returned", "time_seconds": 5.955666964}
+{"request_id": "azure-conv-000000001", "token_index": 90, "event": "token_returned", "time_seconds": 5.972373852}
+{"request_id": "azure-conv-000000001", "token_index": 91, "event": "token_returned", "time_seconds": 5.989222017}
+{"request_id": "azure-conv-000000001", "token_index": 92, "event": "token_returned", "time_seconds": 6.005886467}
+{"request_id": "azure-conv-000000001", "token_index": 93, "event": "token_returned", "time_seconds": 6.022734929}
+{"request_id": "azure-conv-000000001", "token_index": 94, "event": "token_returned", "time_seconds": 6.039342452}
+{"request_id": "azure-conv-000000001", "token_index": 95, "event": "token_returned", "time_seconds": 6.05623076}
+{"request_id": "azure-conv-000000001", "token_index": 96, "event": "token_returned", "time_seconds": 6.072798005}
+{"request_id": "azure-conv-000000001", "token_index": 97, "event": "token_returned", "time_seconds": 6.089607485}
+{"request_id": "azure-conv-000000001", "token_index": 98, "event": "token_returned", "time_seconds": 6.106335977}
+{"request_id": "azure-conv-000000001", "token_index": 99, "event": "token_returned", "time_seconds": 6.123001291}
+{"request_id": "azure-conv-000000001", "token_index": 100, "event": "token_returned", "time_seconds": 6.139848457}
+{"request_id": "azure-conv-000000001", "token_index": 101, "event": "token_returned", "time_seconds": 6.156616363}
+{"request_id": "azure-conv-000000001", "token_index": 102, "event": "token_returned", "time_seconds": 6.173544085}
+{"request_id": "azure-conv-000000001", "token_index": 103, "event": "token_returned", "time_seconds": 6.190350973}
+{"request_id": "azure-conv-000000001", "token_index": 104, "event": "token_returned", "time_seconds": 6.207200866}
+{"request_id": "azure-conv-000000001", "token_index": 105, "event": "token_returned", "time_seconds": 6.22405192}
+{"request_id": "azure-conv-000000001", "token_index": 106, "event": "token_returned", "time_seconds": 6.240903109}
+{"request_id": "azure-conv-000000001", "token_index": 107, "event": "token_returned", "time_seconds": 6.257794009}
+{"request_id": "azure-conv-000000001", "token_index": 108, "event": "token_returned", "time_seconds": 6.274502193}
+{"request_id": "azure-conv-000000001", "token_index": 109, "event": "token_returned", "time_seconds": 6.29131008}
+{"request_id": "azure-conv-000000001", "event": "request_completed", "time_seconds": 6.29131008}
+{"event": "run_end", "time_seconds": 30.0}

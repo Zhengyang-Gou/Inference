@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "task": "T002",
+  "evidence_type": "static_only_not_end_to_end_validation",
+  "t001_frozen_identity_verified": true,
+  "sample_matches_task_table": true,
+  "binding_endpoints_match_parent_projection": true,
+  "config_diff_keys": [
+    "evaluation.window_end_seconds",
+    "evaluation.window_start_seconds",
+    "runtime.time_limit_seconds"
+  ],
+  "static_checks": [
+    {
+      "check": "load_config(inputs/config.json)",
+      "status": "passed",
+      "detail": "ExperimentConfig(topology=TopologyConfig(num_leaves=2, num_spines=4, nodes_per_leaf=2, gpus_per_node=8, gpu_memory_gib=8"
+    },
+    {
+      "check": "load_workload(inputs/workload.json) has 3 requests",
+      "status": "passed",
+      "detail": "True"
+    },
+    {
+      "check": "expert_profile.validate_profile",
+      "status": "passed",
+      "detail": "None"
+    },
+    {
+      "check": "profile.validate_prefill_batch_coverage(879,512,2048,1)",
+      "status": "passed",
+      "detail": "None"
+    },
+    {
+      "check": "profile.lookup_decode_batch(1 x 933)",
+      "status": "passed",
+      "detail": "{'compute_seconds': 0.011404, 'collective_bytes': 14336, 'collectives_per_step': 122}"
+    }
+  ],
+  "ns3_end_to_end_runs": 0,
+  "blocked_reason": "wsl.exe is on the tool Program Blacklist; see logs/wsl-tool-policy-block.txt"
+}

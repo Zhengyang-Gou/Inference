@@ -1,0 +1,177 @@
+{
+  "kind": "server_migration_validation",
+  "host": "s223",
+  "repo": "/home/s223/m0nesy/Inference",
+  "python": "3.12.16 (main, Oct 26 2026, 11:37:43) [GCC 15.3.0]",
+  "expected_commit": "e9b447df7f118661b9b0e4ab2ce13483e7dd9b2a",
+  "platform": "Linux-5.15.0-139-generic-x86_64-with-glibc2.31",
+  "started_at": "2026-11-07T20:19:00.496095+08:00",
+  "commands": [
+    {
+      "name": "01-python",
+      "argv": [
+        "./scripts/simai-python",
+        "-V"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 2.371824307832867,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/01-python.log"
+    },
+    {
+      "name": "02-dependencies",
+      "argv": [
+        "/home/s223/miniconda3/envs/simai/bin/python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 0.36529043037444353,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/02-dependencies.log"
+    },
+    {
+      "name": "03-backend-doctor",
+      "argv": [
+        "./inference",
+        "backend",
+        "doctor"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 2.8713247440755367,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/03-backend-doctor.log"
+    },
+    {
+      "name": "04-smoke-config",
+      "argv": [
+        "./inference",
+        "--config",
+        "joint_scheduling/configs/baseline_smoke.json",
+        "validate"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 2.671664754860103,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/04-smoke-config.log"
+    },
+    {
+      "name": "05-frozen-config",
+      "argv": [
+        "./inference",
+        "--config",
+        "/home/s223/m0nesy/Inference/artifacts/inputs/T001-baseline-freeze/config.json",
+        "validate"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 2.470434984192252,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/05-frozen-config.log"
+    },
+    {
+      "name": "06-targeted-tests",
+      "argv": [
+        "./scripts/simai-python",
+        "-m",
+        "unittest",
+        "joint_scheduling.backend.tests.test_module_boundaries",
+        "joint_scheduling.backend.tests.test_rpc_batching",
+        "joint_scheduling.backend.tests.test_vendored_source"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 6.930772560182959,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/06-targeted-tests.log"
+    },
+    {
+      "name": "07-smoke",
+      "argv": [
+        "./inference",
+        "--config",
+        "joint_scheduling/configs/baseline_smoke.json",
+        "run-baseline",
+        "--output",
+        "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/results/smoke"
+      ],
+      "cwd": "/home/s223/m0nesy/Inference",
+      "returncode": 0,
+      "wall_seconds": 8.988139494787902,
+      "log": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/logs/07-smoke.log"
+    }
+  ],
+  "old_WSL_experiments_used_as_validation": false,
+  "full_regression_run": false,
+  "research_experiment_run": false,
+  "actual_commit": "e9b447df7f118661b9b0e4ab2ce13483e7dd9b2a",
+  "frozen_input_checks": [
+    {
+      "name": "binding_plan.json",
+      "expected_sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091",
+      "actual_sha256": "9a48e35f53a4e8df2c9c09312a1fbf402bf8e79c2d47f083ba12e9416d37b091"
+    },
+    {
+      "name": "compute_profile.json",
+      "expected_sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554",
+      "actual_sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554"
+    },
+    {
+      "name": "config.json",
+      "expected_sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1",
+      "actual_sha256": "565572ab4d2dde71bd265bfc8a240f7b433bf5987886505c231ea9a8f049a8f1"
+    },
+    {
+      "name": "manifest.json",
+      "expected_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78",
+      "actual_sha256": "811cc29616c0e1539a43109ae78d5bce14f23fde6b97a7e157c63ef956b0af78"
+    },
+    {
+      "name": "workload.json",
+      "expected_sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346",
+      "actual_sha256": "0ce0c8cdc4b31d07587014debf7272209d4bd6efb23f03b84ff17fce3282c346"
+    }
+  ],
+  "backend_doctor": {
+    "python": "3.12.16",
+    "python_executable": "/home/s223/miniconda3/envs/simai/bin/python",
+    "vendored_source_present": true,
+    "upstream_ns3_revision": "3e0c7c1bfbbe9f77890ddcf5e5b9c79fc6dd7437",
+    "pinned_source_sha256": "21d7ffbd2abf583bfea08e27196eb90060ad159eed61094256803eabab06f1b6",
+    "backend_ready": true,
+    "executable": "/home/s223/m0nesy/Inference/joint_scheduling/artifacts/backend/current/source/build/bin/joint-scheduling-ns3",
+    "fingerprint": "f1a48f36b6a4ebb9cf8c",
+    "compiler": "g++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0"
+  },
+  "smoke": {
+    "checks": {
+      "request_count_is_12": true,
+      "all_completed": true,
+      "failed_zero": true,
+      "incomplete_zero": true,
+      "resources_all_released": true
+    },
+    "arrival_cohort": {
+      "arrived_count": 12,
+      "completed_by_observation_end": 12,
+      "failed_count": 0,
+      "incomplete_count": 0,
+      "slo_met_completed_count": 12,
+      "completed_and_slo_fraction": 1.0,
+      "slo_attainment_among_completed": 1.0
+    },
+    "completion_window": {
+      "completed_count": 12,
+      "slo_met_count": 12,
+      "slo_attainment": 1.0,
+      "completion_throughput_rps": 120.0,
+      "slo_goodput_rps": 120.0,
+      "carry_in_completed_count": 0
+    },
+    "requests": 12,
+    "slo_met": 12,
+    "run": "/home/s223/m0nesy/Inference/outputs/migrations/2026-11-07/server-migration-201527/results/smoke",
+    "evidence": "server CPU simulation functional smoke; not GPU inference performance"
+  },
+  "status": "passed",
+  "finished_at": "2026-11-07T20:19:27.223492+08:00"
+}

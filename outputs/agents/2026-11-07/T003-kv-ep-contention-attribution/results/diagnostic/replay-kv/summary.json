@@ -1,0 +1,2027 @@
+{
+  "experiment_type": "frozen_network_replay",
+  "selected_flows": 671,
+  "completed_flows": 671,
+  "port_cooldown_checks": 0,
+  "retained_start_times_payload_and_endpoint_order": true,
+  "network_priority_enabled": false,
+  "retained_native_timers_and_local_submissions": true,
+  "final_port_counters": [
+    {
+      "resource_id": "0:1",
+      "node_id": 0,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 26453016,
+      "kv_bytes": 26453016,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        26453016,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "1:1",
+      "node_id": 1,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 28011688,
+      "kv_bytes": 28011688,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        28011688,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "2:1",
+      "node_id": 2,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 62171932,
+      "kv_bytes": 62171932,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        62171932,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "3:1",
+      "node_id": 3,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 6439160,
+      "kv_bytes": 6439160,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        6439160,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "4:1",
+      "node_id": 4,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 6439160,
+      "kv_bytes": 6439160,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        6439160,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "5:1",
+      "node_id": 5,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 26948092,
+      "kv_bytes": 26948092,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        26948092,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "6:1",
+      "node_id": 6,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 92869816,
+      "kv_bytes": 92869816,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        92869816,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "7:1",
+      "node_id": 7,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 27443168,
+      "kv_bytes": 27443168,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        27443168,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "8:1",
+      "node_id": 8,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "9:1",
+      "node_id": 9,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "10:1",
+      "node_id": 10,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "11:1",
+      "node_id": 11,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 197640,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 197640,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "12:1",
+      "node_id": 12,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 695400,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 695400,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "13:1",
+      "node_id": 13,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 204960,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 204960,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "14:1",
+      "node_id": 14,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "15:1",
+      "node_id": 15,
+      "peer_id": 32,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 464820,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 464820,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "16:1",
+      "node_id": 16,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "17:1",
+      "node_id": 17,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "18:1",
+      "node_id": 18,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "19:1",
+      "node_id": 19,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "20:1",
+      "node_id": 20,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "21:1",
+      "node_id": 21,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "22:1",
+      "node_id": 22,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "23:1",
+      "node_id": 23,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "24:1",
+      "node_id": 24,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "25:1",
+      "node_id": 25,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 51240,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 51240,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "26:1",
+      "node_id": 26,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "27:1",
+      "node_id": 27,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 201300,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 201300,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "28:1",
+      "node_id": 28,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "29:1",
+      "node_id": 29,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 51240,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 51240,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "30:1",
+      "node_id": 30,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 212280,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 212280,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "31:1",
+      "node_id": 31,
+      "peer_id": 33,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:1",
+      "node_id": 32,
+      "peer_id": 0,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 197640,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 197640,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:2",
+      "node_id": 32,
+      "peer_id": 1,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 212280,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 212280,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:3",
+      "node_id": 32,
+      "peer_id": 2,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 464820,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 464820,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:4",
+      "node_id": 32,
+      "peer_id": 3,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 51240,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 51240,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:5",
+      "node_id": 32,
+      "peer_id": 4,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 51240,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 51240,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:6",
+      "node_id": 32,
+      "peer_id": 5,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 201300,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 201300,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:7",
+      "node_id": 32,
+      "peer_id": 6,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 695400,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 695400,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:8",
+      "node_id": 32,
+      "peer_id": 7,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 204960,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 204960,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:9",
+      "node_id": 32,
+      "peer_id": 8,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:10",
+      "node_id": 32,
+      "peer_id": 9,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:11",
+      "node_id": 32,
+      "peer_id": 10,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:12",
+      "node_id": 32,
+      "peer_id": 11,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 26453016,
+      "kv_bytes": 26453016,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        26453016,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:13",
+      "node_id": 32,
+      "peer_id": 12,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 92869816,
+      "kv_bytes": 92869816,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        92869816,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:14",
+      "node_id": 32,
+      "peer_id": 13,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 27443168,
+      "kv_bytes": 27443168,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        27443168,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:15",
+      "node_id": 32,
+      "peer_id": 14,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:16",
+      "node_id": 32,
+      "peer_id": 15,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 62171932,
+      "kv_bytes": 62171932,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        62171932,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:17",
+      "node_id": 32,
+      "peer_id": 34,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 14877444,
+      "kv_bytes": 14877444,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        14877444,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:18",
+      "node_id": 32,
+      "peer_id": 35,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 15551964,
+      "kv_bytes": 15551964,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        15551964,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:19",
+      "node_id": 32,
+      "peer_id": 36,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 17424612,
+      "kv_bytes": 17424612,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        17424612,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "32:20",
+      "node_id": 32,
+      "peer_id": 37,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 19984080,
+      "kv_bytes": 19984080,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        19984080,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:1",
+      "node_id": 33,
+      "peer_id": 16,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:2",
+      "node_id": 33,
+      "peer_id": 17,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:3",
+      "node_id": 33,
+      "peer_id": 18,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:4",
+      "node_id": 33,
+      "peer_id": 19,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:5",
+      "node_id": 33,
+      "peer_id": 20,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:6",
+      "node_id": 33,
+      "peer_id": 21,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:7",
+      "node_id": 33,
+      "peer_id": 22,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:8",
+      "node_id": 33,
+      "peer_id": 23,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:9",
+      "node_id": 33,
+      "peer_id": 24,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:10",
+      "node_id": 33,
+      "peer_id": 25,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 6439160,
+      "kv_bytes": 6439160,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        6439160,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:11",
+      "node_id": 33,
+      "peer_id": 26,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:12",
+      "node_id": 33,
+      "peer_id": 27,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 26948092,
+      "kv_bytes": 26948092,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        26948092,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:13",
+      "node_id": 33,
+      "peer_id": 28,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:14",
+      "node_id": 33,
+      "peer_id": 29,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 6439160,
+      "kv_bytes": 6439160,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        6439160,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:15",
+      "node_id": 33,
+      "peer_id": 30,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 28011688,
+      "kv_bytes": 28011688,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        28011688,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:16",
+      "node_id": 33,
+      "peer_id": 31,
+      "capacity_bps": 400000000000,
+      "tx_bytes": 0,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:17",
+      "node_id": 33,
+      "peer_id": 34,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 138480,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 138480,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:18",
+      "node_id": 33,
+      "peer_id": 35,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 157440,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 157440,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:19",
+      "node_id": 33,
+      "peer_id": 36,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 108840,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 108840,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "33:20",
+      "node_id": 33,
+      "peer_id": 37,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 111300,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 111300,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "34:1",
+      "node_id": 34,
+      "peer_id": 32,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 138480,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 138480,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "34:2",
+      "node_id": 34,
+      "peer_id": 33,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 14877444,
+      "kv_bytes": 14877444,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        14877444,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "35:1",
+      "node_id": 35,
+      "peer_id": 32,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 157440,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 157440,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "35:2",
+      "node_id": 35,
+      "peer_id": 33,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 15551964,
+      "kv_bytes": 15551964,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        15551964,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "36:1",
+      "node_id": 36,
+      "peer_id": 32,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 108840,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 108840,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "36:2",
+      "node_id": 36,
+      "peer_id": 33,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 17424612,
+      "kv_bytes": 17424612,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        17424612,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "37:1",
+      "node_id": 37,
+      "peer_id": 32,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 111300,
+      "kv_bytes": 0,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "other_bytes": 111300,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "37:2",
+      "node_id": 37,
+      "peer_id": 33,
+      "capacity_bps": 1600000000000,
+      "tx_bytes": 19984080,
+      "kv_bytes": 19984080,
+      "collective_bytes": 0,
+      "data_priority_bytes": [
+        0,
+        0,
+        19984080,
+        0
+      ],
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-0:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1363525632,
+      "kv_bytes": 0,
+      "collective_bytes": 1363525632,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-0:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1502290944,
+      "kv_bytes": 0,
+      "collective_bytes": 1502290944,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-10:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 49946624,
+      "kv_bytes": 0,
+      "collective_bytes": 49946624,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-10:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 99893248,
+      "kv_bytes": 0,
+      "collective_bytes": 99893248,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-11:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 137668608,
+      "kv_bytes": 0,
+      "collective_bytes": 137668608,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-11:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 133862400,
+      "kv_bytes": 0,
+      "collective_bytes": 133862400,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-12:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 335756288,
+      "kv_bytes": 0,
+      "collective_bytes": 335756288,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-12:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 209778688,
+      "kv_bytes": 0,
+      "collective_bytes": 209778688,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-13:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 218301440,
+      "kv_bytes": 0,
+      "collective_bytes": 218301440,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-13:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 164555776,
+      "kv_bytes": 0,
+      "collective_bytes": 164555776,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-14:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 50405376,
+      "kv_bytes": 0,
+      "collective_bytes": 50405376,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-14:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 100810752,
+      "kv_bytes": 0,
+      "collective_bytes": 100810752,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-15:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 159272960,
+      "kv_bytes": 0,
+      "collective_bytes": 159272960,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-15:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 142643200,
+      "kv_bytes": 0,
+      "collective_bytes": 142643200,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-1:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1408196608,
+      "kv_bytes": 0,
+      "collective_bytes": 1408196608,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-1:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1519422464,
+      "kv_bytes": 0,
+      "collective_bytes": 1519422464,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-24:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 34922496,
+      "kv_bytes": 0,
+      "collective_bytes": 34922496,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-24:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 69844992,
+      "kv_bytes": 0,
+      "collective_bytes": 69844992,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-25:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 66117632,
+      "kv_bytes": 0,
+      "collective_bytes": 66117632,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-25:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 81937408,
+      "kv_bytes": 0,
+      "collective_bytes": 81937408,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-26:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 35108864,
+      "kv_bytes": 0,
+      "collective_bytes": 35108864,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-26:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 70217728,
+      "kv_bytes": 0,
+      "collective_bytes": 70217728,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-27:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 206531584,
+      "kv_bytes": 0,
+      "collective_bytes": 206531584,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-27:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 135919616,
+      "kv_bytes": 0,
+      "collective_bytes": 135919616,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-28:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 35280896,
+      "kv_bytes": 0,
+      "collective_bytes": 35280896,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-28:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 70561792,
+      "kv_bytes": 0,
+      "collective_bytes": 70561792,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-29:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 66253824,
+      "kv_bytes": 0,
+      "collective_bytes": 66253824,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-29:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 82166784,
+      "kv_bytes": 0,
+      "collective_bytes": 82166784,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-2:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 2389624832,
+      "kv_bytes": 0,
+      "collective_bytes": 2389624832,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-2:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1905111040,
+      "kv_bytes": 0,
+      "collective_bytes": 1905111040,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-30:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 258363392,
+      "kv_bytes": 0,
+      "collective_bytes": 258363392,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-30:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 156513280,
+      "kv_bytes": 0,
+      "collective_bytes": 156513280,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-31:rx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 35417088,
+      "kv_bytes": 0,
+      "collective_bytes": 35417088,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-31:tx",
+      "node_id": 3,
+      "peer_id": 3,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 70834176,
+      "kv_bytes": 0,
+      "collective_bytes": 70834176,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-3:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 794558464,
+      "kv_bytes": 0,
+      "collective_bytes": 794558464,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-3:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1292017664,
+      "kv_bytes": 0,
+      "collective_bytes": 1292017664,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-4:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 790773760,
+      "kv_bytes": 0,
+      "collective_bytes": 790773760,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-4:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1284297728,
+      "kv_bytes": 0,
+      "collective_bytes": 1284297728,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-5:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1379166208,
+      "kv_bytes": 0,
+      "collective_bytes": 1379166208,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-5:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1510713344,
+      "kv_bytes": 0,
+      "collective_bytes": 1510713344,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-6:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 3267482624,
+      "kv_bytes": 0,
+      "collective_bytes": 3267482624,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-6:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 2247540736,
+      "kv_bytes": 0,
+      "collective_bytes": 2247540736,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-7:rx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1399444480,
+      "kv_bytes": 0,
+      "collective_bytes": 1399444480,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-7:tx",
+      "node_id": 0,
+      "peer_id": 0,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 1531378688,
+      "kv_bytes": 0,
+      "collective_bytes": 1531378688,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-8:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 49910784,
+      "kv_bytes": 0,
+      "collective_bytes": 49910784,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-8:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 99821568,
+      "kv_bytes": 0,
+      "collective_bytes": 99821568,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-9:rx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 49896448,
+      "kv_bytes": 0,
+      "collective_bytes": 49896448,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    },
+    {
+      "resource_id": "local:gpu-9:tx",
+      "node_id": 1,
+      "peer_id": 1,
+      "capacity_bps": 1280000000000,
+      "tx_bytes": 99792896,
+      "kv_bytes": 0,
+      "collective_bytes": 99792896,
+      "other_bytes": 0,
+      "queue_bytes": 0,
+      "pfc_pause_count": 0
+    }
+  ]
+}

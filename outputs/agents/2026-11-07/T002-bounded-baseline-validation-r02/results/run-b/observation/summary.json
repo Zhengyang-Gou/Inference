@@ -1,0 +1,639 @@
+{
+  "schema_version": 1,
+  "observed_until_seconds": 30.0,
+  "snapshot_count": 814153,
+  "observation_delay_seconds": 0.0001,
+  "instances": {
+    "d0": {
+      "compute_busy_seconds": 0.23969882599998937,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007989960866666312,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d1": {
+      "compute_busy_seconds": 0.23921548399995643,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007973849466665215,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d10": {
+      "compute_busy_seconds": 0.237886383999916,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007929546133330533,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d11": {
+      "compute_busy_seconds": 0.24094754999995033,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.008031584999998344,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d12": {
+      "compute_busy_seconds": 0.24034339999996432,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.008011446666665476,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d13": {
+      "compute_busy_seconds": 0.23873225999997472,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007957741999999157,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d14": {
+      "compute_busy_seconds": 1.471129560999963,
+      "execution_busy_seconds": 1.8901099839999995,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 1,
+      "queue_starts": 108,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.0490376520333321,
+      "execution_utilization": 0.06300366613333332,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": 0.0
+    },
+    "d15": {
+      "compute_busy_seconds": 0.239497560999968,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007983252033332267,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d2": {
+      "compute_busy_seconds": 0.239376603999919,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007979220133330633,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d3": {
+      "compute_busy_seconds": 0.729829160999959,
+      "execution_busy_seconds": 0.7213125420000001,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 1,
+      "queue_starts": 43,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.024327638699998634,
+      "execution_utilization": 0.0240437514,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": 0.0
+    },
+    "d4": {
+      "compute_busy_seconds": 0.23889324499995218,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007963108166665072,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d5": {
+      "compute_busy_seconds": 0.24002104299995197,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.008000701433331732,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d6": {
+      "compute_busy_seconds": 0.23840996799994119,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007946998933331373,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d7": {
+      "compute_busy_seconds": 0.8565621209999532,
+      "execution_busy_seconds": 0.9685879850000001,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 1,
+      "queue_starts": 54,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.02855207069999844,
+      "execution_utilization": 0.03228626616666667,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": 0.0
+    },
+    "d8": {
+      "compute_busy_seconds": 0.2392558349999226,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.00797519449999742,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "d9": {
+      "compute_busy_seconds": 0.2393363919999679,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.007977879733332263,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p0": {
+      "compute_busy_seconds": 0.16944960000000098,
+      "execution_busy_seconds": 0.084032526,
+      "queue_length_seconds": 1e-09,
+      "max_queue_length": 1,
+      "queue_starts": 1,
+      "queue_wait_seconds": 1e-09,
+      "max_queue_wait_seconds": 1e-09,
+      "compute_utilization": 0.005648320000000032,
+      "execution_utilization": 0.0028010841999999998,
+      "mean_queue_length": 3.3333333333333335e-11,
+      "mean_queue_wait_seconds": 1e-09
+    },
+    "p1": {
+      "compute_busy_seconds": 0.17026498399999818,
+      "execution_busy_seconds": 0.08660367099999977,
+      "queue_length_seconds": 1.000000082740371e-09,
+      "max_queue_length": 1,
+      "queue_starts": 1,
+      "queue_wait_seconds": 1.000000082740371e-09,
+      "max_queue_wait_seconds": 1.000000082740371e-09,
+      "compute_utilization": 0.005675499466666606,
+      "execution_utilization": 0.0028867890333333255,
+      "mean_queue_length": 3.33333360913457e-11,
+      "mean_queue_wait_seconds": 1.000000082740371e-09
+    },
+    "p10": {
+      "compute_busy_seconds": 0.153445388999997,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.0051148462999999,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p11": {
+      "compute_busy_seconds": 0.15344414099999884,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114804699999961,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p12": {
+      "compute_busy_seconds": 0.15345216900000114,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005115072300000038,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p13": {
+      "compute_busy_seconds": 0.15343737999999896,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114579333333299,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p14": {
+      "compute_busy_seconds": 0.15344280599999696,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114760199999899,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p15": {
+      "compute_busy_seconds": 0.15344584399999767,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114861466666589,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p2": {
+      "compute_busy_seconds": 0.1922107960000031,
+      "execution_busy_seconds": 0.18524406100000057,
+      "queue_length_seconds": 1.9999992773023223e-09,
+      "max_queue_length": 1,
+      "queue_starts": 2,
+      "queue_wait_seconds": 1.9999992773023223e-09,
+      "max_queue_wait_seconds": 1.000000082740371e-09,
+      "compute_utilization": 0.006407026533333437,
+      "execution_utilization": 0.006174802033333353,
+      "mean_queue_length": 6.666664257674407e-11,
+      "mean_queue_wait_seconds": 9.999996386511611e-10
+    },
+    "p3": {
+      "compute_busy_seconds": 0.15344495600000235,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114831866666745,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p4": {
+      "compute_busy_seconds": 0.1534465539999968,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114885133333227,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p5": {
+      "compute_busy_seconds": 0.1534426270000004,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114754233333347,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p6": {
+      "compute_busy_seconds": 0.15344672799999448,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114890933333149,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p7": {
+      "compute_busy_seconds": 0.15344085500000015,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114695166666672,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p8": {
+      "compute_busy_seconds": 0.1534419179999986,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114730599999953,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    },
+    "p9": {
+      "compute_busy_seconds": 0.15344673300000555,
+      "execution_busy_seconds": 0.0,
+      "queue_length_seconds": 0.0,
+      "max_queue_length": 0,
+      "queue_starts": 0,
+      "queue_wait_seconds": 0.0,
+      "max_queue_wait_seconds": 0.0,
+      "compute_utilization": 0.005114891100000185,
+      "execution_utilization": 0.0,
+      "mean_queue_length": 0.0,
+      "mean_queue_wait_seconds": null
+    }
+  },
+  "communication": {
+    "kv": {
+      "started_count": 244,
+      "completed_count": 244,
+      "started_bytes": 115878528,
+      "completed_bytes": 115878528,
+      "peak_inflight_count": 1,
+      "peak_inflight_bytes": 589824,
+      "inflight_byte_seconds": 1725.8101758709554
+    },
+    "collective": {
+      "started_count": 141968,
+      "completed_count": 141968,
+      "started_bytes": 13137610752,
+      "completed_bytes": 13137610752,
+      "peak_inflight_count": 23,
+      "peak_inflight_bytes": 42620928,
+      "inflight_byte_seconds": 2074892.912132977
+    }
+  },
+  "memory": {
+    "gpu-0": {
+      "peak_occupied_bytes": 26281728,
+      "peak_reserved_bytes": 26281728,
+      "peak_committed_bytes": 26281728
+    },
+    "gpu-1": {
+      "peak_occupied_bytes": 27827712,
+      "peak_reserved_bytes": 27827712,
+      "peak_committed_bytes": 27827712
+    },
+    "gpu-2": {
+      "peak_occupied_bytes": 61769088,
+      "peak_reserved_bytes": 61769088,
+      "peak_committed_bytes": 61769088
+    },
+    "gpu-3": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-4": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-5": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-6": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-7": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-8": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-9": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-10": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-11": {
+      "peak_occupied_bytes": 29233152,
+      "peak_reserved_bytes": 29373696,
+      "peak_committed_bytes": 29373696
+    },
+    "gpu-12": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-13": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-14": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-15": {
+      "peak_occupied_bytes": 65493504,
+      "peak_reserved_bytes": 65634048,
+      "peak_committed_bytes": 65634048
+    },
+    "gpu-16": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-17": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-18": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-19": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-20": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-21": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-22": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-23": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-24": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-25": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-26": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-27": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-28": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-29": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    },
+    "gpu-30": {
+      "peak_occupied_bytes": 35346816,
+      "peak_reserved_bytes": 35487360,
+      "peak_committed_bytes": 35487360
+    },
+    "gpu-31": {
+      "peak_occupied_bytes": 0,
+      "peak_reserved_bytes": 0,
+      "peak_committed_bytes": 0
+    }
+  },
+  "requests": {
+    "arrived_count": 3,
+    "completed_count": 3,
+    "failed_count": 0,
+    "incomplete_count": 0
+  },
+  "semantics": {
+    "compute_utilization": "modeled compute busy time / full simulation horizon",
+    "execution_utilization": "instance step busy time, including its collective waits / horizon",
+    "inflight_bytes": "whole logical messages awaiting ACK completion; includes local traffic",
+    "queue_wait": "completed queue waits per prefill request or decode token step; pending waits remain in state",
+    "network_telemetry": "application transfers only; no per-link occupancy or measured NIC utilization"
+  },
+  "measurement_window": {
+    "start_seconds": 0.0,
+    "end_seconds": 30.0,
+    "mean": {
+      "prefill_queue_length": 1.333333120014231e-10,
+      "decode_queue_length": 0.0,
+      "kv_inflight_count": 0.00011988953333328589,
+      "kv_inflight_bytes": 57.52700586236518,
+      "collective_inflight_count": 0.06002821960001117,
+      "collective_inflight_bytes": 69163.09707109924
+    },
+    "maximum": {
+      "prefill_queue_length": 1.0,
+      "decode_queue_length": 0.0,
+      "kv_inflight_count": 1.0,
+      "kv_inflight_bytes": 589824.0,
+      "collective_inflight_count": 23.0,
+      "collective_inflight_bytes": 42620928.0
+    }
+  }
+}

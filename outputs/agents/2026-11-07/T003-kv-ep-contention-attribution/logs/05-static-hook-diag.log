@@ -1,0 +1,19 @@
+wsl: Failed to translate '\\wsl.localhost\Ubunt\Users\33199\AppData\Local\Programs\WorkBuddy\resources\app.asar.unpacked\cli\vendor\shim\safe-bin'
+wsl: Failed to translate '\\wsl.localhost\Ubunt\Users\33199\AppData\Local\Programs\WorkBuddy\resources\app.asar.unpacked\cli\vendor\shim\safe-bin'
+Traceback (most recent call last):
+  File "/home/m0nesy/Postgraduate/Inference/work/agents/2026-11-07/T003-kv-ep-contention-attribution/diag_hook.py", line 23, in <module>
+    fn(); print("OK", label)
+    ^^^^
+  File "/home/m0nesy/Postgraduate/Inference/work/agents/2026-11-07/T003-kv-ep-contention-attribution/diag_hook.py", line 20, in <lambda>
+    for label, fn in [("probe.event", lambda: probe.event("transfer_started", 472621, data)),
+                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/m0nesy/Postgraduate/Inference/joint_scheduling/experiments/contention.py", line 87, in event
+    self.touch(now,('tx:'+str(source),'rx:'+str(dest)),kind,1)
+  File "/home/m0nesy/Postgraduate/Inference/joint_scheduling/experiments/contention.py", line 55, in touch
+    if counts[0] and counts[1]:self.endpoint_overlap[endpoint]+=now-self.endpoint_last.get(endpoint,now)
+       ~~~~~~^^^
+TypeError: 'int' object is not subscriptable
+probe data: {"request_id": "azure-conv-000000000", "transfer_id": "transfer-1", "transfer_kind": "kv", "block_id": "azure-conv-000000000:l0:r0:b0", "layer_id": 0, "offset_bytes": 0, "ready_at_seconds": 0.000472621, "size_bytes": 430848, "source_gpu_id": 0, "destination_gpu_id": 11, "priority": 2}
+FAILED probe.event
+OK probe.capture
+DIAG_EXIT=0

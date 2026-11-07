@@ -1,0 +1,8 @@
+frozen files: results/frozen/config.json, results/frozen/compute_profile.json, results/frozen/workload.json, results/frozen/binding_plan.json
+config field diff keys: evaluation.output_dir, feedback.compute_profile_path, feedback.state_observation_enabled, kv_scheduler.collective_protection_enabled, kv_scheduler.decode_admission_limit, kv_scheduler.policy, kv_scheduler.slo_priority_enabled, runtime.kv_transfer_mode, runtime.workload_path
+verified unchanged switches: 22
+binding plan: 19366 requests, seed 7 sha256 6fd36888a9e6529550efbd870af8099478ec608a5a6b0250bebf4e13f08d2aa5
+input identity match: True
+coverage checks: [('validate_prefill_batch_coverage', 'passed'), ('lookup_decode_batch', 'passed'), ('lookup_decode_batch', 'passed'), ('expert_profile.validate_profile', 'passed')]
+gaps: []
+git head: 91cf1e2a16b8ff59b595619a7d0c02c4dd5df8dc dirty entries: 71

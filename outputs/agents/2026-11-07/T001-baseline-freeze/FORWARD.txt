@@ -1,0 +1,14 @@
+你是 Inference 仓库 T001 的执行 agent。
+
+仓库：/home/m0nesy/Postgraduate/Inference
+先完整阅读仓库根目录 AGENTS.md，然后执行唯一任务书：
+/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T001-baseline-freeze/TASK.md
+
+本轮只做“唯一基线条件冻结”：核对并冻结现有32GPU配置、Azure2023输入、固定P/D绑定、SLO、统计口径和基础验收开关，完成静态预检。具体要求以TASK.md为准。
+
+任务目录和ready状态已创建。保留TASK.md原文，更新STATUS.json，保存你开工时的Git状态、实际命令、退出码和证据。不要修改正式源码/配置/原始输入，不运行端到端仿真或算法对比，不做新机制或扩容，不恢复旧任务。
+
+完成或失败/阻塞均须写：
+/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-07/T001-baseline-freeze/REPORT.md
+
+最后回复报告绝对路径、结论、实际验证情况和需指挥决定事项。提交后停止，等待审核。
