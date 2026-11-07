@@ -1,9 +1,9 @@
-"""Timeout-bounded line-protocol client shared by the native network backends.
+"""Timeout-bounded line-protocol client for the ns-3 network backend.
 
-Both the ns-3 adapter and the flowSim adapter own simulated time in a child
-process. This module implements the protocol mechanics once: ordered submission,
-bounded batching, completion callbacks, deadline advances and telemetry reads.
-Subclasses only translate one logical transfer into that backend's commands.
+The ns-3 adapter owns simulated time in a child process. This module implements
+the protocol mechanics once: ordered submission, bounded batching, completion
+callbacks, deadline advances and telemetry reads. Subclasses only translate one
+logical transfer into that backend's commands.
 """
 
 import json

@@ -3,17 +3,11 @@
 from dataclasses import dataclass, field
 from typing import Callable, Protocol
 
-# The only valid (time_authority, network_backend) pairs. The default stays the
-# ns-3 packet-level backend; flowSim is an explicitly selected fluid model.
-NS3_PAIR = ("ns3", "ns3_alibabacloud")
-FLOWSIM_PAIR = ("flowsim", "flowsim")
-BACKEND_PAIRS = (NS3_PAIR, FLOWSIM_PAIR)
-
 
 @dataclass(frozen=True)
 class FeedbackConfig:
-    time_authority: str = field(default="ns3", metadata={"choices": ("ns3", "flowsim")})
-    network_backend: str = field(default="ns3_alibabacloud", metadata={"choices": ("ns3_alibabacloud", "flowsim")})
+    time_authority: str = field(default="ns3", metadata={"choices": ("ns3",)})
+    network_backend: str = field(default="ns3_alibabacloud", metadata={"choices": ("ns3_alibabacloud",)})
     compute_backend: str = field(default="profiling", metadata={"choices": ("profiling",)})
     compute_profile_path: str = ""
     compute_profile_excludes_communication: bool = True

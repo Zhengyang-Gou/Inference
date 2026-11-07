@@ -92,22 +92,6 @@
         "Preserve existing CMake, SimCCL, configuration and local log-path adaptations.",
         "Original simulator build scripts are retained as reference and are not the active Inference backend."
       ]
-    },
-    {
-      "name": "flowsim",
-      "path": "third_party/flowsim",
-      "upstream_repository": "https://github.com/netiken/m4",
-      "upstream_revision": "95489830743c4ac2a97a050c86c7c2f32f264b04",
-      "upstream_path": "flowsim",
-      "license_file": "third_party/flowsim/LICENSE-NOTICE.md",
-      "license": "not declared upstream; per-file headers cite an MIT LICENSE file that the repository does not contain",
-      "role": "active_flow_level_network_backend",
-      "source_manifest": "third_party/flowsim/SOURCE_MANIFEST.json",
-      "local_changes": [
-        "Vendor only the 14 upstream fluid-model sources needed by the online adapter; exclude the offline main.cpp, npy.hpp, TopologyBuilder, Makefile and analysis scripts.",
-        "Keep upstream bytes unmodified; reviewed overlays are applied only to isolated build copies by joint_scheduling/backend/flow_patch.py.",
-        "m4 training data, checkpoints, learnt-model code and the SimAI submodule are not used."
-      ]
     }
   ]
 }

@@ -1,46 +1,72 @@
-# 指挥与执行工作流
+# 研究任务协作规范
 
-仓库根目录的 `AGENTS.md` 是共同约定。指挥 agent 给任务，用户转发给执行 agent；执行 agent 将证据归档，指挥 agent 读取后给出审核结论和下一轮任务。
+这份规范只管理任务组织，不代替研究目标，也不预先派发实验。重新开始后，只有用户与指挥 agent 确定的具体目标才进入任务流程。
 
-## 一轮任务
+默认执行仓库为远端 Linux 的 /home/s223/m0nesy/Inference。开发验证、仿真、实验及后续任务归档都在服务器；Windows PowerShell 使用 ssh m0nesy。环境、同步和证据口径见 [远端执行约定](REMOTE_EXECUTION.md)。
 
-1. 指挥 agent 使用 `templates/TASK.md` 明确目标、任务编号、可修改范围、验收条件、前置报告和本轮结果目录。
-2. 用户把任务提示词转发给执行 agent。执行 agent 先读 `AGENTS.md`，建立任务目录并保存原始任务。
-3. 执行 agent 完成任务，使用 `templates/REPORT.md` 写报告，更新状态为 `submitted`（或如实记录阻塞、失败）。
-4. 用户只需把报告路径发回指挥 agent，例如：“请审核 `/home/m0nesy/Postgraduate/Inference/outputs/agents/2026-11-04/T001-example/REPORT.md`。”
-5. 指挥 agent 读取报告、日志和相关代码，按需写 `REVIEW.md` 并更新状态。审核通过后再安排新任务；返工用关联的新目录，保留前一轮证据。
+## 分工
 
-日期目录使用任务开始时的上海日期。任务编号由指挥 agent 分配；每次给提示词时填写实际日期和准确路径，不让用户手工拼接。首次建立本约定的归档为 `outputs/agents/2026-11-04/T000-collaboration-setup/`。
+| 角色 | 负责内容 |
+| --- | --- |
+| 用户 | 确定方向、转发任务路径、回传报告路径 |
+| 指挥 agent | 拆分单一问题、写任务书、审查证据、安排下一轮 |
+| 执行 agent | 严格按任务执行、验证、归档并提交报告 |
 
-## 通用转发提示词
+只读答疑不生成任务；讨论中的建议不会自动成为任务。
 
-下面是模板。指挥 agent 在转发前补齐所有尖括号字段，并附上完整任务内容；没有确定任务时不让执行 agent自行找任务修改。
+## 一轮任务的标准步骤
+
+1. 明确本轮只回答的一个问题、交付物和通过标准。
+2. 指挥从 T001 起编号，在 `outputs/agents/YYYY-MM-DD/T001-short-name/` 中先写 TASK.md、STATUS.json（ready），并建 logs/、results/ 父目录。
+3. 指挥给出填好绝对路径的转发提示词。用户转发即为本任务指派；普通执行细节由执行 agent 处理。
+4. 执行 agent 阅读 AGENTS.md 和 TASK.md，保存新的执行前 Git 状态，更新为 in_progress，完成本轮工作。
+5. 执行 agent 写 REPORT.md，状态设为 submitted；失败或阻塞时如实记录，同样写报告。提交后停止。
+6. 用户把 REPORT.md 绝对路径交回指挥。指挥检查原始证据，写 REVIEW.md，给出 accepted 或 changes_requested。
+7. 通过后再安排下一项；返工保留原证据，另设关联目录。默认只维护一个待执行或执行中的任务。
+
+## 文件格式
 
 ```text
-你是 Inference 仓库本轮任务的执行 agent。
-
-工作仓库：/home/m0nesy/Postgraduate/Inference
-请先完整阅读 /home/m0nesy/Postgraduate/Inference/AGENTS.md。
-
-任务编号：<T001>
-任务名称：<名称>
-前置报告：<绝对路径；无则写“无”>
-结果目录：/home/m0nesy/Postgraduate/Inference/outputs/agents/<YYYY-MM-DD>/<T001-short-name>/
-
-请先建立结果目录，按约定保存 TASK.md、STATUS.json 和执行前工作区状态。
-只完成下述任务，保留已有修改。所有验证日志和本轮产物写入结果目录。
-完成或阻塞时均须写 REPORT.md；不要自动开展下一项建议。
-最后回复 REPORT.md 的绝对路径、结论和验证情况，供指挥 agent 审核。
-
-<按 templates/TASK.md 补齐的本轮目标、范围、约束和验收条件>
+outputs/agents/YYYY-MM-DD/T001-short-name/
+├── TASK.md
+├── STATUS.json
+├── REPORT.md
+├── REVIEW.md
+├── logs/
+└── results/
 ```
 
-## 指挥 agent 如何查阅
+| 文件 | 内容 | 写入角色 |
+| --- | --- | --- |
+| TASK.md | 原始需求、研究问题、范围、固定条件、步骤、验收、停止条件 | 指挥 |
+| STATUS.json | 编号、人员、状态、时间、前置任务 | 按阶段更新 |
+| REPORT.md | 结论、逐项验收、修改、实际命令、结果证据、局限 | 执行 |
+| REVIEW.md | 审核结论、检查证据、问题与是否满足下一轮条件 | 指挥 |
 
-优先打开用户回传或上轮提示词指定的 `REPORT.md`，再查看 `STATUS.json`、`logs/`、`results/` 和实际修改。任务产物在忽略目录下，默认文件搜索可能不显示它们；可用：
+需求只有任务目录内的 TASK.md 一份。模板只在 `coordination/templates/` 维护；不维护平行任务书或旧任务自动续做清单。
 
-```bash
-rg --files --hidden --no-ignore outputs/agents -g REPORT.md -g STATUS.json -g REVIEW.md
+## 任务书的最低要求
+
+- 一项主要问题；说明完成后能作出什么判断。
+- 明确允许修改的文件或模块；列出本轮不涉及的扩展。
+- 涉及实验时，固定模型、输入、配置、对照、指标与统计窗口，说明实际样本和运行规模。
+- 给出可观察、可核对的验收标准与证据文件，避免“优化一下”“尽可能完善”等开放范围。
+- 指定失败、超时或缺少条件时如何记录和停止；不默认为了得到收益无限调参。
+- 指定完整的输出路径，不覆盖既有运行。清楚区分预检、功能验证、有限样本与持续负载实验。
+
+## 通用转发文本
+
+指挥在派发时补齐下列路径；不将占位文本原样交给执行 agent。
+
+```text
+你是 Inference 仓库本轮执行 agent。
+仓库：/home/s223/m0nesy/Inference
+先完整阅读仓库根目录 AGENTS.md，然后执行：
+<本轮 TASK.md 的完整绝对路径>
+
+只完成任务书规定的目标与范围。保留任务原文，更新同目录 STATUS.json，保存执行前工作区状态与原始证据。完成或失败/阻塞均须写 REPORT.md。提交后停止，等待指挥审核。
+
+最后回复本轮 REPORT.md 的完整绝对路径、结论和实际验证情况。
 ```
 
-`REVIEW.md` 建议包含：审核结论（通过/需返工/待补证据）、检查了哪些代码或结果、发现的问题、下一轮任务及其前置条件。报告中的下一步建议是输入材料，不自动成为已授权的新任务。
+旧任务和旧结论不构成当前的派发或验收状态。新任务编号从 T001 开始；本规范没有创建任何 ready 或 in_progress 的任务。

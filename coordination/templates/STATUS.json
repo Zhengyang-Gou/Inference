@@ -1,0 +1,11 @@
+{
+  "task_id": "<任务编号>",
+  "title": "<任务名称>",
+  "agent": null,
+  "status": "ready",
+  "created_at": "<ISO 8601，+08:00>",
+  "started_at": null,
+  "updated_at": "<ISO 8601，+08:00>",
+  "parent_task": null,
+  "report": "REPORT.md"
+}

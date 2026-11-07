@@ -5,8 +5,8 @@ from dataclasses import asdict, replace
 from pathlib import Path
 
 from .expert_profile import validate_profile as validate_ep_profile
-from .factory import backend_identity as resolve_backend_identity
-from .factory import create_backend
+from .build import require_backend
+from .client import Ns3Backend
 from .compute_profile import ComputeProfile
 from .settings import KV_TRANSFER_MODES, CONTROLLED_KV_MODES
 from ..workload.inputs import load_workload
@@ -27,7 +27,8 @@ _Baseline = ExecutionCoordinator
 
 
 def run_baseline(config, output_dir, workload_path=None, profile_path=None, make_plots=False, kv_mode=None, *, hooks=None, source_snapshot=None, binding_plan=None):
-    backend_identity = resolve_backend_identity(config)
+    backend_state = require_backend()
+    backend_identity = json.loads(backend_state['manifest'].read_text())
     if kv_mode is not None:
         config = replace(config, runtime=replace(config.runtime, kv_transfer_mode=kv_mode))
     validate_mlu_settings(config)
@@ -154,18 +155,21 @@ def run_baseline(config, output_dir, workload_path=None, profile_path=None, make
     from ..experiments.provenance import record_run
     record_run(output, output/'config.json', profile_copy, output/'workload.json',
                backend_identity, 'end_to_end', source_snapshot)
-    with create_backend(config, output / "network", hooks=hooks) as backend:
+    native_schedule = getattr(hooks, "native_schedule", None) if hooks is not None else None
+    with Ns3Backend(config.topology, output / "network", config.runtime.seed,
+                    config.runtime.congestion_control, config.runtime.packet_payload_bytes,
+                    config.runtime.switch_buffer_bytes, config.runtime.rpc_timeout_seconds,
+                    network_priority_enabled=config.runtime.network_priority_enabled,
+                    submission_batch_size=config.runtime.rpc_submission_batch_size,
+                    native_schedule=native_schedule) as backend:
         metadata = {"synthetic": profile.provenance["synthetic"] or workload_provenance["synthetic"],
                     "backend": backend.metadata, "compute_profile_provenance": profile.provenance,
                     "workload_provenance": workload_provenance, "effective_baseline": snapshot["effective_baseline"],
                     "compute_profile_sha256": hashlib.sha256(profile_copy.read_bytes()).hexdigest(),
                     "recording": asdict(config.recording)}
-        suffix = "flowsim" if config.feedback.network_backend == "flowsim" else "ns3"
-        strategy = {"whole_ready_immediate": "round_robin_fifo_" + suffix,
-                    "whole_ready_chunked": "whole_chunked_" + suffix,
-                    "layer_ready_immediate": "layer_ready_immediate_" + suffix,
-                    "layer_ready_fifo": "layer_ready_fifo_" + suffix,
-                    "layer_ready_slo": "layer_ready_slo_" + suffix}[config.runtime.kv_transfer_mode]
+        strategy = {"whole_ready_immediate": "round_robin_fifo_ns3", "whole_ready_chunked": "whole_chunked_ns3",
+                    "layer_ready_immediate": "layer_ready_immediate_ns3", "layer_ready_fifo": "layer_ready_fifo_ns3",
+                    "layer_ready_slo": "layer_ready_slo_ns3"}[config.runtime.kv_transfer_mode]
         observer_class = StateObserver if config.feedback.state_observation_enabled else DisabledStateObserver
         with TraceRecorder(output / "events.jsonl", strategy, config.runtime.seed, metadata,
                            detailed=config.recording.detailed) as recorder, \
