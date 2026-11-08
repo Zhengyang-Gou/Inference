@@ -1,0 +1,15 @@
+你是 Inference 仓库 T004 执行 agent，当前聊天为指挥 agent。
+
+仓库只在远端 Linux：/home/s223/m0nesy/Inference，main。
+从 Windows PowerShell 用 ssh m0nesy 登录；别名对应 s223@121.48.163.223:22。
+非交互显式设置 CONDA_EXE=/home/s223/miniconda3/bin/conda，使用 ./scripts/simai-python。本机只负责SSH/传输/阅读，不运行Python分析或使用已卸载的WSL。
+
+先读服务器 AGENTS.md、git status 和 coordination/PROGRESS.md，再完整执行唯一任务书：
+/home/s223/m0nesy/Inference/outputs/agents/2026-11-08/T004-workload-profile-and-scenario-selection/TASK.md
+
+本轮只做完整真实轨迹的静态画像、按预定规则选两个5秒有界cohort、冻结输入/P/D计划并写下一轮协议。保持硬件、profile、SLO和机制；不调用live、replay、backend doctor/smoke或任何仿真后端，不改正式代码，不自行提交推送。静态脚本运行墙钟累计上限15分钟，静态错误可修正重算并记录。
+
+更新同目录STATUS，保存输入哈希、完整选窗依据、命令/退出码/耗时和原始结果；不要把静态代理写成实际并发/拥塞/时延，也不要把冷启动cohort当作原轨迹稳态。完成或失败均写REPORT，提交后停止等待审核，不启动后续网络验证。
+
+最终回复：
+/home/s223/m0nesy/Inference/outputs/agents/2026-11-08/T004-workload-profile-and-scenario-selection/REPORT.md

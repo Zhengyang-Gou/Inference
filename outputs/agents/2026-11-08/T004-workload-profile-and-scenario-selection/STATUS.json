@@ -1,0 +1,11 @@
+{
+  "task_id": "T004",
+  "title": "真实负载画像、固定选窗与有界实验协议",
+  "agent": null,
+  "status": "ready",
+  "created_at": "2026-11-08T09:59:13+08:00",
+  "started_at": null,
+  "updated_at": "2026-11-08T09:59:13+08:00",
+  "parent_task": "T003-r02",
+  "report": "REPORT.md"
+}
