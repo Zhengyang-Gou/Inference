@@ -1,0 +1,45 @@
+{
+  "checks_total": 37,
+  "passed": 37,
+  "failed": [],
+  "traffic": {
+    "kv": {
+      "count": 671,
+      "minimum_ns": 0,
+      "maximum_ns": 144,
+      "mean_ns": 0.22056631892697467,
+      "positive": 3,
+      "negative": 0,
+      "nonzero": 3,
+      "over_1us": 0,
+      "below_minus_1us": 0
+    },
+    "collective": {
+      "count": 201006,
+      "minimum_ns": -127,
+      "maximum_ns": 136,
+      "mean_ns": 0.0016417420375511179,
+      "positive": 5,
+      "negative": 1,
+      "nonzero": 6,
+      "over_1us": 0,
+      "below_minus_1us": 0
+    }
+  },
+  "stage_nonzero": [
+    {
+      "stage_index": 7059,
+      "delta_ns": 9,
+      "call_id": "ep-3530",
+      "kind": "ep_combine",
+      "phase": "decode",
+      "start_ns": 4657926355,
+      "ack_ns": 4657935759,
+      "local_ack_ns": 4657926945
+    }
+  ],
+  "gate_count": 8,
+  "token_boundaries": 550,
+  "parent_A6": "failed",
+  "simulation_starts": 0
+}

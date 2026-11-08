@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "task": "T003-r02 static recomputation",
+  "evidence_class": "WSL historical evidence; read-only server recomputation; no new simulation",
+  "sources": {
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/flows.csv": "0543e2319d2b6d3ff19fae4b1c299dda333cef1dde918ca004b1d448ad8b89d3",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/stages.json": "704ae8302c027b27f963639fe42d69f769e04004cf18333d7919edc238d43fe0",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-both/completions.csv": "42b18ffe7d9e1d4e4d1d189ac4793895fc2353d927e58aa3f75f5679033ea2b7",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-collective/completions.csv": "508f43a8528ae1dc503f463afd1efbecf92ef88b02314ec3b0886d30d7080a0b",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-kv/completions.csv": "274a0530860a42bf0194afb445ca2b43e5fd1c3f4371bcfa9481d0b66f081d0f",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/flow-comparison.csv": "ca3a04424348e7970e9d3aad93d360ac17ca0ca94e982475c0b1448745661da1",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/stage-comparison.csv": "855a7ea6ff1ae8f0fd24b1ff83b8a35aa1c3373710cb49844ac4804bad457f79",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/request-impact.csv": "86f4dd69c3958af9e9cb1b87989738d6e74643163453410ee64f21144800ef7d",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/contention-summary.json": "2054304f523e05f216223cad02d8d1f9767f40c128bde60eab13edb1eeafc36d",
+    "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/request-impact-summary.json": "a443d664e448eff81b12fdfc28ef564610999e733fce197bb5067be3af8172a6"
+  },
+  "traffic_classes": {
+    "kv": {
+      "flow_count": 671,
+      "logical_payload_bytes": 274974336,
+      "isolated_replay": "replay-kv",
+      "added_latency_ns": {
+        "count": 671,
+        "mean": 0.22056631892697467,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": 0,
+        "maximum": 144
+      },
+      "positive_delta_count": 3,
+      "negative_delta_count": 0,
+      "zero_delta_count": 668,
+      "delayed_over_1us_count": 0,
+      "improved_over_1us_count": 0,
+      "nonzero_flow_details": [
+        {
+          "flow_index": 20449,
+          "delta_ns": 2,
+          "request_id": "azure-conv-000000002",
+          "stage_index": -1,
+          "src": "2",
+          "dst": "15"
+        },
+        {
+          "flow_index": 23505,
+          "delta_ns": 2,
+          "request_id": "azure-conv-000000002",
+          "stage_index": -1,
+          "src": "2",
+          "dst": "15"
+        },
+        {
+          "flow_index": 117354,
+          "delta_ns": 144,
+          "request_id": "azure-conv-000000006",
+          "stage_index": -1,
+          "src": "6",
+          "dst": "12"
+        }
+      ]
+    },
+    "collective": {
+      "flow_count": 201006,
+      "logical_payload_bytes": 16977795072,
+      "isolated_replay": "replay-collective",
+      "added_latency_ns": {
+        "count": 201006,
+        "mean": 0.0016417420375511179,
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "minimum": -127,
+        "maximum": 136
+      },
+      "positive_delta_count": 5,
+      "negative_delta_count": 1,
+      "zero_delta_count": 201000,
+      "delayed_over_1us_count": 0,
+      "improved_over_1us_count": 0,
+      "nonzero_flow_details": [
+        {
+          "flow_index": 20448,
+          "delta_ns": 64,
+          "request_id": "azure-conv-000000001",
+          "stage_index": 6269,
+          "src": "15",
+          "dst": "30"
+        },
+        {
+          "flow_index": 23504,
+          "delta_ns": 136,
+          "request_id": "azure-conv-000000001",
+          "stage_index": 7059,
+          "src": "15",
+          "dst": "30"
+        },
+        {
+          "flow_index": 26065,
+          "delta_ns": 53,
+          "request_id": "azure-conv-000000001",
+          "stage_index": 7673,
+          "src": "30",
+          "dst": "8"
+        },
+        {
+          "flow_index": 117355,
+          "delta_ns": 77,
+          "request_id": "azure-conv-000000005",
+          "stage_index": 37402,
+          "src": "27",
+          "dst": "12"
+        },
+        {
+          "flow_index": 117620,
+          "delta_ns": 127,
+          "request_id": "azure-conv-000000005",
+          "stage_index": 37473,
+          "src": "12",
+          "dst": "27"
+        },
+        {
+          "flow_index": 117621,
+          "delta_ns": -127,
+          "request_id": "azure-conv-000000005",
+          "stage_index": 37473,
+          "src": "13",
+          "dst": "27"
+        }
+      ]
+    }
+  },
+  "ep_stages": {
+    "stage_count": 64148,
+    "added_latency_ns": {
+      "count": 64148,
+      "mean": 0.00014030055496663964,
+      "p50": 0.0,
+      "p95": 0.0,
+      "p99": 0.0,
+      "minimum": 0,
+      "maximum": 9
+    },
+    "nonzero_stage_count": 1,
+    "max_added_ns": 9,
+    "min_added_ns": 0,
+    "delayed_over_1us_count": 0,
+    "stage_reconstruction_vs_live_max_error_ns": 0,
+    "final_layer_combine_stage_rows": 553,
+    "final_layer_combine_max_added_us": 0.0,
+    "final_layer_combine_nonzero_count": 0,
+    "stage_csv_rows": 64148,
+    "stage_csv_max_abs_delta_us_difference": 0.0
+  },
+  "request_necessary_boundaries": {
+    "requests": 8,
+    "delta_G_ns_all": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "delta_G_nonzero_count": 0,
+    "T_KV_all_both_matches_live_count": 8,
+    "gate_determining_kv_flow_delta_ns": {
+      "azure-conv-000000000": 0,
+      "azure-conv-000000001": 0,
+      "azure-conv-000000002": 0,
+      "azure-conv-000000003": 0,
+      "azure-conv-000000004": 0,
+      "azure-conv-000000005": 0,
+      "azure-conv-000000006": 0,
+      "azure-conv-000000007": 0
+    },
+    "mapped_decode_token_boundaries": 542,
+    "max_boundary_exposure_us": 0.0,
+    "final_prefill_combine_added_us_all": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "first_decode_token_combine_added_us_all": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "following_decode_combine_max_added_us": 0.0,
+    "all_delta_G_zero": true,
+    "all_gate_determining_kv_flows_unaffected": true
+  },
+  "flow_comparison_cross_check": {
+    "rows": 201677,
+    "max_abs_delta_ns_difference": 0,
+    "all_delta_rows_match": true,
+    "recorded_max_us": {
+      "kv": 0.144,
+      "collective": 0.136
+    },
+    "recorded_min_us": {
+      "kv": 0.0,
+      "collective": -0.127
+    }
+  },
+  "summary_cross_check": {
+    "both_replay_max_ack_error_ns": 0,
+    "recorded_max_kv_added_us": 0.144,
+    "recorded_max_ep_added_us": 0.136,
+    "recorded_min_ep_added_us": -0.127,
+    "recorded_max_stage_added_us": 0.009,
+    "recorded_layer3_status": "not_measured",
+    "kv_max_matches_144ns": true,
+    "ep_max_matches_136ns": true,
+    "ep_min_matches_minus_127ns": true,
+    "stage_max_matches_9ns": true,
+    "layer3_not_measured": true
+  },
+  "checks": {
+    "flow_rows": 201677,
+    "stage_rows": 64148,
+    "flow_cross_all_match": true,
+    "stage_csv_max_abs_delta_us_difference": 0.0,
+    "stage_reconstruction_error_ns": 0,
+    "boundary_all_zero": true,
+    "cross_all_match": true,
+    "all_passed": true
+  },
+  "one_microsecond_note": "1 us is only a descriptive count threshold, not a statistical significance test; zero count above 1 us does not mean zero interference.",
+  "corrected_conclusion": "Detected extremely weak network interference (KV->EP max 136 ns, EP->KV max 144 ns, one reverse delta -127 ns, one EP stage +9 ns); exposure at the specified frozen request-necessary boundaries is zero; end-to-end counterfactual performance change was not measured.",
+  "corrected_conclusion_zh": "检出极弱网络互扰；冻结条件下指定请求边界暴露为零；端到端反事实性能变化未测。"
+}

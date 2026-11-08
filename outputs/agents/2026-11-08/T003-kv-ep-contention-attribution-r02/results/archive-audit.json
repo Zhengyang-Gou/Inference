@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "task": "T003-r02 archive audit",
+  "evidence_class": "WSL historical evidence; read-only server audit, not a new experiment",
+  "archive_json_sha256": "100771f40b01bc8187dff0b94bdc54af60c1ca7acf884159f72ea974b37e0ec4",
+  "package": {
+    "path": "artifacts/history/wsl-2026-11-07-task-records/records-full.tar.gz",
+    "expected_sha256": "5ea2d7c640e060c32b259a0d8a94f97b758f05b29bf562c11611f8704fc18a8a",
+    "actual_sha256": "5ea2d7c640e060c32b259a0d8a94f97b758f05b29bf562c11611f8704fc18a8a",
+    "expected_bytes": 58791704,
+    "actual_bytes": 58791704,
+    "match": true
+  },
+  "manifest_file_count": 323,
+  "original_file_count": 323,
+  "tracked_snapshot_count": 262,
+  "extracted_file_count": 323,
+  "per_file_hash_mismatches": [],
+  "all_per_file_hashes_match": true,
+  "server_live_copies_checked": 262,
+  "server_live_copies_mismatched": [],
+  "server_historical_originals_unchanged": true,
+  "t003_archive_entries": 137,
+  "independent_audit_dir": "work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit",
+  "note": "ARCHIVE.json hash verified before reading the package; extraction to an independent work directory did not overwrite any task file.",
+  "all_passed": true
+}

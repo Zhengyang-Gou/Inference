@@ -1,0 +1,39 @@
+{
+  "checked_at": "see logs/r02-07-verify.log",
+  "problems": [],
+  "all_ok": true,
+  "git_status_lines": 0,
+  "original_task_tree_unchanged": true,
+  "original_task_files": 84,
+  "deliverable_files": 22,
+  "deliverable_bytes": 110410,
+  "status": "submitted",
+  "a6": "failed",
+  "gate": "failed",
+  "live_starts": 2,
+  "conclusion": "A6 must evaluate start count and stop conditions, not only effective-stage wall clock; the failed start also counts toward the aggregate budget."
+}
+--- files ---
+    17964  6252dd4debba  REPORT.md
+     6354  65bbd91c2788  SCOPE.md
+     1111  4190c11ea5b2  STATUS.json
+       41  4dd7a3efb5f1  logs/baseline-head.txt
+       64  a434565b0dd0  logs/baseline-log.txt
+        0  e3b0c44298fc  logs/baseline-status.txt
+      961  ab83194ab529  logs/r02-00-environment.log
+      169  7cc2c776fe1e  logs/r02-01-archive-audit.log
+      211  5006fdeba1bb  logs/r02-02-static-recompute.log
+      496  fbd0b3c7ff96  logs/r02-03-acceptance-revision.log
+      114  56ccb18b8fb3  logs/r02-04-tree-hash-after.log
+      127  2074f78f8ec8  logs/r02-05-exit-codes.txt
+      239  8760df9288a7  logs/r02-06-command-record.log
+        0  e3b0c44298fc  logs/r02-07-verify.log
+    13915  d17b9a3a0fa7  results/acceptance-summary.corrected.json
+     1232  9db36711714f  results/archive-audit.json
+     7115  2e2ef993cd75  results/conclusion-correction.md
+     8607  84178f0b1ef4  results/deviation-register.json
+     4546  306ed1b72f62  results/server-static-review-2026-11-08.json
+     8102  011f0071f335  results/static-recomputation.json
+    19521  12ce2d1138b1  results/t003-original-tree-after.json
+    19521  12ce2d1138b1  results/t003-original-tree-before.json
+EXIT_CODE=0

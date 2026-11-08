@@ -1,0 +1,5 @@
+r02-01-archive-audit 0
+r02-02-static-recompute 0
+r02-03-acceptance-revision 3
+r02-04-tree-hash-after 0
+r02-06-command-record 0

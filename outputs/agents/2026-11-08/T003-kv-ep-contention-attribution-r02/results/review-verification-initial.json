@@ -1,0 +1,4300 @@
+{
+  "reviewed_at": "2026-11-08T09:38:10+08:00",
+  "reviewer": "commander",
+  "scope": "Independent server static review of T003-r02 corrections and historical evidence. No simulation/replay.",
+  "checks_total": 37,
+  "passed": 36,
+  "failed": [
+    {
+      "check": "original_T003_matches_reported_tree",
+      "passed": false,
+      "detail": null
+    }
+  ],
+  "checks": [
+    {
+      "check": "archive_package_identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "323_extracted_and_262_tracked_hashes",
+      "passed": true,
+      "detail": {
+        "extracted_mismatches": [],
+        "live_mismatches": []
+      }
+    },
+    {
+      "check": "original_T003_matches_reported_tree",
+      "passed": false,
+      "detail": null
+    },
+    {
+      "check": "r02_recompute_source_hashes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original_eight_request_prefix",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "parent_binding_projection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "estimated_profile_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "8_completed_550_tokens",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "token_indices_and_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "cohort_failed_incomplete_zero",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "32_memory_domains_released",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "32074_EP_calls_no_active_residue",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "flow_class_counts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "completion_identity.both",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "completion_identity.collective",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "completion_identity.kv",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "completion_no_duplicate_or_invalid_ID",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "both_ACK_exactly_reproduces_live",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "reported_signed_flow_deltas",
+      "passed": true,
+      "detail": {
+        "kv": {
+          "count": 671,
+          "minimum_ns": 0,
+          "maximum_ns": 144,
+          "mean_ns": 0.22056631892697467,
+          "positive": 3,
+          "negative": 0,
+          "nonzero": 3,
+          "over_1us": 0,
+          "below_minus_1us": 0
+        },
+        "collective": {
+          "count": 201006,
+          "minimum_ns": -127,
+          "maximum_ns": 136,
+          "mean_ns": 0.0016417420375511179,
+          "positive": 5,
+          "negative": 1,
+          "nonzero": 6,
+          "over_1us": 0,
+          "below_minus_1us": 0
+        }
+      }
+    },
+    {
+      "check": "all_flow_comparison_rows_recomputed",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "endpoint_pairs_separate_by_class",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "64148_stage_gates_exactly_reproduce_live",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "one_9ns_stage_difference",
+      "passed": true,
+      "detail": [
+        {
+          "stage_index": 7059,
+          "delta_ns": 9,
+          "call_id": "ep-3530",
+          "kind": "ep_combine",
+          "phase": "decode",
+          "start_ns": 4657926355,
+          "ack_ns": 4657935759,
+          "local_ack_ns": 4657926945
+        }
+      ]
+    },
+    {
+      "check": "all_flow_identity_links_and_stage_links",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "all_stages_link_to_correct_calls",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "8_KV_gates_and_first_tokens_independently_rebuilt",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "671_KV_payload_and_ACK_identities",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "all_550_token_final_combine_identities",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "all_550_final_boundaries_zero_exposure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "end_to_end_counterfactual_not_measured",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "native_calendar_complete",
+      "passed": true,
+      "detail": {
+        "TIMER": 298164,
+        "SEND": 201677,
+        "LOCAL_PORTS": 175334
+      }
+    },
+    {
+      "check": "two_live_starts_first_already_entered_network",
+      "passed": true,
+      "detail": {
+        "attempts": [
+          {
+            "log": "04-live-console.log",
+            "start": "2026-11-07T19:35:40+0800",
+            "exit_code": 1
+          },
+          {
+            "log": "07-live-console.log",
+            "start": "2026-11-07T19:42:41+0800",
+            "exit_code": 0
+          }
+        ],
+        "first_time_ns": 472621,
+        "first_native_commands": 12
+      }
+    },
+    {
+      "check": "A6_failed_and_not_all_passed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "four_process_findings_registered",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "r02_source_statistics_match_independent_results",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "evidence_paths_resolve_in_verified_archive",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "check": "original_task_files_preserved_during_review",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "traffic": {
+    "kv": {
+      "count": 671,
+      "minimum_ns": 0,
+      "maximum_ns": 144,
+      "mean_ns": 0.22056631892697467,
+      "positive": 3,
+      "negative": 0,
+      "nonzero": 3,
+      "over_1us": 0,
+      "below_minus_1us": 0
+    },
+    "collective": {
+      "count": 201006,
+      "minimum_ns": -127,
+      "maximum_ns": 136,
+      "mean_ns": 0.0016417420375511179,
+      "positive": 5,
+      "negative": 1,
+      "nonzero": 6,
+      "over_1us": 0,
+      "below_minus_1us": 0
+    }
+  },
+  "nonzero_stage": [
+    {
+      "stage_index": 7059,
+      "delta_ns": 9,
+      "call_id": "ep-3530",
+      "kind": "ep_combine",
+      "phase": "decode",
+      "start_ns": 4657926355,
+      "ack_ns": 4657935759,
+      "local_ack_ns": 4657926945
+    }
+  ],
+  "gate_rows": [
+    {
+      "request_id": "azure-conv-000000000",
+      "prefill_end_ns": 84032527,
+      "first_token_ns": 84032527,
+      "KV_both_ns": 84045361,
+      "KV_isolated_ns": 84045361,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "prefill_end_ns": 4401182672,
+      "first_token_ns": 4401182672,
+      "KV_both_ns": 4401200096,
+      "KV_isolated_ns": 4401200096,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "prefill_end_ns": 4737969763,
+      "first_token_ns": 4737969763,
+      "KV_both_ns": 4737982434,
+      "KV_isolated_ns": 4737982434,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "prefill_end_ns": 4774114829,
+      "first_token_ns": 4774114829,
+      "KV_both_ns": 4774125182,
+      "KV_isolated_ns": 4774125182,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "prefill_end_ns": 5949377867,
+      "first_token_ns": 5949377867,
+      "KV_both_ns": 5949388220,
+      "KV_isolated_ns": 5949388220,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "prefill_end_ns": 6396380664,
+      "first_token_ns": 6396380664,
+      "KV_both_ns": 6396397740,
+      "KV_isolated_ns": 6396397740,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "prefill_end_ns": 8025506801,
+      "first_token_ns": 8025506801,
+      "KV_both_ns": 8025517664,
+      "KV_isolated_ns": 8025517664,
+      "delta_G_ns": 0
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "prefill_end_ns": 8337098116,
+      "first_token_ns": 8337098116,
+      "KV_both_ns": 8337111274,
+      "KV_isolated_ns": 8337111274,
+      "delta_G_ns": 0
+    }
+  ],
+  "token_boundaries": [
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 1,
+      "stage_index": 115,
+      "delta_ns": 0,
+      "token_ns": 84032527
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 2,
+      "stage_index": 231,
+      "delta_ns": 0,
+      "token_ns": 100857298
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 3,
+      "stage_index": 347,
+      "delta_ns": 0,
+      "token_ns": 117629524
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 4,
+      "stage_index": 463,
+      "delta_ns": 0,
+      "token_ns": 134360473
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 5,
+      "stage_index": 579,
+      "delta_ns": 0,
+      "token_ns": 151172113
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 6,
+      "stage_index": 695,
+      "delta_ns": 0,
+      "token_ns": 167901199
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 7,
+      "stage_index": 811,
+      "delta_ns": 0,
+      "token_ns": 184729353
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 8,
+      "stage_index": 927,
+      "delta_ns": 0,
+      "token_ns": 201335877
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 9,
+      "stage_index": 1043,
+      "delta_ns": 0,
+      "token_ns": 218269080
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 10,
+      "stage_index": 1159,
+      "delta_ns": 0,
+      "token_ns": 234877764
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 11,
+      "stage_index": 1275,
+      "delta_ns": 0,
+      "token_ns": 251649423
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 12,
+      "stage_index": 1391,
+      "delta_ns": 0,
+      "token_ns": 268379940
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 13,
+      "stage_index": 1507,
+      "delta_ns": 0,
+      "token_ns": 285029469
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 14,
+      "stage_index": 1623,
+      "delta_ns": 0,
+      "token_ns": 301935587
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 15,
+      "stage_index": 1739,
+      "delta_ns": 0,
+      "token_ns": 318702359
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 16,
+      "stage_index": 1855,
+      "delta_ns": 0,
+      "token_ns": 335651347
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 17,
+      "stage_index": 1971,
+      "delta_ns": 0,
+      "token_ns": 352336402
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 18,
+      "stage_index": 2087,
+      "delta_ns": 0,
+      "token_ns": 369231190
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 19,
+      "stage_index": 2203,
+      "delta_ns": 0,
+      "token_ns": 386039671
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 20,
+      "stage_index": 2319,
+      "delta_ns": 0,
+      "token_ns": 402852607
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 21,
+      "stage_index": 2435,
+      "delta_ns": 0,
+      "token_ns": 419622538
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 22,
+      "stage_index": 2551,
+      "delta_ns": 0,
+      "token_ns": 436315936
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 23,
+      "stage_index": 2667,
+      "delta_ns": 0,
+      "token_ns": 453142362
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 24,
+      "stage_index": 2783,
+      "delta_ns": 0,
+      "token_ns": 469831305
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 25,
+      "stage_index": 2899,
+      "delta_ns": 0,
+      "token_ns": 486698441
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 26,
+      "stage_index": 3015,
+      "delta_ns": 0,
+      "token_ns": 503305532
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 27,
+      "stage_index": 3131,
+      "delta_ns": 0,
+      "token_ns": 520237736
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 28,
+      "stage_index": 3247,
+      "delta_ns": 0,
+      "token_ns": 536847419
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 29,
+      "stage_index": 3363,
+      "delta_ns": 0,
+      "token_ns": 553619078
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 30,
+      "stage_index": 3479,
+      "delta_ns": 0,
+      "token_ns": 570309884
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 31,
+      "stage_index": 3595,
+      "delta_ns": 0,
+      "token_ns": 586960277
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 32,
+      "stage_index": 3711,
+      "delta_ns": 0,
+      "token_ns": 603865963
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 33,
+      "stage_index": 3827,
+      "delta_ns": 0,
+      "token_ns": 620593888
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 34,
+      "stage_index": 3943,
+      "delta_ns": 0,
+      "token_ns": 637542012
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 35,
+      "stage_index": 4059,
+      "delta_ns": 0,
+      "token_ns": 654267912
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 36,
+      "stage_index": 4175,
+      "delta_ns": 0,
+      "token_ns": 671162133
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 37,
+      "stage_index": 4291,
+      "delta_ns": 0,
+      "token_ns": 688011459
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 38,
+      "stage_index": 4407,
+      "delta_ns": 0,
+      "token_ns": 704823828
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 39,
+      "stage_index": 4523,
+      "delta_ns": 0,
+      "token_ns": 721635036
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 40,
+      "stage_index": 4639,
+      "delta_ns": 0,
+      "token_ns": 738367281
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 41,
+      "stage_index": 4755,
+      "delta_ns": 0,
+      "token_ns": 755193707
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 42,
+      "stage_index": 4871,
+      "delta_ns": 0,
+      "token_ns": 771882515
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 43,
+      "stage_index": 4987,
+      "delta_ns": 0,
+      "token_ns": 788750083
+    },
+    {
+      "request_id": "azure-conv-000000000",
+      "token_index": 44,
+      "stage_index": 5103,
+      "delta_ns": 0,
+      "token_ns": 805357903
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 1,
+      "stage_index": 5219,
+      "delta_ns": 0,
+      "token_ns": 4401182672
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 2,
+      "stage_index": 5335,
+      "delta_ns": 0,
+      "token_ns": 4417905256
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 3,
+      "stage_index": 5451,
+      "delta_ns": 0,
+      "token_ns": 4434753718
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 4,
+      "stage_index": 5567,
+      "delta_ns": 0,
+      "token_ns": 4451380050
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 5,
+      "stage_index": 5683,
+      "delta_ns": 0,
+      "token_ns": 4468308204
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 6,
+      "stage_index": 5799,
+      "delta_ns": 0,
+      "token_ns": 4484917455
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 7,
+      "stage_index": 5915,
+      "delta_ns": 0,
+      "token_ns": 4501686225
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 8,
+      "stage_index": 6031,
+      "delta_ns": 0,
+      "token_ns": 4518374871
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 9,
+      "stage_index": 6147,
+      "delta_ns": 0,
+      "token_ns": 4535022375
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 10,
+      "stage_index": 6274,
+      "delta_ns": 0,
+      "token_ns": 4552718621
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 11,
+      "stage_index": 6412,
+      "delta_ns": 0,
+      "token_ns": 4571579475
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 12,
+      "stage_index": 6549,
+      "delta_ns": 0,
+      "token_ns": 4589654036
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 13,
+      "stage_index": 6687,
+      "delta_ns": 0,
+      "token_ns": 4608023022
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 14,
+      "stage_index": 6825,
+      "delta_ns": 0,
+      "token_ns": 4627068841
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 15,
+      "stage_index": 6962,
+      "delta_ns": 0,
+      "token_ns": 4645422069
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 16,
+      "stage_index": 7102,
+      "delta_ns": 0,
+      "token_ns": 4663137186
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 17,
+      "stage_index": 7243,
+      "delta_ns": 0,
+      "token_ns": 4680936811
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 18,
+      "stage_index": 7384,
+      "delta_ns": 0,
+      "token_ns": 4698637964
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 19,
+      "stage_index": 7527,
+      "delta_ns": 0,
+      "token_ns": 4716115165
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 20,
+      "stage_index": 7684,
+      "delta_ns": 0,
+      "token_ns": 4733279135
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 1,
+      "stage_index": 7718,
+      "delta_ns": 0,
+      "token_ns": 4737969763
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 21,
+      "stage_index": 7921,
+      "delta_ns": 0,
+      "token_ns": 4751062827
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 2,
+      "stage_index": 7990,
+      "delta_ns": 0,
+      "token_ns": 4755888775
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 22,
+      "stage_index": 8190,
+      "delta_ns": 0,
+      "token_ns": 4768846119
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 3,
+      "stage_index": 8260,
+      "delta_ns": 0,
+      "token_ns": 4773671962
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 1,
+      "stage_index": 8263,
+      "delta_ns": 0,
+      "token_ns": 4774114829
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 23,
+      "stage_index": 8502,
+      "delta_ns": 0,
+      "token_ns": 4787322583
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 4,
+      "stage_index": 8613,
+      "delta_ns": 0,
+      "token_ns": 4793540225
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 2,
+      "stage_index": 8614,
+      "delta_ns": 0,
+      "token_ns": 4793619630
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 24,
+      "stage_index": 8857,
+      "delta_ns": 0,
+      "token_ns": 4806976980
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 5,
+      "stage_index": 8958,
+      "delta_ns": 0,
+      "token_ns": 4812732618
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 3,
+      "stage_index": 8961,
+      "delta_ns": 0,
+      "token_ns": 4812959979
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 25,
+      "stage_index": 9198,
+      "delta_ns": 0,
+      "token_ns": 4826357250
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 6,
+      "stage_index": 9306,
+      "delta_ns": 0,
+      "token_ns": 4832558637
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 4,
+      "stage_index": 9310,
+      "delta_ns": 0,
+      "token_ns": 4832819195
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 26,
+      "stage_index": 9550,
+      "delta_ns": 0,
+      "token_ns": 4846188282
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 7,
+      "stage_index": 9657,
+      "delta_ns": 0,
+      "token_ns": 4852196423
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 5,
+      "stage_index": 9660,
+      "delta_ns": 0,
+      "token_ns": 4852383649
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 27,
+      "stage_index": 9903,
+      "delta_ns": 0,
+      "token_ns": 4866124160
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 6,
+      "stage_index": 10000,
+      "delta_ns": 0,
+      "token_ns": 4871545038
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 8,
+      "stage_index": 10001,
+      "delta_ns": 0,
+      "token_ns": 4871633400
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 28,
+      "stage_index": 10256,
+      "delta_ns": 0,
+      "token_ns": 4885751404
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 7,
+      "stage_index": 10348,
+      "delta_ns": 0,
+      "token_ns": 4890882142
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 9,
+      "stage_index": 10349,
+      "delta_ns": 0,
+      "token_ns": 4890922421
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 29,
+      "stage_index": 10608,
+      "delta_ns": 0,
+      "token_ns": 4905388049
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 8,
+      "stage_index": 10694,
+      "delta_ns": 0,
+      "token_ns": 4910463519
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 10,
+      "stage_index": 10695,
+      "delta_ns": 0,
+      "token_ns": 4910504086
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 30,
+      "stage_index": 10951,
+      "delta_ns": 0,
+      "token_ns": 4924770043
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 9,
+      "stage_index": 11038,
+      "delta_ns": 0,
+      "token_ns": 4929651051
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 11,
+      "stage_index": 11046,
+      "delta_ns": 0,
+      "token_ns": 4930236892
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 31,
+      "stage_index": 11307,
+      "delta_ns": 0,
+      "token_ns": 4944405935
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 10,
+      "stage_index": 11385,
+      "delta_ns": 0,
+      "token_ns": 4949078496
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 12,
+      "stage_index": 11391,
+      "delta_ns": 0,
+      "token_ns": 4949528160
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 32,
+      "stage_index": 11645,
+      "delta_ns": 0,
+      "token_ns": 4963335707
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 13,
+      "stage_index": 11736,
+      "delta_ns": 0,
+      "token_ns": 4968383621
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 11,
+      "stage_index": 11741,
+      "delta_ns": 0,
+      "token_ns": 4968740061
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 33,
+      "stage_index": 12005,
+      "delta_ns": 0,
+      "token_ns": 4983215685
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 14,
+      "stage_index": 12071,
+      "delta_ns": 0,
+      "token_ns": 4986787054
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 12,
+      "stage_index": 12087,
+      "delta_ns": 0,
+      "token_ns": 4988125988
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 34,
+      "stage_index": 12348,
+      "delta_ns": 0,
+      "token_ns": 5001817306
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 15,
+      "stage_index": 12413,
+      "delta_ns": 0,
+      "token_ns": 5005560360
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 13,
+      "stage_index": 12443,
+      "delta_ns": 0,
+      "token_ns": 5007409547
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 35,
+      "stage_index": 12698,
+      "delta_ns": 0,
+      "token_ns": 5020980136
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 16,
+      "stage_index": 12759,
+      "delta_ns": 0,
+      "token_ns": 5024382234
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 14,
+      "stage_index": 12793,
+      "delta_ns": 0,
+      "token_ns": 5026742396
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 36,
+      "stage_index": 13044,
+      "delta_ns": 0,
+      "token_ns": 5040129585
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 17,
+      "stage_index": 13105,
+      "delta_ns": 0,
+      "token_ns": 5043587738
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 15,
+      "stage_index": 13141,
+      "delta_ns": 0,
+      "token_ns": 5045858900
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 37,
+      "stage_index": 13397,
+      "delta_ns": 0,
+      "token_ns": 5059584332
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 18,
+      "stage_index": 13445,
+      "delta_ns": 0,
+      "token_ns": 5062441878
+    },
+    {
+      "request_id": "azure-conv-000000003",
+      "token_index": 16,
+      "stage_index": 13495,
+      "delta_ns": 0,
+      "token_ns": 5065435121
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 38,
+      "stage_index": 13666,
+      "delta_ns": 0,
+      "token_ns": 5077630972
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 19,
+      "stage_index": 13699,
+      "delta_ns": 0,
+      "token_ns": 5080669678
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 39,
+      "stage_index": 13899,
+      "delta_ns": 0,
+      "token_ns": 5095580173
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 20,
+      "stage_index": 13931,
+      "delta_ns": 0,
+      "token_ns": 5098688170
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 40,
+      "stage_index": 14129,
+      "delta_ns": 0,
+      "token_ns": 5113893631
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 21,
+      "stage_index": 14163,
+      "delta_ns": 0,
+      "token_ns": 5116899912
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 41,
+      "stage_index": 14364,
+      "delta_ns": 0,
+      "token_ns": 5132052320
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 22,
+      "stage_index": 14393,
+      "delta_ns": 0,
+      "token_ns": 5134657393
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 42,
+      "stage_index": 14597,
+      "delta_ns": 0,
+      "token_ns": 5149864414
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 23,
+      "stage_index": 14625,
+      "delta_ns": 0,
+      "token_ns": 5152447709
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 43,
+      "stage_index": 14828,
+      "delta_ns": 0,
+      "token_ns": 5167641640
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 24,
+      "stage_index": 14857,
+      "delta_ns": 0,
+      "token_ns": 5170450307
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 44,
+      "stage_index": 15062,
+      "delta_ns": 0,
+      "token_ns": 5185921644
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 25,
+      "stage_index": 15087,
+      "delta_ns": 0,
+      "token_ns": 5188202603
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 45,
+      "stage_index": 15294,
+      "delta_ns": 0,
+      "token_ns": 5203609825
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 26,
+      "stage_index": 15319,
+      "delta_ns": 0,
+      "token_ns": 5205913707
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 46,
+      "stage_index": 15526,
+      "delta_ns": 0,
+      "token_ns": 5221320505
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 27,
+      "stage_index": 15551,
+      "delta_ns": 0,
+      "token_ns": 5223804423
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 47,
+      "stage_index": 15758,
+      "delta_ns": 0,
+      "token_ns": 5239228997
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 28,
+      "stage_index": 15785,
+      "delta_ns": 0,
+      "token_ns": 5241891986
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 48,
+      "stage_index": 15990,
+      "delta_ns": 0,
+      "token_ns": 5257403831
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 29,
+      "stage_index": 16015,
+      "delta_ns": 0,
+      "token_ns": 5259822228
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 49,
+      "stage_index": 16224,
+      "delta_ns": 0,
+      "token_ns": 5275626136
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 30,
+      "stage_index": 16245,
+      "delta_ns": 0,
+      "token_ns": 5277646232
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 50,
+      "stage_index": 16457,
+      "delta_ns": 0,
+      "token_ns": 5293385680
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 31,
+      "stage_index": 16477,
+      "delta_ns": 0,
+      "token_ns": 5295415170
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 51,
+      "stage_index": 16688,
+      "delta_ns": 0,
+      "token_ns": 5311744332
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 32,
+      "stage_index": 16709,
+      "delta_ns": 0,
+      "token_ns": 5313851881
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 52,
+      "stage_index": 16921,
+      "delta_ns": 0,
+      "token_ns": 5329575926
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 33,
+      "stage_index": 16940,
+      "delta_ns": 0,
+      "token_ns": 5331637647
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 53,
+      "stage_index": 17154,
+      "delta_ns": 0,
+      "token_ns": 5347839391
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 34,
+      "stage_index": 17170,
+      "delta_ns": 0,
+      "token_ns": 5349502928
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 54,
+      "stage_index": 17388,
+      "delta_ns": 0,
+      "token_ns": 5366109277
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 35,
+      "stage_index": 17402,
+      "delta_ns": 0,
+      "token_ns": 5367740242
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 55,
+      "stage_index": 17618,
+      "delta_ns": 0,
+      "token_ns": 5383716042
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 36,
+      "stage_index": 17635,
+      "delta_ns": 0,
+      "token_ns": 5385606885
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 56,
+      "stage_index": 17850,
+      "delta_ns": 0,
+      "token_ns": 5401438813
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 37,
+      "stage_index": 17867,
+      "delta_ns": 0,
+      "token_ns": 5403252975
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 57,
+      "stage_index": 18081,
+      "delta_ns": 0,
+      "token_ns": 5419872913
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 38,
+      "stage_index": 18099,
+      "delta_ns": 0,
+      "token_ns": 5421846328
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 58,
+      "stage_index": 18312,
+      "delta_ns": 0,
+      "token_ns": 5438085718
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 39,
+      "stage_index": 18333,
+      "delta_ns": 0,
+      "token_ns": 5440252442
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 59,
+      "stage_index": 18543,
+      "delta_ns": 0,
+      "token_ns": 5455771724
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 40,
+      "stage_index": 18566,
+      "delta_ns": 0,
+      "token_ns": 5458060949
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 60,
+      "stage_index": 18774,
+      "delta_ns": 0,
+      "token_ns": 5473533543
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 41,
+      "stage_index": 18799,
+      "delta_ns": 0,
+      "token_ns": 5475876839
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 61,
+      "stage_index": 19005,
+      "delta_ns": 0,
+      "token_ns": 5491172001
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 42,
+      "stage_index": 19032,
+      "delta_ns": 0,
+      "token_ns": 5493675420
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 62,
+      "stage_index": 19238,
+      "delta_ns": 0,
+      "token_ns": 5508947437
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 43,
+      "stage_index": 19264,
+      "delta_ns": 0,
+      "token_ns": 5511551789
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 63,
+      "stage_index": 19469,
+      "delta_ns": 0,
+      "token_ns": 5527763611
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 44,
+      "stage_index": 19496,
+      "delta_ns": 0,
+      "token_ns": 5530334109
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 64,
+      "stage_index": 19702,
+      "delta_ns": 0,
+      "token_ns": 5545657135
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 45,
+      "stage_index": 19727,
+      "delta_ns": 0,
+      "token_ns": 5548182052
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 65,
+      "stage_index": 19934,
+      "delta_ns": 0,
+      "token_ns": 5564513181
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 46,
+      "stage_index": 19959,
+      "delta_ns": 0,
+      "token_ns": 5566803776
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 66,
+      "stage_index": 20166,
+      "delta_ns": 0,
+      "token_ns": 5582084063
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 47,
+      "stage_index": 20191,
+      "delta_ns": 0,
+      "token_ns": 5584658563
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 67,
+      "stage_index": 20399,
+      "delta_ns": 0,
+      "token_ns": 5600372075
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 48,
+      "stage_index": 20423,
+      "delta_ns": 0,
+      "token_ns": 5602678024
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 68,
+      "stage_index": 20630,
+      "delta_ns": 0,
+      "token_ns": 5618053548
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 49,
+      "stage_index": 20655,
+      "delta_ns": 0,
+      "token_ns": 5620505039
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 69,
+      "stage_index": 20863,
+      "delta_ns": 0,
+      "token_ns": 5636030347
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 50,
+      "stage_index": 20885,
+      "delta_ns": 0,
+      "token_ns": 5638101754
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 70,
+      "stage_index": 21095,
+      "delta_ns": 0,
+      "token_ns": 5653395905
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 51,
+      "stage_index": 21118,
+      "delta_ns": 0,
+      "token_ns": 5655644276
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 71,
+      "stage_index": 21328,
+      "delta_ns": 0,
+      "token_ns": 5671370390
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 52,
+      "stage_index": 21349,
+      "delta_ns": 0,
+      "token_ns": 5673437059
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 72,
+      "stage_index": 21560,
+      "delta_ns": 0,
+      "token_ns": 5689268598
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 53,
+      "stage_index": 21582,
+      "delta_ns": 0,
+      "token_ns": 5691490597
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 73,
+      "stage_index": 21792,
+      "delta_ns": 0,
+      "token_ns": 5707141945
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 54,
+      "stage_index": 21815,
+      "delta_ns": 0,
+      "token_ns": 5709591684
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 74,
+      "stage_index": 22022,
+      "delta_ns": 0,
+      "token_ns": 5724957218
+    },
+    {
+      "request_id": "azure-conv-000000002",
+      "token_index": 55,
+      "stage_index": 22047,
+      "delta_ns": 0,
+      "token_ns": 5727204122
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 75,
+      "stage_index": 22155,
+      "delta_ns": 0,
+      "token_ns": 5741827337
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 76,
+      "stage_index": 22271,
+      "delta_ns": 0,
+      "token_ns": 5758436588
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 77,
+      "stage_index": 22387,
+      "delta_ns": 0,
+      "token_ns": 5775324464
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 78,
+      "stage_index": 22503,
+      "delta_ns": 0,
+      "token_ns": 5791893437
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 79,
+      "stage_index": 22619,
+      "delta_ns": 0,
+      "token_ns": 5808702053
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 80,
+      "stage_index": 22735,
+      "delta_ns": 0,
+      "token_ns": 5825431841
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 81,
+      "stage_index": 22851,
+      "delta_ns": 0,
+      "token_ns": 5842095859
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 82,
+      "stage_index": 22967,
+      "delta_ns": 0,
+      "token_ns": 5858942161
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 83,
+      "stage_index": 23083,
+      "delta_ns": 0,
+      "token_ns": 5875727013
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 84,
+      "stage_index": 23199,
+      "delta_ns": 0,
+      "token_ns": 5892653304
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 85,
+      "stage_index": 23348,
+      "delta_ns": 0,
+      "token_ns": 5909469710
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 86,
+      "stage_index": 23499,
+      "delta_ns": 0,
+      "token_ns": 5926317740
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 87,
+      "stage_index": 23650,
+      "delta_ns": 0,
+      "token_ns": 5943131275
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 1,
+      "stage_index": 23700,
+      "delta_ns": 0,
+      "token_ns": 5949377867
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 88,
+      "stage_index": 23849,
+      "delta_ns": 0,
+      "token_ns": 5960963974
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 2,
+      "stage_index": 23931,
+      "delta_ns": 0,
+      "token_ns": 5967293144
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 89,
+      "stage_index": 24082,
+      "delta_ns": 0,
+      "token_ns": 5978541443
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 3,
+      "stage_index": 24165,
+      "delta_ns": 0,
+      "token_ns": 5985201022
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 90,
+      "stage_index": 24311,
+      "delta_ns": 0,
+      "token_ns": 5996553475
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 4,
+      "stage_index": 24398,
+      "delta_ns": 0,
+      "token_ns": 6003577474
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 91,
+      "stage_index": 24543,
+      "delta_ns": 0,
+      "token_ns": 6014584436
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 5,
+      "stage_index": 24630,
+      "delta_ns": 0,
+      "token_ns": 6021214500
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 92,
+      "stage_index": 24775,
+      "delta_ns": 0,
+      "token_ns": 6032350418
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 6,
+      "stage_index": 24863,
+      "delta_ns": 0,
+      "token_ns": 6039317627
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 93,
+      "stage_index": 25007,
+      "delta_ns": 0,
+      "token_ns": 6050309767
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 7,
+      "stage_index": 25094,
+      "delta_ns": 0,
+      "token_ns": 6057040264
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 94,
+      "stage_index": 25239,
+      "delta_ns": 0,
+      "token_ns": 6068238211
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 8,
+      "stage_index": 25327,
+      "delta_ns": 0,
+      "token_ns": 6075295110
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 95,
+      "stage_index": 25471,
+      "delta_ns": 0,
+      "token_ns": 6086188917
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 9,
+      "stage_index": 25560,
+      "delta_ns": 0,
+      "token_ns": 6093350900
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 96,
+      "stage_index": 25702,
+      "delta_ns": 0,
+      "token_ns": 6104071850
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 10,
+      "stage_index": 25792,
+      "delta_ns": 0,
+      "token_ns": 6111199237
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 97,
+      "stage_index": 25933,
+      "delta_ns": 0,
+      "token_ns": 6121981058
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 11,
+      "stage_index": 26024,
+      "delta_ns": 0,
+      "token_ns": 6129145855
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 98,
+      "stage_index": 26167,
+      "delta_ns": 0,
+      "token_ns": 6139990935
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 12,
+      "stage_index": 26256,
+      "delta_ns": 0,
+      "token_ns": 6147071211
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 99,
+      "stage_index": 26397,
+      "delta_ns": 0,
+      "token_ns": 6157844523
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 13,
+      "stage_index": 26487,
+      "delta_ns": 0,
+      "token_ns": 6165068336
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 100,
+      "stage_index": 26628,
+      "delta_ns": 0,
+      "token_ns": 6175878443
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 14,
+      "stage_index": 26723,
+      "delta_ns": 0,
+      "token_ns": 6183263780
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 101,
+      "stage_index": 26858,
+      "delta_ns": 0,
+      "token_ns": 6193367283
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 15,
+      "stage_index": 26955,
+      "delta_ns": 0,
+      "token_ns": 6200952706
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 102,
+      "stage_index": 27089,
+      "delta_ns": 0,
+      "token_ns": 6211430379
+    },
+    {
+      "request_id": "azure-conv-000000004",
+      "token_index": 16,
+      "stage_index": 27189,
+      "delta_ns": 0,
+      "token_ns": 6219144245
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 103,
+      "stage_index": 27259,
+      "delta_ns": 0,
+      "token_ns": 6228637032
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 104,
+      "stage_index": 27375,
+      "delta_ns": 0,
+      "token_ns": 6245486925
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 105,
+      "stage_index": 27491,
+      "delta_ns": 0,
+      "token_ns": 6262337979
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 106,
+      "stage_index": 27607,
+      "delta_ns": 0,
+      "token_ns": 6279189168
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 107,
+      "stage_index": 27723,
+      "delta_ns": 0,
+      "token_ns": 6296080068
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 108,
+      "stage_index": 27839,
+      "delta_ns": 0,
+      "token_ns": 6312788252
+    },
+    {
+      "request_id": "azure-conv-000000001",
+      "token_index": 109,
+      "stage_index": 27980,
+      "delta_ns": 0,
+      "token_ns": 6330527562
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 1,
+      "stage_index": 28071,
+      "delta_ns": 0,
+      "token_ns": 6396380664
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 2,
+      "stage_index": 28187,
+      "delta_ns": 0,
+      "token_ns": 6413324733
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 3,
+      "stage_index": 28303,
+      "delta_ns": 0,
+      "token_ns": 6429934848
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 4,
+      "stage_index": 28419,
+      "delta_ns": 0,
+      "token_ns": 6446703321
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 5,
+      "stage_index": 28535,
+      "delta_ns": 0,
+      "token_ns": 6463431813
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 6,
+      "stage_index": 28651,
+      "delta_ns": 0,
+      "token_ns": 6480079884
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 7,
+      "stage_index": 28767,
+      "delta_ns": 0,
+      "token_ns": 6496965168
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 8,
+      "stage_index": 28883,
+      "delta_ns": 0,
+      "token_ns": 6513748292
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 9,
+      "stage_index": 28999,
+      "delta_ns": 0,
+      "token_ns": 6530673719
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 10,
+      "stage_index": 29115,
+      "delta_ns": 0,
+      "token_ns": 6547379311
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 11,
+      "stage_index": 29231,
+      "delta_ns": 0,
+      "token_ns": 6564265891
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 12,
+      "stage_index": 29347,
+      "delta_ns": 0,
+      "token_ns": 6581080987
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 13,
+      "stage_index": 29463,
+      "delta_ns": 0,
+      "token_ns": 6597889171
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 14,
+      "stage_index": 29579,
+      "delta_ns": 0,
+      "token_ns": 6614663125
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 15,
+      "stage_index": 29695,
+      "delta_ns": 0,
+      "token_ns": 6631353067
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 16,
+      "stage_index": 29811,
+      "delta_ns": 0,
+      "token_ns": 6648162250
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 17,
+      "stage_index": 29927,
+      "delta_ns": 0,
+      "token_ns": 6664867410
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 18,
+      "stage_index": 30043,
+      "delta_ns": 0,
+      "token_ns": 6681715872
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 19,
+      "stage_index": 30159,
+      "delta_ns": 0,
+      "token_ns": 6698342204
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 20,
+      "stage_index": 30275,
+      "delta_ns": 0,
+      "token_ns": 6715270358
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 21,
+      "stage_index": 30391,
+      "delta_ns": 0,
+      "token_ns": 6731879744
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 22,
+      "stage_index": 30507,
+      "delta_ns": 0,
+      "token_ns": 6748648514
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 23,
+      "stage_index": 30623,
+      "delta_ns": 0,
+      "token_ns": 6765337295
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 24,
+      "stage_index": 30739,
+      "delta_ns": 0,
+      "token_ns": 6781984799
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 25,
+      "stage_index": 30855,
+      "delta_ns": 0,
+      "token_ns": 6798870650
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 26,
+      "stage_index": 30971,
+      "delta_ns": 0,
+      "token_ns": 6815613064
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 27,
+      "stage_index": 31087,
+      "delta_ns": 0,
+      "token_ns": 6832539490
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 28,
+      "stage_index": 31203,
+      "delta_ns": 0,
+      "token_ns": 6849284928
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 29,
+      "stage_index": 31319,
+      "delta_ns": 0,
+      "token_ns": 6866172372
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 30,
+      "stage_index": 31435,
+      "delta_ns": 0,
+      "token_ns": 6883026882
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 31,
+      "stage_index": 31551,
+      "delta_ns": 0,
+      "token_ns": 6899836794
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 32,
+      "stage_index": 31667,
+      "delta_ns": 0,
+      "token_ns": 6916650162
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 33,
+      "stage_index": 31783,
+      "delta_ns": 0,
+      "token_ns": 6933380814
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 34,
+      "stage_index": 31899,
+      "delta_ns": 0,
+      "token_ns": 6950189997
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 35,
+      "stage_index": 32015,
+      "delta_ns": 0,
+      "token_ns": 6966894725
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 36,
+      "stage_index": 32131,
+      "delta_ns": 0,
+      "token_ns": 6983742890
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 37,
+      "stage_index": 32247,
+      "delta_ns": 0,
+      "token_ns": 7000367926
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 38,
+      "stage_index": 32363,
+      "delta_ns": 0,
+      "token_ns": 7017296647
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 39,
+      "stage_index": 32479,
+      "delta_ns": 0,
+      "token_ns": 7033904170
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 40,
+      "stage_index": 32595,
+      "delta_ns": 0,
+      "token_ns": 7050673939
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 41,
+      "stage_index": 32711,
+      "delta_ns": 0,
+      "token_ns": 7067361721
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 42,
+      "stage_index": 32827,
+      "delta_ns": 0,
+      "token_ns": 7084010656
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 43,
+      "stage_index": 32943,
+      "delta_ns": 0,
+      "token_ns": 7100895940
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 44,
+      "stage_index": 33059,
+      "delta_ns": 0,
+      "token_ns": 7117640514
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 45,
+      "stage_index": 33175,
+      "delta_ns": 0,
+      "token_ns": 7134567669
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 46,
+      "stage_index": 33291,
+      "delta_ns": 0,
+      "token_ns": 7151335575
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 47,
+      "stage_index": 33407,
+      "delta_ns": 0,
+      "token_ns": 7168224315
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 48,
+      "stage_index": 33523,
+      "delta_ns": 0,
+      "token_ns": 7185076233
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 49,
+      "stage_index": 33639,
+      "delta_ns": 0,
+      "token_ns": 7201927719
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 50,
+      "stage_index": 33755,
+      "delta_ns": 0,
+      "token_ns": 7218778773
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 51,
+      "stage_index": 33871,
+      "delta_ns": 0,
+      "token_ns": 7235510289
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 52,
+      "stage_index": 33987,
+      "delta_ns": 0,
+      "token_ns": 7252317312
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 53,
+      "stage_index": 34103,
+      "delta_ns": 0,
+      "token_ns": 7269023768
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 54,
+      "stage_index": 34219,
+      "delta_ns": 0,
+      "token_ns": 7285871366
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 55,
+      "stage_index": 34335,
+      "delta_ns": 0,
+      "token_ns": 7302521030
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 56,
+      "stage_index": 34451,
+      "delta_ns": 0,
+      "token_ns": 7319408906
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 57,
+      "stage_index": 34567,
+      "delta_ns": 0,
+      "token_ns": 7336016996
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 58,
+      "stage_index": 34683,
+      "delta_ns": 0,
+      "token_ns": 7352826908
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 59,
+      "stage_index": 34799,
+      "delta_ns": 0,
+      "token_ns": 7369475411
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 60,
+      "stage_index": 34915,
+      "delta_ns": 0,
+      "token_ns": 7386164489
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 61,
+      "stage_index": 35031,
+      "delta_ns": 0,
+      "token_ns": 7403010494
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 62,
+      "stage_index": 35147,
+      "delta_ns": 0,
+      "token_ns": 7419755068
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 63,
+      "stage_index": 35263,
+      "delta_ns": 0,
+      "token_ns": 7436681494
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 64,
+      "stage_index": 35379,
+      "delta_ns": 0,
+      "token_ns": 7453450696
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 65,
+      "stage_index": 35495,
+      "delta_ns": 0,
+      "token_ns": 7470298726
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 66,
+      "stage_index": 35611,
+      "delta_ns": 0,
+      "token_ns": 7487111230
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 67,
+      "stage_index": 35727,
+      "delta_ns": 0,
+      "token_ns": 7503962284
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 68,
+      "stage_index": 35843,
+      "delta_ns": 0,
+      "token_ns": 7520814634
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 69,
+      "stage_index": 35959,
+      "delta_ns": 0,
+      "token_ns": 7537546582
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 70,
+      "stage_index": 36075,
+      "delta_ns": 0,
+      "token_ns": 7554354037
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 71,
+      "stage_index": 36191,
+      "delta_ns": 0,
+      "token_ns": 7571060493
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 72,
+      "stage_index": 36307,
+      "delta_ns": 0,
+      "token_ns": 7587907362
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 73,
+      "stage_index": 36423,
+      "delta_ns": 0,
+      "token_ns": 7604557755
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 74,
+      "stage_index": 36539,
+      "delta_ns": 0,
+      "token_ns": 7621445334
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 75,
+      "stage_index": 36655,
+      "delta_ns": 0,
+      "token_ns": 7638055017
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 76,
+      "stage_index": 36771,
+      "delta_ns": 0,
+      "token_ns": 7654864200
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 77,
+      "stage_index": 36887,
+      "delta_ns": 0,
+      "token_ns": 7671512568
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 78,
+      "stage_index": 37003,
+      "delta_ns": 0,
+      "token_ns": 7688217296
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 79,
+      "stage_index": 37119,
+      "delta_ns": 0,
+      "token_ns": 7705062734
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 80,
+      "stage_index": 37235,
+      "delta_ns": 0,
+      "token_ns": 7721807740
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 81,
+      "stage_index": 37351,
+      "delta_ns": 0,
+      "token_ns": 7738733167
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 82,
+      "stage_index": 37478,
+      "delta_ns": 0,
+      "token_ns": 7756348762
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 83,
+      "stage_index": 37616,
+      "delta_ns": 0,
+      "token_ns": 7774928094
+    },
+    {
+      "request_id": "azure-conv-000000005",
+      "token_index": 84,
+      "stage_index": 37753,
+      "delta_ns": 0,
+      "token_ns": 7793010322
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 1,
+      "stage_index": 38047,
+      "delta_ns": 0,
+      "token_ns": 8025506801
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 2,
+      "stage_index": 38163,
+      "delta_ns": 0,
+      "token_ns": 8042288459
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 3,
+      "stage_index": 38279,
+      "delta_ns": 0,
+      "token_ns": 8059194577
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 4,
+      "stage_index": 38395,
+      "delta_ns": 0,
+      "token_ns": 8076006946
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 5,
+      "stage_index": 38511,
+      "delta_ns": 0,
+      "token_ns": 8092914792
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 6,
+      "stage_index": 38627,
+      "delta_ns": 0,
+      "token_ns": 8109763254
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 7,
+      "stage_index": 38743,
+      "delta_ns": 0,
+      "token_ns": 8126494068
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 8,
+      "stage_index": 38859,
+      "delta_ns": 0,
+      "token_ns": 8143264998
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 9,
+      "stage_index": 38975,
+      "delta_ns": 0,
+      "token_ns": 8159995380
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 10,
+      "stage_index": 39091,
+      "delta_ns": 0,
+      "token_ns": 8176886280
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 11,
+      "stage_index": 39207,
+      "delta_ns": 0,
+      "token_ns": 8193537834
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 12,
+      "stage_index": 39323,
+      "delta_ns": 0,
+      "token_ns": 8210204444
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 13,
+      "stage_index": 39439,
+      "delta_ns": 0,
+      "token_ns": 8226975239
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 14,
+      "stage_index": 39555,
+      "delta_ns": 0,
+      "token_ns": 8243561293
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 15,
+      "stage_index": 39682,
+      "delta_ns": 0,
+      "token_ns": 8260955839
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 16,
+      "stage_index": 39823,
+      "delta_ns": 0,
+      "token_ns": 8278855524
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 17,
+      "stage_index": 39964,
+      "delta_ns": 0,
+      "token_ns": 8296999887
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 18,
+      "stage_index": 40104,
+      "delta_ns": 0,
+      "token_ns": 8314875043
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 19,
+      "stage_index": 40245,
+      "delta_ns": 0,
+      "token_ns": 8332852066
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 1,
+      "stage_index": 40271,
+      "delta_ns": 0,
+      "token_ns": 8337098116
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 20,
+      "stage_index": 40451,
+      "delta_ns": 0,
+      "token_ns": 8350536210
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 2,
+      "stage_index": 40507,
+      "delta_ns": 0,
+      "token_ns": 8355234578
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 21,
+      "stage_index": 40683,
+      "delta_ns": 0,
+      "token_ns": 8368652292
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 3,
+      "stage_index": 40739,
+      "delta_ns": 0,
+      "token_ns": 8373336217
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 22,
+      "stage_index": 40913,
+      "delta_ns": 0,
+      "token_ns": 8386454373
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 4,
+      "stage_index": 40971,
+      "delta_ns": 0,
+      "token_ns": 8391279384
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 23,
+      "stage_index": 41148,
+      "delta_ns": 0,
+      "token_ns": 8404760805
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 5,
+      "stage_index": 41202,
+      "delta_ns": 0,
+      "token_ns": 8409351334
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 24,
+      "stage_index": 41377,
+      "delta_ns": 0,
+      "token_ns": 8422640286
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 6,
+      "stage_index": 41435,
+      "delta_ns": 0,
+      "token_ns": 8427454320
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 25,
+      "stage_index": 41612,
+      "delta_ns": 0,
+      "token_ns": 8440834461
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 7,
+      "stage_index": 41666,
+      "delta_ns": 0,
+      "token_ns": 8445247704
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 26,
+      "stage_index": 41842,
+      "delta_ns": 0,
+      "token_ns": 8458652124
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 8,
+      "stage_index": 41899,
+      "delta_ns": 0,
+      "token_ns": 8463378029
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 27,
+      "stage_index": 42076,
+      "delta_ns": 0,
+      "token_ns": 8476836828
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 9,
+      "stage_index": 42128,
+      "delta_ns": 0,
+      "token_ns": 8481122723
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 28,
+      "stage_index": 42310,
+      "delta_ns": 0,
+      "token_ns": 8494921749
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 10,
+      "stage_index": 42359,
+      "delta_ns": 0,
+      "token_ns": 8499055859
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 29,
+      "stage_index": 42543,
+      "delta_ns": 0,
+      "token_ns": 8512889307
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 11,
+      "stage_index": 42590,
+      "delta_ns": 0,
+      "token_ns": 8516836335
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 30,
+      "stage_index": 42774,
+      "delta_ns": 0,
+      "token_ns": 8530648863
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 12,
+      "stage_index": 42825,
+      "delta_ns": 0,
+      "token_ns": 8534992219
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 31,
+      "stage_index": 43006,
+      "delta_ns": 0,
+      "token_ns": 8548806124
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 13,
+      "stage_index": 43055,
+      "delta_ns": 0,
+      "token_ns": 8552884349
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 32,
+      "stage_index": 43239,
+      "delta_ns": 0,
+      "token_ns": 8566645176
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 14,
+      "stage_index": 43287,
+      "delta_ns": 0,
+      "token_ns": 8570789402
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 33,
+      "stage_index": 43471,
+      "delta_ns": 0,
+      "token_ns": 8584635462
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 15,
+      "stage_index": 43519,
+      "delta_ns": 0,
+      "token_ns": 8588702085
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 34,
+      "stage_index": 43702,
+      "delta_ns": 0,
+      "token_ns": 8602578511
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 16,
+      "stage_index": 43751,
+      "delta_ns": 0,
+      "token_ns": 8606607764
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 35,
+      "stage_index": 43936,
+      "delta_ns": 0,
+      "token_ns": 8620410027
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 17,
+      "stage_index": 43981,
+      "delta_ns": 0,
+      "token_ns": 8624420602
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 36,
+      "stage_index": 44166,
+      "delta_ns": 0,
+      "token_ns": 8638325530
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 18,
+      "stage_index": 44216,
+      "delta_ns": 0,
+      "token_ns": 8642546694
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 37,
+      "stage_index": 44399,
+      "delta_ns": 0,
+      "token_ns": 8656351694
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 19,
+      "stage_index": 44447,
+      "delta_ns": 0,
+      "token_ns": 8660350180
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 38,
+      "stage_index": 44628,
+      "delta_ns": 0,
+      "token_ns": 8674082698
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 20,
+      "stage_index": 44681,
+      "delta_ns": 0,
+      "token_ns": 8678441521
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 39,
+      "stage_index": 44861,
+      "delta_ns": 0,
+      "token_ns": 8691952059
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 21,
+      "stage_index": 44913,
+      "delta_ns": 0,
+      "token_ns": 8696575628
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 40,
+      "stage_index": 45091,
+      "delta_ns": 0,
+      "token_ns": 8710046454
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 22,
+      "stage_index": 45145,
+      "delta_ns": 0,
+      "token_ns": 8714551406
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 41,
+      "stage_index": 45325,
+      "delta_ns": 0,
+      "token_ns": 8728152762
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 23,
+      "stage_index": 45378,
+      "delta_ns": 0,
+      "token_ns": 8732662039
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 42,
+      "stage_index": 45555,
+      "delta_ns": 0,
+      "token_ns": 8746103278
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 24,
+      "stage_index": 45610,
+      "delta_ns": 0,
+      "token_ns": 8750667356
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 43,
+      "stage_index": 45789,
+      "delta_ns": 0,
+      "token_ns": 8764229465
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 25,
+      "stage_index": 45840,
+      "delta_ns": 0,
+      "token_ns": 8768439649
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 44,
+      "stage_index": 46021,
+      "delta_ns": 0,
+      "token_ns": 8781976054
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 26,
+      "stage_index": 46073,
+      "delta_ns": 0,
+      "token_ns": 8786369241
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 45,
+      "stage_index": 46253,
+      "delta_ns": 0,
+      "token_ns": 8799877124
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 27,
+      "stage_index": 46304,
+      "delta_ns": 0,
+      "token_ns": 8804274938
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 46,
+      "stage_index": 46486,
+      "delta_ns": 0,
+      "token_ns": 8817984911
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 28,
+      "stage_index": 46535,
+      "delta_ns": 0,
+      "token_ns": 8822070957
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 47,
+      "stage_index": 46717,
+      "delta_ns": 0,
+      "token_ns": 8836042364
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 29,
+      "stage_index": 46768,
+      "delta_ns": 0,
+      "token_ns": 8840331203
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 48,
+      "stage_index": 46950,
+      "delta_ns": 0,
+      "token_ns": 8854061867
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 30,
+      "stage_index": 46999,
+      "delta_ns": 0,
+      "token_ns": 8858367953
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 49,
+      "stage_index": 47183,
+      "delta_ns": 0,
+      "token_ns": 8872164182
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 31,
+      "stage_index": 47231,
+      "delta_ns": 0,
+      "token_ns": 8876337544
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 50,
+      "stage_index": 47415,
+      "delta_ns": 0,
+      "token_ns": 8890259111
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 32,
+      "stage_index": 47462,
+      "delta_ns": 0,
+      "token_ns": 8894215159
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 51,
+      "stage_index": 47647,
+      "delta_ns": 0,
+      "token_ns": 8908013022
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 33,
+      "stage_index": 47694,
+      "delta_ns": 0,
+      "token_ns": 8911917980
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 52,
+      "stage_index": 47881,
+      "delta_ns": 0,
+      "token_ns": 8926000916
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 34,
+      "stage_index": 47925,
+      "delta_ns": 0,
+      "token_ns": 8929791903
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 53,
+      "stage_index": 48114,
+      "delta_ns": 0,
+      "token_ns": 8944162894
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 35,
+      "stage_index": 48155,
+      "delta_ns": 0,
+      "token_ns": 8947734012
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 54,
+      "stage_index": 48345,
+      "delta_ns": 0,
+      "token_ns": 8962059333
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 36,
+      "stage_index": 48389,
+      "delta_ns": 0,
+      "token_ns": 8966005131
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 55,
+      "stage_index": 48577,
+      "delta_ns": 0,
+      "token_ns": 8980052693
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 37,
+      "stage_index": 48621,
+      "delta_ns": 0,
+      "token_ns": 8983794497
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 56,
+      "stage_index": 48809,
+      "delta_ns": 0,
+      "token_ns": 8998172240
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 38,
+      "stage_index": 48853,
+      "delta_ns": 0,
+      "token_ns": 9001896646
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 57,
+      "stage_index": 49043,
+      "delta_ns": 0,
+      "token_ns": 9016370496
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 39,
+      "stage_index": 49083,
+      "delta_ns": 0,
+      "token_ns": 9019885933
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 58,
+      "stage_index": 49275,
+      "delta_ns": 0,
+      "token_ns": 9033853212
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 40,
+      "stage_index": 49315,
+      "delta_ns": 0,
+      "token_ns": 9037368216
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 59,
+      "stage_index": 49506,
+      "delta_ns": 0,
+      "token_ns": 9051986585
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 41,
+      "stage_index": 49548,
+      "delta_ns": 0,
+      "token_ns": 9055625503
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 60,
+      "stage_index": 49736,
+      "delta_ns": 0,
+      "token_ns": 9069587000
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 42,
+      "stage_index": 49781,
+      "delta_ns": 0,
+      "token_ns": 9073408769
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 61,
+      "stage_index": 49969,
+      "delta_ns": 0,
+      "token_ns": 9087567940
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 43,
+      "stage_index": 50013,
+      "delta_ns": 0,
+      "token_ns": 9091377737
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 62,
+      "stage_index": 50200,
+      "delta_ns": 0,
+      "token_ns": 9105313415
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 44,
+      "stage_index": 50245,
+      "delta_ns": 0,
+      "token_ns": 9109142080
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 63,
+      "stage_index": 50431,
+      "delta_ns": 0,
+      "token_ns": 9123207620
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 45,
+      "stage_index": 50478,
+      "delta_ns": 0,
+      "token_ns": 9127258478
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 64,
+      "stage_index": 50664,
+      "delta_ns": 0,
+      "token_ns": 9141218937
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 46,
+      "stage_index": 50709,
+      "delta_ns": 0,
+      "token_ns": 9145207422
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 65,
+      "stage_index": 50895,
+      "delta_ns": 0,
+      "token_ns": 9159251354
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 47,
+      "stage_index": 50942,
+      "delta_ns": 0,
+      "token_ns": 9163179205
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 66,
+      "stage_index": 51128,
+      "delta_ns": 0,
+      "token_ns": 9177192635
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 48,
+      "stage_index": 51174,
+      "delta_ns": 0,
+      "token_ns": 9181139287
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 67,
+      "stage_index": 51359,
+      "delta_ns": 0,
+      "token_ns": 9195088490
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 49,
+      "stage_index": 51407,
+      "delta_ns": 0,
+      "token_ns": 9199186862
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 68,
+      "stage_index": 51591,
+      "delta_ns": 0,
+      "token_ns": 9212916517
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 50,
+      "stage_index": 51639,
+      "delta_ns": 0,
+      "token_ns": 9216933493
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 69,
+      "stage_index": 51823,
+      "delta_ns": 0,
+      "token_ns": 9230661335
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 51,
+      "stage_index": 51870,
+      "delta_ns": 0,
+      "token_ns": 9234599193
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 70,
+      "stage_index": 52054,
+      "delta_ns": 0,
+      "token_ns": 9248546280
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 52,
+      "stage_index": 52103,
+      "delta_ns": 0,
+      "token_ns": 9252729618
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 71,
+      "stage_index": 52288,
+      "delta_ns": 0,
+      "token_ns": 9266798624
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 53,
+      "stage_index": 52333,
+      "delta_ns": 0,
+      "token_ns": 9270836287
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 72,
+      "stage_index": 52519,
+      "delta_ns": 0,
+      "token_ns": 9284828517
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 54,
+      "stage_index": 52567,
+      "delta_ns": 0,
+      "token_ns": 9288846188
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 73,
+      "stage_index": 52752,
+      "delta_ns": 0,
+      "token_ns": 9302601583
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 55,
+      "stage_index": 52797,
+      "delta_ns": 0,
+      "token_ns": 9306580155
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 74,
+      "stage_index": 52983,
+      "delta_ns": 0,
+      "token_ns": 9320381818
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 56,
+      "stage_index": 53030,
+      "delta_ns": 0,
+      "token_ns": 9324333454
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 75,
+      "stage_index": 53215,
+      "delta_ns": 0,
+      "token_ns": 9338303743
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 57,
+      "stage_index": 53263,
+      "delta_ns": 0,
+      "token_ns": 9342450974
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 76,
+      "stage_index": 53445,
+      "delta_ns": 0,
+      "token_ns": 9356046383
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 58,
+      "stage_index": 53496,
+      "delta_ns": 0,
+      "token_ns": 9360334434
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 77,
+      "stage_index": 53678,
+      "delta_ns": 0,
+      "token_ns": 9374033779
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 59,
+      "stage_index": 53728,
+      "delta_ns": 0,
+      "token_ns": 9378247376
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 78,
+      "stage_index": 53911,
+      "delta_ns": 0,
+      "token_ns": 9392223614
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 60,
+      "stage_index": 53959,
+      "delta_ns": 0,
+      "token_ns": 9396571877
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 79,
+      "stage_index": 54141,
+      "delta_ns": 0,
+      "token_ns": 9410250049
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 61,
+      "stage_index": 54195,
+      "delta_ns": 0,
+      "token_ns": 9414790692
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 80,
+      "stage_index": 54372,
+      "delta_ns": 0,
+      "token_ns": 9428142330
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 62,
+      "stage_index": 54425,
+      "delta_ns": 0,
+      "token_ns": 9432527129
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 81,
+      "stage_index": 54602,
+      "delta_ns": 0,
+      "token_ns": 9445873462
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 63,
+      "stage_index": 54659,
+      "delta_ns": 0,
+      "token_ns": 9450590662
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 82,
+      "stage_index": 54837,
+      "delta_ns": 0,
+      "token_ns": 9464022200
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 64,
+      "stage_index": 54888,
+      "delta_ns": 0,
+      "token_ns": 9468276675
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 83,
+      "stage_index": 55069,
+      "delta_ns": 0,
+      "token_ns": 9481941180
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 65,
+      "stage_index": 55121,
+      "delta_ns": 0,
+      "token_ns": 9486338975
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 84,
+      "stage_index": 55301,
+      "delta_ns": 0,
+      "token_ns": 9499801362
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 66,
+      "stage_index": 55353,
+      "delta_ns": 0,
+      "token_ns": 9504186306
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 85,
+      "stage_index": 55531,
+      "delta_ns": 0,
+      "token_ns": 9517639360
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 67,
+      "stage_index": 55586,
+      "delta_ns": 0,
+      "token_ns": 9522223556
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 86,
+      "stage_index": 55765,
+      "delta_ns": 0,
+      "token_ns": 9535740571
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 68,
+      "stage_index": 55817,
+      "delta_ns": 0,
+      "token_ns": 9540083653
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 87,
+      "stage_index": 55998,
+      "delta_ns": 0,
+      "token_ns": 9554090470
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 69,
+      "stage_index": 56047,
+      "delta_ns": 0,
+      "token_ns": 9558157839
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 88,
+      "stage_index": 56229,
+      "delta_ns": 0,
+      "token_ns": 9571932195
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 70,
+      "stage_index": 56280,
+      "delta_ns": 0,
+      "token_ns": 9576167618
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 89,
+      "stage_index": 56463,
+      "delta_ns": 0,
+      "token_ns": 9589939209
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 71,
+      "stage_index": 56511,
+      "delta_ns": 0,
+      "token_ns": 9594114752
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 90,
+      "stage_index": 56693,
+      "delta_ns": 0,
+      "token_ns": 9607822450
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 72,
+      "stage_index": 56744,
+      "delta_ns": 0,
+      "token_ns": 9612170335
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 91,
+      "stage_index": 56927,
+      "delta_ns": 0,
+      "token_ns": 9625893098
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 73,
+      "stage_index": 56975,
+      "delta_ns": 0,
+      "token_ns": 9630198923
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 92,
+      "stage_index": 57155,
+      "delta_ns": 0,
+      "token_ns": 9643633479
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 74,
+      "stage_index": 57211,
+      "delta_ns": 0,
+      "token_ns": 9648307317
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 93,
+      "stage_index": 57387,
+      "delta_ns": 0,
+      "token_ns": 9661673600
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 75,
+      "stage_index": 57444,
+      "delta_ns": 0,
+      "token_ns": 9666514011
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 94,
+      "stage_index": 57617,
+      "delta_ns": 0,
+      "token_ns": 9679473132
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 76,
+      "stage_index": 57675,
+      "delta_ns": 0,
+      "token_ns": 9684287166
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 95,
+      "stage_index": 57852,
+      "delta_ns": 0,
+      "token_ns": 9697838105
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 77,
+      "stage_index": 57905,
+      "delta_ns": 0,
+      "token_ns": 9702298166
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 96,
+      "stage_index": 58085,
+      "delta_ns": 0,
+      "token_ns": 9716048992
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 78,
+      "stage_index": 58137,
+      "delta_ns": 0,
+      "token_ns": 9720425262
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 97,
+      "stage_index": 58316,
+      "delta_ns": 0,
+      "token_ns": 9733932693
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 79,
+      "stage_index": 58369,
+      "delta_ns": 0,
+      "token_ns": 9738338719
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 98,
+      "stage_index": 58548,
+      "delta_ns": 0,
+      "token_ns": 9751943365
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 80,
+      "stage_index": 58601,
+      "delta_ns": 0,
+      "token_ns": 9756486900
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 99,
+      "stage_index": 58780,
+      "delta_ns": 0,
+      "token_ns": 9769887926
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 81,
+      "stage_index": 58833,
+      "delta_ns": 0,
+      "token_ns": 9774373162
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 100,
+      "stage_index": 59014,
+      "delta_ns": 0,
+      "token_ns": 9788195688
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 82,
+      "stage_index": 59063,
+      "delta_ns": 0,
+      "token_ns": 9792542052
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 101,
+      "stage_index": 59247,
+      "delta_ns": 0,
+      "token_ns": 9806319828
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 83,
+      "stage_index": 59295,
+      "delta_ns": 0,
+      "token_ns": 9810305581
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 102,
+      "stage_index": 59478,
+      "delta_ns": 0,
+      "token_ns": 9824165542
+    },
+    {
+      "request_id": "azure-conv-000000007",
+      "token_index": 84,
+      "stage_index": 59529,
+      "delta_ns": 0,
+      "token_ns": 9828430676
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 103,
+      "stage_index": 59623,
+      "delta_ns": 0,
+      "token_ns": 9841080983
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 104,
+      "stage_index": 59739,
+      "delta_ns": 0,
+      "token_ns": 9857689802
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 105,
+      "stage_index": 59855,
+      "delta_ns": 0,
+      "token_ns": 9874580135
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 106,
+      "stage_index": 59971,
+      "delta_ns": 0,
+      "token_ns": 9891267647
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 107,
+      "stage_index": 60087,
+      "delta_ns": 0,
+      "token_ns": 9908199122
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 108,
+      "stage_index": 60203,
+      "delta_ns": 0,
+      "token_ns": 9924925751
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 109,
+      "stage_index": 60319,
+      "delta_ns": 0,
+      "token_ns": 9941875171
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 110,
+      "stage_index": 60435,
+      "delta_ns": 0,
+      "token_ns": 9958601800
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 111,
+      "stage_index": 60551,
+      "delta_ns": 0,
+      "token_ns": 9975454879
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 112,
+      "stage_index": 60667,
+      "delta_ns": 0,
+      "token_ns": 9992267248
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 113,
+      "stage_index": 60783,
+      "delta_ns": 0,
+      "token_ns": 10008998629
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 114,
+      "stage_index": 60899,
+      "delta_ns": 0,
+      "token_ns": 10025769991
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 115,
+      "stage_index": 61015,
+      "delta_ns": 0,
+      "token_ns": 10042499509
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 116,
+      "stage_index": 61131,
+      "delta_ns": 0,
+      "token_ns": 10059311581
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 117,
+      "stage_index": 61247,
+      "delta_ns": 0,
+      "token_ns": 10075999957
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 118,
+      "stage_index": 61363,
+      "delta_ns": 0,
+      "token_ns": 10092949377
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 119,
+      "stage_index": 61479,
+      "delta_ns": 0,
+      "token_ns": 10109557629
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 120,
+      "stage_index": 61595,
+      "delta_ns": 0,
+      "token_ns": 10126290873
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 121,
+      "stage_index": 61711,
+      "delta_ns": 0,
+      "token_ns": 10143021822
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 122,
+      "stage_index": 61827,
+      "delta_ns": 0,
+      "token_ns": 10159631640
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 123,
+      "stage_index": 61943,
+      "delta_ns": 0,
+      "token_ns": 10176520110
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 124,
+      "stage_index": 62059,
+      "delta_ns": 0,
+      "token_ns": 10193208189
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 125,
+      "stage_index": 62175,
+      "delta_ns": 0,
+      "token_ns": 10210155017
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 126,
+      "stage_index": 62291,
+      "delta_ns": 0,
+      "token_ns": 10226880350
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 127,
+      "stage_index": 62407,
+      "delta_ns": 0,
+      "token_ns": 10243830202
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 128,
+      "stage_index": 62523,
+      "delta_ns": 0,
+      "token_ns": 10260556399
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 129,
+      "stage_index": 62639,
+      "delta_ns": 0,
+      "token_ns": 10277410045
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 130,
+      "stage_index": 62755,
+      "delta_ns": 0,
+      "token_ns": 10294221118
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 131,
+      "stage_index": 62871,
+      "delta_ns": 0,
+      "token_ns": 10310953498
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 132,
+      "stage_index": 62987,
+      "delta_ns": 0,
+      "token_ns": 10327722565
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 133,
+      "stage_index": 63103,
+      "delta_ns": 0,
+      "token_ns": 10344414100
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 134,
+      "stage_index": 63219,
+      "delta_ns": 0,
+      "token_ns": 10361240958
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 135,
+      "stage_index": 63335,
+      "delta_ns": 0,
+      "token_ns": 10377889623
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 136,
+      "stage_index": 63451,
+      "delta_ns": 0,
+      "token_ns": 10394878025
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 137,
+      "stage_index": 63567,
+      "delta_ns": 0,
+      "token_ns": 10411487276
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 138,
+      "stage_index": 63683,
+      "delta_ns": 0,
+      "token_ns": 10428219521
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 139,
+      "stage_index": 63799,
+      "delta_ns": 0,
+      "token_ns": 10444991747
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 140,
+      "stage_index": 63915,
+      "delta_ns": 0,
+      "token_ns": 10461601430
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 141,
+      "stage_index": 64031,
+      "delta_ns": 0,
+      "token_ns": 10478490467
+    },
+    {
+      "request_id": "azure-conv-000000006",
+      "token_index": 142,
+      "stage_index": 64147,
+      "delta_ns": 0,
+      "token_ns": 10495219121
+    }
+  ],
+  "native_counts": {
+    "TIMER": 298164,
+    "SEND": 201677,
+    "LOCAL_PORTS": 175334
+  },
+  "attempts": [
+    {
+      "log": "04-live-console.log",
+      "start": "2026-11-07T19:35:40+0800",
+      "exit_code": 1
+    },
+    {
+      "log": "07-live-console.log",
+      "start": "2026-11-07T19:42:41+0800",
+      "exit_code": 0
+    }
+  ],
+  "parent_experiment": {
+    "A6": "failed",
+    "all_passed": false,
+    "scientific_data": "Historical diagnostic evidence with recorded process deviations; not a new server experiment"
+  },
+  "original_tree": "52fe4a5f4a57fa7874bf57fad00294b26e99bfb26e73dd19faccdf1974ddafe5",
+  "evidence_locations": [
+    {
+      "original_relative_path": "results/attempt1-failed/live-stage.json",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/attempt1-failed/live-stage.json",
+      "sha256": "fb8ca34e6452d37fd94e47dec0fce83c95de068ab69a6cb77d4028e7dc781965",
+      "bytes": 295
+    },
+    {
+      "original_relative_path": "results/attempt1-failed/run/network/backend_rpc_summary.json",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/attempt1-failed/run/network/backend_rpc_summary.json",
+      "sha256": "2468085a1987ea038b68c20dc8fb4ef7b90bf1457872a3cfafcf8bc82e4a2628",
+      "bytes": 168
+    },
+    {
+      "original_relative_path": "results/diagnostic/flows.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/flows.csv",
+      "sha256": "0543e2319d2b6d3ff19fae4b1c299dda333cef1dde918ca004b1d448ad8b89d3",
+      "bytes": 14959253
+    },
+    {
+      "original_relative_path": "results/diagnostic/stages.json",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/stages.json",
+      "sha256": "704ae8302c027b27f963639fe42d69f769e04004cf18333d7919edc238d43fe0",
+      "bytes": 8216357
+    },
+    {
+      "original_relative_path": "results/diagnostic/native_schedule.jsonl",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/native_schedule.jsonl",
+      "sha256": "9775962b5b327d9917db47975e176f731b26a293889e5a722add025b2e265338",
+      "bytes": 87352957
+    },
+    {
+      "original_relative_path": "results/flow-comparison.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/flow-comparison.csv",
+      "sha256": "ca3a04424348e7970e9d3aad93d360ac17ca0ca94e982475c0b1448745661da1",
+      "bytes": 28728658
+    },
+    {
+      "original_relative_path": "results/stage-comparison.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/stage-comparison.csv",
+      "sha256": "855a7ea6ff1ae8f0fd24b1ff83b8a35aa1c3373710cb49844ac4804bad457f79",
+      "bytes": 10611536
+    },
+    {
+      "original_relative_path": "results/port-intervals.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/port-intervals.csv",
+      "sha256": "e8ce22de45513e638048b8824f5cddb748d6db3abff805d555dbd4e30d622724",
+      "bytes": 18858029
+    },
+    {
+      "original_relative_path": "results/event-links.jsonl",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/event-links.jsonl",
+      "sha256": "d785ecf31ad78b873e0d2d44c47ae1a8bb7246be9aac3943f114d1c63558d241",
+      "bytes": 161584432
+    }
+  ],
+  "archive_sha256": "5ea2d7c640e060c32b259a0d8a94f97b758f05b29bf562c11611f8704fc18a8a"
+}

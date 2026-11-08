@@ -1,0 +1,232 @@
+{
+  "schema_version": 2,
+  "task_id": "T003-r02",
+  "parent_task": "/home/s223/m0nesy/Inference/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution",
+  "evidence_class": "WSL historical evidence; server static recheck",
+  "first_live_start": {
+    "exit_code": 1,
+    "simulation_time_ns": 472621,
+    "native_registrations": 12,
+    "hook_events": 12,
+    "cross_node_flows": 1,
+    "wall_clock_seconds": 0.8348467350000064,
+    "recorded_lifecycle_events": 4,
+    "ep_calls_started": 0,
+    "status": "failed",
+    "error": "'int' object is not subscriptable",
+    "started_at": "2026-11-07T19:35:42+08:00",
+    "is_started_network_stage": true
+  },
+  "second_live_start": {
+    "exit_code": 0,
+    "wall_clock_seconds": 911.9064795220002,
+    "status": "completed",
+    "flows": 201677,
+    "stages": 64148,
+    "native_registrations": 675175
+  },
+  "process_gate": {
+    "status": "failed",
+    "live_start_cap": 1,
+    "live_start_count": 2,
+    "observed_starts": [
+      {
+        "log": "logs/04-live-console.log",
+        "started_at": "2026-11-07T19:35:40+0800",
+        "exit_code": 1
+      },
+      {
+        "log": "logs/07-live-console.log",
+        "started_at": "2026-11-07T19:42:41+0800",
+        "exit_code": 0
+      }
+    ],
+    "failed_live_starts": 1,
+    "first_start_is_started_network_stage": true,
+    "stop_condition_triggered": true,
+    "stop_observed": false,
+    "prior_report_found": false,
+    "review_md_present": false,
+    "violation_count": 4,
+    "violations": [
+      {
+        "id": "V1",
+        "rule": "TASK.md line 224: 启动次数上限=1次live+3次network replay",
+        "finding": "live was started 2 times (first 2026-11-07T19:35:40+0800 failed at sim 472621 ns with 12 native registrations; second 2026-11-07T19:42:41+0800 succeeded)",
+        "expected_live_starts": 1,
+        "actual_live_starts": 2,
+        "passed": false,
+        "evidence": [
+          "logs/04-live-console.log",
+          "logs/07-live-console.log",
+          "results/attempt1-failed/live-stage.json",
+          "results/attempt1-failed/run/network/backend_rpc_summary.json",
+          "logs/commands.md"
+        ]
+      },
+      {
+        "id": "V2",
+        "rule": "TASK.md line 224: 前置失败、live机制失败/未完成…保留现场并停止；不补跑",
+        "finding": "after the first live start failed the run was not stopped: another live start and 3 network replays plus analysis followed",
+        "stop_condition_triggered": true,
+        "stop_observed": false,
+        "passed": false,
+        "evidence": [
+          "logs/04-live-console.log",
+          "results/replay-stage-both.json",
+          "results/replay-stage-collective.json",
+          "results/replay-stage-kv.json",
+          "logs/12-analyze.log"
+        ]
+      },
+      {
+        "id": "V3",
+        "rule": "TASK.md line 225: 已经启动的网络阶段不得借脚本修复静默重启；需要返工则先报告",
+        "finding": "the draft hook bug was reproduced/fixed (logs 05/06) after the failed start and the already-started live stage was restarted, without a prior commander report and without REVIEW.md",
+        "prior_report_found": false,
+        "review_md_present": false,
+        "passed": false,
+        "evidence": [
+          "logs/05-static-hook-diag.log",
+          "logs/06-static-hook-diag-fixed.log",
+          "logs/04-live-console.log",
+          "logs/07-live-console.log",
+          "results/attempt1-failed/README.md"
+        ]
+      },
+      {
+        "id": "V4",
+        "rule": "TASK.md line 225: 普通静态脚本错误可在网络开跑前修正并记录",
+        "finding": "original records classified the first live start as a pre-network static error; the 472621 ns simulation time, 12 native registrations and 1 cross-node flow show the network stage had already started, so that exclusion does not apply",
+        "classification_in_original": "pre-network static script error",
+        "classification_corrected": "started network stage that failed",
+        "passed": false,
+        "evidence": [
+          "results/attempt1-failed/README.md",
+          "results/attempt1-failed/run/network/backend_rpc_summary.json",
+          "logs/commands.md",
+          "REPORT.md"
+        ]
+      }
+    ],
+    "budget": {
+      "per_stage_minutes": {
+        "live-baseline": 15.19844132536667,
+        "replay-both": 1.6085971350833348,
+        "replay-collective": 1.4441816662500022,
+        "replay-kv": 0.7822027810333338
+      },
+      "per_stage_caps_min": {
+        "live-baseline": 25.0,
+        "replay-both": 15.0,
+        "replay-collective": 15.0,
+        "replay-kv": 15.0
+      },
+      "per_stage_within_cap": {
+        "live-baseline": true,
+        "replay-both": true,
+        "replay-collective": true,
+        "replay-kv": true
+      },
+      "total_minutes": 19.04733701998334,
+      "total_cap_min": 70.0,
+      "total_within_cap": true,
+      "note": "wall clock alone cannot clear the gate: the failed start is counted in all_starts_total, and start count / stop conditions are judged independently of time."
+    },
+    "note": "A6 must evaluate start count and stop conditions, not only effective-stage wall clock; the failed start also counts toward the aggregate budget."
+  },
+  "budget": {
+    "per_stage_minutes": {
+      "live-baseline": 15.19844132536667,
+      "replay-both": 1.6085971350833348,
+      "replay-collective": 1.4441816662500022,
+      "replay-kv": 0.7822027810333338
+    },
+    "per_stage_caps_min": {
+      "live-baseline": 25.0,
+      "replay-both": 15.0,
+      "replay-collective": 15.0,
+      "replay-kv": 15.0
+    },
+    "per_stage_within_cap": {
+      "live-baseline": true,
+      "replay-both": true,
+      "replay-collective": true,
+      "replay-kv": true
+    },
+    "total_minutes": 19.04733701998334,
+    "total_cap_min": 70.0,
+    "total_within_cap": true,
+    "note": "wall clock alone cannot clear the gate: the failed start is counted in all_starts_total, and start count / stop conditions are judged independently of time."
+  },
+  "failed_scene_preserved": {
+    "path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/attempt1-failed",
+    "package": "artifacts/history/wsl-2026-11-07-task-records/records-full.tar.gz",
+    "note": "complete partial run directory, event links, port intervals, README and logs preserved inside the history package; not modified by this recheck",
+    "resolved_in_task_dir": false
+  },
+  "evidence_location": [
+    {
+      "cited_as": "results/attempt1-failed/live-stage.json",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/attempt1-failed/run/network/backend_rpc_summary.json",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/diagnostic/flows.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/diagnostic/stages.json",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/flow-comparison.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/stage-comparison.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/port-intervals.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/event-links.jsonl",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    }
+  ],
+  "original_records_with_misclassification": [
+    "results/attempt1-failed/README.md",
+    "logs/commands.md",
+    "REPORT.md"
+  ],
+  "no_script_or_evidence_was_altered": true
+}

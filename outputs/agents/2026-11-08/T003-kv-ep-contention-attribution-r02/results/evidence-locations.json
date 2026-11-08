@@ -1,0 +1,70 @@
+{
+  "evidence_class": "WSL historical artifacts verified on server; not new simulations",
+  "archive": "/home/s223/m0nesy/Inference/artifacts/history/wsl-2026-11-07-task-records/records-full.tar.gz",
+  "archive_sha256": "5ea2d7c640e060c32b259a0d8a94f97b758f05b29bf562c11611f8704fc18a8a",
+  "locations": [
+    {
+      "original_relative_path": "results/attempt1-failed/live-stage.json",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/attempt1-failed/live-stage.json",
+      "sha256": "fb8ca34e6452d37fd94e47dec0fce83c95de068ab69a6cb77d4028e7dc781965",
+      "bytes": 295
+    },
+    {
+      "original_relative_path": "results/attempt1-failed/run/network/backend_rpc_summary.json",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/attempt1-failed/run/network/backend_rpc_summary.json",
+      "sha256": "2468085a1987ea038b68c20dc8fb4ef7b90bf1457872a3cfafcf8bc82e4a2628",
+      "bytes": 168
+    },
+    {
+      "original_relative_path": "results/diagnostic/flows.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/flows.csv",
+      "sha256": "0543e2319d2b6d3ff19fae4b1c299dda333cef1dde918ca004b1d448ad8b89d3",
+      "bytes": 14959253
+    },
+    {
+      "original_relative_path": "results/diagnostic/stages.json",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/stages.json",
+      "sha256": "704ae8302c027b27f963639fe42d69f769e04004cf18333d7919edc238d43fe0",
+      "bytes": 8216357
+    },
+    {
+      "original_relative_path": "results/diagnostic/native_schedule.jsonl",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/native_schedule.jsonl",
+      "sha256": "9775962b5b327d9917db47975e176f731b26a293889e5a722add025b2e265338",
+      "bytes": 87352957
+    },
+    {
+      "original_relative_path": "results/flow-comparison.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/flow-comparison.csv",
+      "sha256": "ca3a04424348e7970e9d3aad93d360ac17ca0ca94e982475c0b1448745661da1",
+      "bytes": 28728658
+    },
+    {
+      "original_relative_path": "results/stage-comparison.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/stage-comparison.csv",
+      "sha256": "855a7ea6ff1ae8f0fd24b1ff83b8a35aa1c3373710cb49844ac4804bad457f79",
+      "bytes": 10611536
+    },
+    {
+      "original_relative_path": "results/port-intervals.csv",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/port-intervals.csv",
+      "sha256": "e8ce22de45513e638048b8824f5cddb748d6db3abff805d555dbd4e30d622724",
+      "bytes": 18858029
+    },
+    {
+      "original_relative_path": "results/event-links.jsonl",
+      "server_tracked_copy_exists": false,
+      "resolved_historical_path": "/home/s223/m0nesy/Inference/work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive-audit/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/event-links.jsonl",
+      "sha256": "d785ecf31ad78b873e0d2d44c47ae1a8bb7246be9aac3943f114d1c63558d241",
+      "bytes": 161584432
+    }
+  ]
+}

@@ -1,0 +1,427 @@
+{
+  "tree": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution",
+  "file_count": 84,
+  "tree_sha256": "52fe4a5f4a57fa7874bf57fad00294b26e99bfb26e73dd19faccdf1974ddafe5",
+  "files": [
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/FORWARD.txt",
+      "bytes": 1376,
+      "sha256": "7586baecf1813495df2b94be6bebc674a2523a228d82263227877b04fa85cfc5"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/REPORT.md",
+      "bytes": 17713,
+      "sha256": "964fd132cff554d2902adaca2227c8f38e03982f50bfe19eafb03e5843e5f0dc"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/STATUS.json",
+      "bytes": 576,
+      "sha256": "7c73b50486ffeb7cb8a940a94ee1d26683ad16f84bf853f942678e343ab0b264"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/TASK.md",
+      "bytes": 19705,
+      "sha256": "60970ac5a33a8881738fda811710928f7b94f0e23d79dc286ce682cec5405b77"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/inputs/binding_plan.json",
+      "bytes": 2879,
+      "sha256": "1c59fbfbbf09fd0ed834e73748413a0734d7a963ca5c62fed970658a706445d1"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/inputs/compute_profile.json",
+      "bytes": 578530,
+      "sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/inputs/config.json",
+      "bytes": 7724,
+      "sha256": "4752ff14a63d5625da7d31fc9d89a66cf87d64c6134c7b367c6f297af2d755b7"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/inputs/sample-manifest.json",
+      "bytes": 10429,
+      "sha256": "c1daae927121de7e588233c8e4ca207858b82d2dd4132c4f9e602bc9f048762f"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/inputs/workload.json",
+      "bytes": 2706,
+      "sha256": "bac5a8df2c5f5d74693fe967674ebdc9f27f707264efb13e25dec50c17ec20b4"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/01-prepare-inputs.log",
+      "bytes": 587,
+      "sha256": "e15f1bd3c7ecc7e7516d73d6ca4f3aec41ba738edca3f431e27dc5aa0fd3f6ab"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/02-validate-doctor.log",
+      "bytes": 2951,
+      "sha256": "dcbb64b0d2e93ae12228ae810a6078a296b443d1d27b14dc6f18c51d551fc6d1"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/02a-identity-attempt1-failed.log",
+      "bytes": 2951,
+      "sha256": "dcbb64b0d2e93ae12228ae810a6078a296b443d1d27b14dc6f18c51d551fc6d1"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/03-identity-check.log",
+      "bytes": 569,
+      "sha256": "6df830e9fdab69969aff946bf1c26e8b8403e219a6133548779bf51bf1d979b9"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/04-live-baseline.log",
+      "bytes": 220,
+      "sha256": "772359eaa5613271684841c30f9046958b7044b194730f462af44f9e6dba1037"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/04-live-console.log",
+      "bytes": 302,
+      "sha256": "49e2a67268b6de5c7bb9d8347eb8aa21f55bf3ee37f2acc43383504f83db84e3"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/05-static-hook-diag.log",
+      "bytes": 1617,
+      "sha256": "1d7eb133a33539e2306b4b95a37f72e4e7fbe708d5e44e67c5ba5046940019dd"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/06-static-hook-diag-fixed.log",
+      "bytes": 637,
+      "sha256": "3f2948e597b01dc1693ceaa2c56f8baa9fd27d6b6e8b9e83aff1a6191998b72b"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/07-live-baseline.log",
+      "bytes": 3825,
+      "sha256": "bb59803b93c204fbe257b7d356d7490e4444dd5acf7ee89d6938137bef49e498"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/07-live-console.log",
+      "bytes": 1799,
+      "sha256": "2ef4de4f263972f44caf9ef3a33e82390695ca099c719e68e82095fd58302780"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/08-replay-both-console.log",
+      "bytes": 575,
+      "sha256": "35c339fa57b79e82f8bff142c16c6a2c2339befced3560706ca6570ab253f4f2"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/08-replay-both.log",
+      "bytes": 472,
+      "sha256": "04329083ca3ead28ccd92f8179e9cf67c18031b458e656c5286dac19a20d3693"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/09-fidelity-console.log",
+      "bytes": 158,
+      "sha256": "5e0265afefadfcbc9e281e66f5be95bc2f8a4e61eb8c3090f87fb64cfba15f36"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/09-fidelity.log",
+      "bytes": 142,
+      "sha256": "913fc43e833e739be393d6e5052fb2799256bb38156b41cb6d57d822d66577f7"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/10-replay-collective-console.log",
+      "bytes": 591,
+      "sha256": "b5568d90dec96de318cd2b29d61ca068240de0b7da08cd88bfcb08b3ae4ab0ba"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/10-replay-collective.log",
+      "bytes": 470,
+      "sha256": "902f495530059e2fb8872a4127ba1761bb32d6995deec202529cf86d3b6d5238"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/11-replay-kv-console.log",
+      "bytes": 400,
+      "sha256": "3c2a9e86e1c9318dea953e2a735deb52ccf57bda0bcb7b7c8790525be6002507"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/11-replay-kv.log",
+      "bytes": 303,
+      "sha256": "aa4e7e7a6593f97957d0983c8300b8bab37ecf79f965cfe5628c8e492dca9d23"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/12-analyze-console.log",
+      "bytes": 467,
+      "sha256": "96cf2c627eec881649b120b4270ea1d171f397c9f911c5a622b20266da2eab48"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/12-analyze.log",
+      "bytes": 452,
+      "sha256": "5971195a1e8c530251da1748222874ac7a9d396e8dda86186392596fe3d3b630"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/baseline-status.txt",
+      "bytes": 2882,
+      "sha256": "08c3de8deac9ec57391ba23b3ffa708c6c7b45bb59b8f4e557907cc9bde21d94"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/commands.md",
+      "bytes": 4579,
+      "sha256": "cae7e850daaa15bf0bc6fa148e21fdd646955c94eea59b2afce57cbcaef78645"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/final-status.txt",
+      "bytes": 2882,
+      "sha256": "08c3de8deac9ec57391ba23b3ffa708c6c7b45bb59b8f4e557907cc9bde21d94"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/logs/git-head.txt",
+      "bytes": 41,
+      "sha256": "4e7cfd7cb3114cb78d3ab735840867b455b7b59a9534cce4ed5125b098d890cf"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/acceptance-summary.json",
+      "bytes": 2969,
+      "sha256": "2556977a9040e08793a7ff377359c8761921f27470b7833ce6468837f8ad9dae"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/contention-summary.json",
+      "bytes": 22833,
+      "sha256": "2054304f523e05f216223cad02d8d1f9767f40c128bde60eab13edb1eeafc36d"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/baseline_summary.json",
+      "bytes": 38219,
+      "sha256": "c64aeaef0efd9e38961b39ea827c40d60c39f79bc502ec48aec544ee0f8e3841"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/config.json",
+      "bytes": 7738,
+      "sha256": "9ce5cc40ed07fbf95f4cdc41c3bcd1bb2edeb6c03f651cbd1af870345b54b3fe"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/inputs/source/manifest.json",
+      "bytes": 416039,
+      "sha256": "b5c75f53483b4e9524d1596b5a54a673edb7d732ec768e63869ee54a44656729"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-both/network/backend_metadata.json",
+      "bytes": 698,
+      "sha256": "059ff1fa7e2417286f384f08e1ad52d918bbeff2e13013d51ec031a4061809bd"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-both/network/backend_rpc_summary.json",
+      "bytes": 192,
+      "sha256": "7831b7ad189f5056192a764eff08433bba07fb542abb174b16094a13a4417176"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-both/reproducibility.json",
+      "bytes": 2990,
+      "sha256": "9fdcd3e94d75f207049e669e25a053608bba16b9f72cea453c1332f942eede88"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-both/summary.json",
+      "bytes": 44880,
+      "sha256": "13b170b381ac0246fc591986275f1b44429f428dfaa91ceb09f5f62675feccaf"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-collective/network/backend_metadata.json",
+      "bytes": 698,
+      "sha256": "059ff1fa7e2417286f384f08e1ad52d918bbeff2e13013d51ec031a4061809bd"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-collective/network/backend_rpc_summary.json",
+      "bytes": 192,
+      "sha256": "33f32a919273831c710d1892089bd378046d93d6b637bd0512519351b4cc49d3"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-collective/reproducibility.json",
+      "bytes": 2990,
+      "sha256": "9fdcd3e94d75f207049e669e25a053608bba16b9f72cea453c1332f942eede88"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-collective/summary.json",
+      "bytes": 44716,
+      "sha256": "8d903f5a780b88d46e39a4e3e5bbde0f11d98ef2e2fa92e13d81e991e9e7e5ef"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-kv/network/backend_metadata.json",
+      "bytes": 698,
+      "sha256": "059ff1fa7e2417286f384f08e1ad52d918bbeff2e13013d51ec031a4061809bd"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-kv/network/backend_rpc_summary.json",
+      "bytes": 192,
+      "sha256": "4deb31cfae789e63c307985b2e4d673f1fe3787ee787a4f21d66ca21ff5027ae"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-kv/reproducibility.json",
+      "bytes": 2990,
+      "sha256": "9fdcd3e94d75f207049e669e25a053608bba16b9f72cea453c1332f942eede88"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/replay-kv/summary.json",
+      "bytes": 42950,
+      "sha256": "c32ac67ab404d94daf0adf2ab5e63b4660d69708e08434db43a85225ba39e836"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/binding_plan.json",
+      "bytes": 2879,
+      "sha256": "1c59fbfbbf09fd0ed834e73748413a0734d7a963ca5c62fed970658a706445d1"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/compute_profile.json",
+      "bytes": 578530,
+      "sha256": "374595adf46d7b65bf34eb47e693b41a06dddb9fb1890f093afb013f66f93554"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/config.json",
+      "bytes": 8084,
+      "sha256": "75a7e2d6d40d671c830596d9e780ab19aed1bd19e5fb1c17e60314ee76bdb596"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/decode_batch_summary.json",
+      "bytes": 394,
+      "sha256": "43620742817b290720187c4329a6bccd77e172dc588738109d9720c4f89eccf7"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/events.jsonl",
+      "bytes": 78968,
+      "sha256": "7990c1793ac22e35dd0c90996eca7f32dca25de8a4ff8a5e4d4743134eb35ad5"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/expert_parallel_summary.json",
+      "bytes": 2810,
+      "sha256": "542eb477aabc71b46594d20fda0530945d69684aee82021f6ff8f5a3d766ce10"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/final_resources.json",
+      "bytes": 4441,
+      "sha256": "c1a627f3303bb55bf83607905fcf609ba278b40bbe9407625b8ad9eaed466f45"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/network/backend_metadata.json",
+      "bytes": 698,
+      "sha256": "059ff1fa7e2417286f384f08e1ad52d918bbeff2e13013d51ec031a4061809bd"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/network/backend_rpc_summary.json",
+      "bytes": 191,
+      "sha256": "84f73be9ba65d711bea3aae125826c084d67a428c45846856294dbd98cd71357"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/observation/network_summary.json",
+      "bytes": 94416,
+      "sha256": "3005abdedc015993416bf53aaa30c8af117cc6a1c4b79a33f83a826a5dc6d0bf"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/observation/summary.json",
+      "bytes": 20817,
+      "sha256": "e3719010373dba80730a213e68977c746ab0e41bbb1cd9858911eafab78324a8"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/prefill_batch_summary.json",
+      "bytes": 2779,
+      "sha256": "984faf94df5acb7de4a291fda68a815326f85835ee1cd00e3fa79cdb72dfb1e9"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/prefill_chunk_summary.json",
+      "bytes": 155,
+      "sha256": "9db4ed5c838c3d15e9e3a0ce234a1d26a084eb5ddde96176b5d421dfd2c8d191"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/reproducibility.json",
+      "bytes": 3044,
+      "sha256": "ef1c9cce6d983ef8b83a85bdac11d796a2ecdd005d9d0b2599370630f75b32d4"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/resolved_config.json",
+      "bytes": 9712,
+      "sha256": "e395aecab01317f8a784831dd7d113e073c1e2f4b0909d8cbe69b7d622cc3e65"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/result/requests.csv",
+      "bytes": 2248,
+      "sha256": "10bb87921810df27e4cbcedd3c3a4845da27ea3f661f02a6cd5f23578394e9ee"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/result/summary.json",
+      "bytes": 19073,
+      "sha256": "505fd0ffcd12101e79f26a4ff173383c695db77942c1fe0fdfc029dd28e38a6a"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/result/timeseries.csv",
+      "bytes": 770,
+      "sha256": "8d074392f0f853b25dcaee28385365e2b09e3431dc24f0f8bd526c8289161728"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/result/tokens.csv",
+      "bytes": 34799,
+      "sha256": "e877d141637144df3f12ef7e8d2e6d78d448a263208f0d96965b629e8dc1abef"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/runtime_components.json",
+      "bytes": 1920,
+      "sha256": "7e83741a3a70eb1fd8f76210106b51f494130beae438ad5e8bb2cd554a9ba313"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/diagnostic/run/workload.json",
+      "bytes": 2706,
+      "sha256": "bac5a8df2c5f5d74693fe967674ebdc9f27f707264efb13e25dec50c17ec20b4"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/environment-check.json",
+      "bytes": 1335,
+      "sha256": "4073202a50772c0f6aaaaeb0ad4194090a7227bd1cacadf0fbf02401b3cbbbf8"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/identity-check.json",
+      "bytes": 1217,
+      "sha256": "3bbe4184b4665a12c12030578101959854ea93954b5d8016d0c8d6d089c0f5a0"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/kv-transfer-links.json",
+      "bytes": 351619,
+      "sha256": "7148e3251694d69cf0897302661a688004159de45a4c10c5076ef5ce3d539505"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/live-stage.json",
+      "bytes": 2378,
+      "sha256": "714a7c8349a837282a44ffeb5f128305658ca40831649bc3fdf17bd4582cdd55"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/mechanism-checks.json",
+      "bytes": 4038,
+      "sha256": "513d6a7ba0b54a037a9049bd8650aa2781638f92604e9bde29f62b0b0cbc469b"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/metrics-summary.json",
+      "bytes": 19015,
+      "sha256": "e513c43d3f76a0805ebea5ad0c975f4b59dcdb13584ccff5ab9a38b0e7dfd28f"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/replay-fidelity.json",
+      "bytes": 6234794,
+      "sha256": "6f559c9ee0908fcd9425303e25d76a3d28693ca2143ae3d4c71746449468a8a3"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/replay-inputs-manifest.json",
+      "bytes": 3632,
+      "sha256": "f873699db0cccc0f5264401af449681a790ad73ecb908129ba47b91529264bcf"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/replay-stage-both.json",
+      "bytes": 2359842,
+      "sha256": "f06847e0406ee195d487597ae89d5dad7473e779a4e7eb2b90bb51672cc2dfb2"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/replay-stage-collective.json",
+      "bytes": 2352192,
+      "sha256": "1ebfedcbd5c48e2c0f7d792c12f62d14dc583f9011b20cc062dc935ddf277e31"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/replay-stage-kv.json",
+      "bytes": 56379,
+      "sha256": "6b01de025bfff441a65cc7d62160659bc9652402397c49b0588d2776739c1084"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/request-impact-summary.json",
+      "bytes": 11089,
+      "sha256": "a443d664e448eff81b12fdfc28ef564610999e733fce197bb5067be3af8172a6"
+    },
+    {
+      "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/request-impact.csv",
+      "bytes": 3417,
+      "sha256": "86f4dd69c3958af9e9cb1b87989738d6e74643163453410ee64f21144800ef7d"
+    }
+  ]
+}

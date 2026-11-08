@@ -1,0 +1,11 @@
+{
+  "checks": {
+    "portable_config_identical": true,
+    "profile_workload_bytes_identical": true,
+    "binding_plan_identical": true,
+    "source_and_backend_identities_identical": true
+  },
+  "all_passed": true,
+  "failed_start_excluded_from_completed_trajectory": true,
+  "note": "Same configured experiment; process deviation remains failed. Static comparison only."
+}

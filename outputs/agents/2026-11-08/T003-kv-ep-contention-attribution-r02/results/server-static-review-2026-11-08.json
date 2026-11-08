@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "task_id": "T003-r02",
+  "parent_task": "/home/s223/m0nesy/Inference/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution",
+  "round": "2026-11-08 server static recheck",
+  "evidence_class": "WSL historical evidence re-audited and statically recomputed on the server; no live run, no network replay, no new experiment",
+  "environment": {
+    "host": "s223",
+    "repo": "/home/s223/m0nesy/Inference",
+    "branch": "main",
+    "head": "df0248a1327c41645b00110ff6d260d6f6884587",
+    "python": "3.12.16",
+    "conda_exe": "/home/s223/miniconda3/bin/conda",
+    "utc_start": "2026-11-08T01:17:10Z",
+    "utc_end": null,
+    "git_status_lines_before": 0
+  },
+  "commands": [
+    {
+      "step": 1,
+      "log": "logs/r02-01-archive-audit.log",
+      "command": "export CONDA_EXE=/home/s223/miniconda3/bin/conda; ./scripts/simai-python work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive_audit.py",
+      "exit_code": 0
+    },
+    {
+      "step": 2,
+      "log": "logs/r02-02-static-recompute.log",
+      "command": "export CONDA_EXE=/home/s223/miniconda3/bin/conda; ./scripts/simai-python work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/interference_recompute.py",
+      "exit_code": 0
+    },
+    {
+      "step": 3,
+      "log": "logs/r02-03-acceptance-revision.log",
+      "command": "export CONDA_EXE=/home/s223/miniconda3/bin/conda; ./scripts/simai-python work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/acceptance_revision.py",
+      "exit_code": 3,
+      "exit_code_meaning": "3 = recheck completed and a process deviation was recorded (not a crash)"
+    },
+    {
+      "step": 4,
+      "log": "logs/r02-04-tree-hash-after.log",
+      "command": "./scripts/simai-python work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/t3_tree_hash.py outputs/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/results/t003-original-tree-after.json",
+      "exit_code": 0
+    }
+  ],
+  "scripts": {
+    "archive_audit.py": {
+      "sha256": "3da7945121b334ccc67ee940941a98d9450c067f7b41956137ad4963381b4ff8",
+      "bytes": 4253
+    },
+    "interference_recompute.py": {
+      "sha256": "7ddb58ec79aba212bff34e8dd8dc3f68d179623f2abb8b09f09f4cc702837f90",
+      "bytes": 9447
+    },
+    "acceptance_revision.py": {
+      "sha256": "5339a1ab996de8239578ff6306ff3f6a1b3e621879ce9233e7e894609fbe9d6a",
+      "bytes": 19713
+    },
+    "t3_tree_hash.py": {
+      "sha256": "7125caf5631b84be469cca439e44aa12b5d7c4aed0ab5f6b7dcde7846ed404d7",
+      "bytes": 873
+    },
+    "record_static_review.py": {
+      "sha256": "4782ff8a7c23e6b289dd4dc940f58ffc31c4002619e737df9f1e9587b41361a5",
+      "bytes": 7767
+    }
+  },
+  "archive_audit": {
+    "package": "artifacts/history/wsl-2026-11-07-task-records/records-full.tar.gz",
+    "package_sha256": "5ea2d7c640e060c32b259a0d8a94f97b758f05b29bf562c11611f8704fc18a8a",
+    "package_bytes": 58791704,
+    "package_matches_manifest": true,
+    "manifest_files": 323,
+    "per_file_hash_mismatches": 0,
+    "tracked_snapshot_copies_checked": 262,
+    "tracked_snapshot_mismatches": 0,
+    "audit_passed": true
+  },
+  "static_recomputation": {
+    "passed": true,
+    "flow_rows": 201677,
+    "stage_rows": 64148,
+    "kv_max_added_ns": 144,
+    "ep_max_added_ns": 136,
+    "ep_min_added_ns": -127,
+    "stage_max_added_ns": 9,
+    "stage_nonzero_count": 1,
+    "delta_G_nonzero_count": 0,
+    "final_layer_combine_nonzero_count": 0,
+    "layer3_status": "not_measured"
+  },
+  "acceptance": {
+    "all_passed": false,
+    "process_gate_status": "failed",
+    "live_start_count": 2,
+    "live_start_cap": 1,
+    "violations": [
+      "V1",
+      "V2",
+      "V3",
+      "V4"
+    ],
+    "a6": "failed",
+    "total_minutes": 19.047,
+    "total_within_cap": true
+  },
+  "original_task_tree": {
+    "path": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution",
+    "file_count_before": 84,
+    "file_count_after": 84,
+    "tree_sha256_before": "52fe4a5f4a57fa7874bf57fad00294b26e99bfb26e73dd19faccdf1974ddafe5",
+    "tree_sha256_after": "52fe4a5f4a57fa7874bf57fad00294b26e99bfb26e73dd19faccdf1974ddafe5",
+    "unchanged": true
+  },
+  "simulation_started": false,
+  "simulation_note": "only read-only scripts were executed: hash audit, CSV/JSON recomputation, acceptance re-evaluation and tree hashing; no ns-3 backend, no live baseline, no replay, no new run directory",
+  "git": {
+    "committed": false,
+    "pushed": false,
+    "note": "no commit/push in this round; changes stay in the working tree"
+  },
+  "all_passed": true
+}

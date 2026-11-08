@@ -1,0 +1,3 @@
+{"all_passed": false, "gate": "failed", "violations": 4, "live_starts": 2, "start_markers": ["2026-11-07T19:35:40+0800", "2026-11-07T19:42:41+0800"], "stop_observed": false, "first_sim_ns": 472621, "first_native": 12, "a6": "failed", "rules_all_present": true, "total_minutes": 19.047, "total_within_cap": true}
+ERROR conda.cli.main_run:execute(149): `conda run python work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/acceptance_revision.py` failed. (See above for error)
+EXIT_CODE=3

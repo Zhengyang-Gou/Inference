@@ -1,0 +1,18 @@
+host=s223
+utc_start=2026-11-08T01:17:10Z
+local_start=2026-11-08T09:17:10+08:00
+repo=/home/s223/m0nesy/Inference
+branch=main
+head=df0248a1327c41645b00110ff6d260d6f6884587
+conda_exe=/home/s223/miniconda3/bin/conda
+python=3.12.16
+git_status_lines=0
+--- script hashes ---
+3da7945121b334ccc67ee940941a98d9450c067f7b41956137ad4963381b4ff8  work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/archive_audit.py
+7ddb58ec79aba212bff34e8dd8dc3f68d179623f2abb8b09f09f4cc702837f90  work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/interference_recompute.py
+5339a1ab996de8239578ff6306ff3f6a1b3e621879ce9233e7e894609fbe9d6a  work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/acceptance_revision.py
+7125caf5631b84be469cca439e44aa12b5d7c4aed0ab5f6b7dcde7846ed404d7  work/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/t3_tree_hash.py
+utc_end=2026-11-08T01:17:30Z
+local_end=2026-11-08T09:17:30+08:00
+env_log_rc=0
+--- git status after ---

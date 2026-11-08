@@ -1,0 +1,2 @@
+{"all_passed": true, "kv_max_ns": 144, "kv_positive": 3, "ep_max_ns": 136, "ep_min_ns": -127, "ep_positive": 5, "stage_max_ns": 9, "stage_nonzero": 1, "delta_G_nonzero": 0, "layer3": "not_measured"}
+EXIT_CODE=0

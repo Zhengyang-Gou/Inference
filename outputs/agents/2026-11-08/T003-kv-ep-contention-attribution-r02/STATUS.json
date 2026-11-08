@@ -1,0 +1,27 @@
+{
+  "task_id": "T003-r02",
+  "title": "T003 修复：验收逻辑、研究结论收窄与证据来源（返工补充轮）",
+  "agent": "execution-agent (WorkBuddy)",
+  "status": "accepted",
+  "created_at": "2026-11-08T08:18:22+08:00",
+  "started_at": "2026-11-08T08:18:22+08:00",
+  "updated_at": "2026-11-08T09:41:47+08:00",
+  "parent_task": "outputs/agents/2026-11-07/T003-kv-ep-contention-attribution",
+  "report": "REPORT.md",
+  "scope_record": "SCOPE.md",
+  "acceptance_summary": "results/acceptance-summary.corrected.json",
+  "deviation_register": "results/deviation-register.json",
+  "static_review_record": "results/server-static-review-2026-11-08.json",
+  "conclusion": "r02静态修复accepted；原T003 A6=failed、all_passed=false保留。已复算数据仅按有流程偏离的有限历史诊断采纳。",
+  "notes": "本目录无新 TASK.md：唯一有效需求仍是原 T003 TASK.md。执行 agent 不设置 accepted，不修改 coordination/PROGRESS.md，未提交、未推送。",
+  "submission_conclusion": "检出极弱网络互扰；冻结条件下指定请求边界暴露为零；端到端反事实性能变化未测。A6 failed（live 启动 2 次、失败后未停止、已启动阶段借修复重启），整体 all_passed=false，待指挥裁决。",
+  "reviewed_at": "2026-11-08T09:41:47+08:00",
+  "reviewed_by": "commander",
+  "review": "REVIEW.md",
+  "review_scope": "correction_only",
+  "parent_experiment_acceptance": {
+    "A6": "failed",
+    "all_passed": false,
+    "data_admissibility": "historical diagnostic with recorded process deviations"
+  }
+}

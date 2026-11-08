@@ -1,8 +1,8 @@
 # 研究推进记录
 
-最后整理：2026-11-07。维护人：指挥 agent。这里记录研究状态；任务需求和证据仍以各任务目录原文为准。
+最后整理：2026-11-08。维护人：指挥 agent。这里记录研究状态；任务需求和证据仍以各任务目录原文为准。
 
-**当前停在 T003 已提交、等待指挥审核。T004 尚未发布。** 不能因为执行报告声称 passed 就把 submitted 改成 accepted。
+**当前：T003-r02 静态修复已审核接受；原 T003 的 A6=failed、all_passed=false 保留。历史数据仅按带偏离的诊断证据采纳。T004 尚未发布。** r02 accepted 不表示原执行全部通过。
 
 ## 已确定的研究范围
 
@@ -18,9 +18,10 @@
 | [T002 原轮次](../outputs/agents/2026-11-07/T002-bounded-baseline-validation/TASK.md) | blocked（历史） | 工具环境阻塞；证据保留，后由 r02/r03继续 |
 | [T002-r02](../outputs/agents/2026-11-07/T002-bounded-baseline-validation-r02/REPORT.md) | changes_requested（历史） | 两轮3请求/208token实际跑通；[审核](../outputs/agents/2026-11-07/T002-bounded-baseline-validation-r02/REVIEW.md)要求补三处边界证据，现已由r03补齐 |
 | [T002-r03](../outputs/agents/2026-11-07/T002-bounded-baseline-validation-r03/REPORT.md) | accepted | [审核](../outputs/agents/2026-11-07/T002-bounded-baseline-validation-r03/REVIEW.md)与[合并验收](../outputs/agents/2026-11-07/T002-bounded-baseline-validation-r03/results/acceptance-summary.json)：有界基础链路验收完成；244条KV、3个交接边界、205个Decode token边界复核通过 |
-| [T003 KV/EP竞争归因](../outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/TASK.md) | **submitted，待审** | [执行报告](../outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/REPORT.md)、[状态](../outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/STATUS.json)、[结果汇总](../outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/contention-summary.json)：报告称8请求样本互扰极小、必要边界暴露为0；尚未经指挥独立审核，失败启动与重跑记录也待核对 |
+| [T003 KV/EP竞争归因](../outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/TASK.md) | 原A6 failed，历史原文保留 | 原[报告](../outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/REPORT.md)和submitted状态未改写；原“全部passed”与过度结论被[r02指挥审核](../outputs/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/REVIEW.md)及修订件替代 |
+| [T003-r02静态修复](../outputs/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/REPORT.md) | **accepted（仅修复范围）** | 服务器独立41项检查通过；极弱互扰最大144ns/136ns，指定8个准入门及550个token最终边界暴露0，端到端反事实未测；启动/停止偏离保留；[证据定位](../outputs/agents/2026-11-08/T003-kv-ep-contention-attribution-r02/EVIDENCE_LOCATIONS.md) |
 
-T003 的负结果只是执行方提交的有限样本判断，不能据此关闭整个研究主线，也不构成调度算法收益证据。下一动作是审核 T003；本次归档没有开展审核、重跑或新实验。
+T003的修复审核已完成。经复算确有极弱网络互扰，冻结条件下指定请求边界暴露为零，端到端反事实变化未测。原执行违规不能通过改脚本消除；现数据仅用于有限历史机制诊断，不据此关闭主线或宣称算法收益。当前没有授权重跑、扩大样本或改变冻结条件。
 
 ## 执行环境已迁移
 
@@ -28,7 +29,7 @@ T003 的负结果只是执行方提交的有限样本判断，不能据此关闭
 
 代码迁移检查点 e9b447d 已推送 GitHub。[服务器迁移报告](../outputs/migrations/2026-11-07/server-migration-201527/REPORT.md)和[本轮服务器验证](../outputs/migrations/2026-11-07/server-migration-201527/validation-summary.json)记录18个定向测试通过、12个synthetic smoke请求完成并满足配置SLO；未做完整回归或服务器研究负载实验。
 
-上述 T001～T003 是 **WSL历史研究记录**，原文及输入保持字节不变；复制到服务器/Git不会把它们变为服务器实验。服务器迁移验证是另一组证据。原始报告内旧绝对路径仅用于历史来源说明；新任务使用服务器实际路径和本轮实测。
+上述 T001～T003 原运行是 **WSL历史研究记录**；T003-r02是服务器静态审计，不是新仿真。原任务文件与输入保持字节不变；复制到服务器/Git不会把它们变为服务器实验。服务器迁移验证是另一组证据。原始报告内旧绝对路径仅用于历史来源说明；新任务使用服务器实际路径和本轮实测。
 
 ## 如何找到完整证据
 

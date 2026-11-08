@@ -1,0 +1,2 @@
+{"all_passed": true, "tree_unchanged": true, "audit": true, "recompute": true, "gate": "failed", "codes": {"r02-01-archive-audit": 0, "r02-02-static-recompute": 0, "r02-03-acceptance-revision": 3, "r02-04-tree-hash-after": 0}}
+EXIT_CODE=0

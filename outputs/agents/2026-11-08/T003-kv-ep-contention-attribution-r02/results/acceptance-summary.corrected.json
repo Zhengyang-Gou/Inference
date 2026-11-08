@@ -1,0 +1,346 @@
+{
+  "schema_version": 2,
+  "task_id": "T003-r02",
+  "parent_task": "/home/s223/m0nesy/Inference/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution",
+  "status": "deviation_registered",
+  "all_passed": false,
+  "evidence_class": "WSL historical evidence; server-side read-only static recheck; no new simulation",
+  "original_acceptance": {
+    "path": "/home/s223/m0nesy/Inference/outputs/agents/2026-11-07/T003-kv-ep-contention-attribution/results/acceptance-summary.json",
+    "all_passed": true,
+    "status": "superseded_by_this_correction",
+    "file_preserved_unchanged": true
+  },
+  "rules": {
+    "live_cap_rule": true,
+    "stop_rule": true,
+    "restart_rule": true,
+    "prior_report_rule": true,
+    "static_error_rule": true,
+    "a6_rule": true,
+    "all_rules_present": true
+  },
+  "first_live_start": {
+    "exit_code": 1,
+    "simulation_time_ns": 472621,
+    "native_registrations": 12,
+    "hook_events": 12,
+    "cross_node_flows": 1,
+    "wall_clock_seconds": 0.8348467350000064,
+    "recorded_lifecycle_events": 4,
+    "ep_calls_started": 0,
+    "status": "failed",
+    "error": "'int' object is not subscriptable",
+    "started_at": "2026-11-07T19:35:42+08:00",
+    "is_started_network_stage": true
+  },
+  "second_live_start": {
+    "exit_code": 0,
+    "wall_clock_seconds": 911.9064795220002,
+    "status": "completed",
+    "flows": 201677,
+    "stages": 64148,
+    "native_registrations": 675175
+  },
+  "process_gate": {
+    "status": "failed",
+    "live_start_cap": 1,
+    "live_start_count": 2,
+    "observed_starts": [
+      {
+        "log": "logs/04-live-console.log",
+        "started_at": "2026-11-07T19:35:40+0800",
+        "exit_code": 1
+      },
+      {
+        "log": "logs/07-live-console.log",
+        "started_at": "2026-11-07T19:42:41+0800",
+        "exit_code": 0
+      }
+    ],
+    "failed_live_starts": 1,
+    "first_start_is_started_network_stage": true,
+    "stop_condition_triggered": true,
+    "stop_observed": false,
+    "prior_report_found": false,
+    "review_md_present": false,
+    "violation_count": 4,
+    "violations": [
+      {
+        "id": "V1",
+        "rule": "TASK.md line 224: 启动次数上限=1次live+3次network replay",
+        "finding": "live was started 2 times (first 2026-11-07T19:35:40+0800 failed at sim 472621 ns with 12 native registrations; second 2026-11-07T19:42:41+0800 succeeded)",
+        "expected_live_starts": 1,
+        "actual_live_starts": 2,
+        "passed": false,
+        "evidence": [
+          "logs/04-live-console.log",
+          "logs/07-live-console.log",
+          "results/attempt1-failed/live-stage.json",
+          "results/attempt1-failed/run/network/backend_rpc_summary.json",
+          "logs/commands.md"
+        ]
+      },
+      {
+        "id": "V2",
+        "rule": "TASK.md line 224: 前置失败、live机制失败/未完成…保留现场并停止；不补跑",
+        "finding": "after the first live start failed the run was not stopped: another live start and 3 network replays plus analysis followed",
+        "stop_condition_triggered": true,
+        "stop_observed": false,
+        "passed": false,
+        "evidence": [
+          "logs/04-live-console.log",
+          "results/replay-stage-both.json",
+          "results/replay-stage-collective.json",
+          "results/replay-stage-kv.json",
+          "logs/12-analyze.log"
+        ]
+      },
+      {
+        "id": "V3",
+        "rule": "TASK.md line 225: 已经启动的网络阶段不得借脚本修复静默重启；需要返工则先报告",
+        "finding": "the draft hook bug was reproduced/fixed (logs 05/06) after the failed start and the already-started live stage was restarted, without a prior commander report and without REVIEW.md",
+        "prior_report_found": false,
+        "review_md_present": false,
+        "passed": false,
+        "evidence": [
+          "logs/05-static-hook-diag.log",
+          "logs/06-static-hook-diag-fixed.log",
+          "logs/04-live-console.log",
+          "logs/07-live-console.log",
+          "results/attempt1-failed/README.md"
+        ]
+      },
+      {
+        "id": "V4",
+        "rule": "TASK.md line 225: 普通静态脚本错误可在网络开跑前修正并记录",
+        "finding": "original records classified the first live start as a pre-network static error; the 472621 ns simulation time, 12 native registrations and 1 cross-node flow show the network stage had already started, so that exclusion does not apply",
+        "classification_in_original": "pre-network static script error",
+        "classification_corrected": "started network stage that failed",
+        "passed": false,
+        "evidence": [
+          "results/attempt1-failed/README.md",
+          "results/attempt1-failed/run/network/backend_rpc_summary.json",
+          "logs/commands.md",
+          "REPORT.md"
+        ]
+      }
+    ],
+    "budget": {
+      "per_stage_minutes": {
+        "live-baseline": 15.19844132536667,
+        "replay-both": 1.6085971350833348,
+        "replay-collective": 1.4441816662500022,
+        "replay-kv": 0.7822027810333338
+      },
+      "per_stage_caps_min": {
+        "live-baseline": 25.0,
+        "replay-both": 15.0,
+        "replay-collective": 15.0,
+        "replay-kv": 15.0
+      },
+      "per_stage_within_cap": {
+        "live-baseline": true,
+        "replay-both": true,
+        "replay-collective": true,
+        "replay-kv": true
+      },
+      "total_minutes": 19.04733701998334,
+      "total_cap_min": 70.0,
+      "total_within_cap": true,
+      "note": "wall clock alone cannot clear the gate: the failed start is counted in all_starts_total, and start count / stop conditions are judged independently of time."
+    },
+    "note": "A6 must evaluate start count and stop conditions, not only effective-stage wall clock; the failed start also counts toward the aggregate budget."
+  },
+  "items": [
+    {
+      "id": "A1",
+      "status": "passed",
+      "note": "Frozen identity, 8 request fields, parent binding projection and permitted config diffs were static checks independent of the live run; archive audit confirms historical originals are byte-identical.",
+      "evidence": [
+        "results/identity-check.json",
+        "results/environment-check.json",
+        "inputs/sample-manifest.json",
+        "results/archive-audit.json"
+      ]
+    },
+    {
+      "id": "A2",
+      "status": "passed_with_deviation",
+      "note": "Artifact criteria (8 requests / 550 tokens / 31 mechanism checks / EP audit) are met, but all live evidence comes from the second live start, which violated the start cap and the stop condition. Admissibility requires commander ruling.",
+      "evidence": [
+        "results/mechanism-checks.json",
+        "results/live-stage.json",
+        "results/metrics-summary.json",
+        "results/diagnostic/run"
+      ]
+    },
+    {
+      "id": "A3",
+      "status": "passed_with_deviation",
+      "note": "Both replay drained 201677/201677 with 0 ns ACK/stage error, but its calendar derives from the same out-of-process live start.",
+      "evidence": [
+        "results/replay-fidelity.json",
+        "results/diagnostic/replay-both"
+      ]
+    },
+    {
+      "id": "A4",
+      "status": "passed_with_deviation",
+      "note": "Signed flow/stage deltas and shared-resource evidence are complete and reproducible from the unpacked raw files; provenance is still WSL historical, not a server experiment.",
+      "evidence": [
+        "results/contention-summary.json",
+        "results/flow-comparison.csv",
+        "results/stage-comparison.csv",
+        "results/static-recomputation.json"
+      ]
+    },
+    {
+      "id": "A5",
+      "status": "passed_with_deviation",
+      "note": "8 KV gates and 550 token final-layer combine stages mapped exactly, with zero conditional exposure; end-to-end counterfactual remains not measured.",
+      "evidence": [
+        "results/event-links.jsonl",
+        "results/request-impact.csv",
+        "results/request-impact-summary.json"
+      ]
+    },
+    {
+      "id": "A6",
+      "status": "failed",
+      "note": "Budget and scope are NOT compliant: 2 live starts (cap 1), stop condition after the failed live not observed, already-started network stage restarted after a script fix without a prior commander report. Effective-stage wall clock alone is insufficient; time caps themselves were not exceeded.",
+      "evidence": [
+        "TASK.md",
+        "logs/commands.md",
+        "logs/04-live-console.log",
+        "logs/07-live-console.log",
+        "results/attempt1-failed/",
+        "results/acceptance-summary.json",
+        "REPORT.md"
+      ]
+    }
+  ],
+  "wall_clock_seconds": {
+    "live_failed_start": 0.8348467350000064,
+    "live_valid": 911.9064795220002,
+    "both": 96.51582810500008,
+    "collective": 86.65089997500013,
+    "kv": 46.93216686200003,
+    "effective_stage_total": 1142.0053744640004,
+    "all_starts_total": 1142.8402211990003
+  },
+  "budget": {
+    "per_stage_minutes": {
+      "live-baseline": 15.19844132536667,
+      "replay-both": 1.6085971350833348,
+      "replay-collective": 1.4441816662500022,
+      "replay-kv": 0.7822027810333338
+    },
+    "per_stage_caps_min": {
+      "live-baseline": 25.0,
+      "replay-both": 15.0,
+      "replay-collective": 15.0,
+      "replay-kv": 15.0
+    },
+    "per_stage_within_cap": {
+      "live-baseline": true,
+      "replay-both": true,
+      "replay-collective": true,
+      "replay-kv": true
+    },
+    "total_minutes": 19.04733701998334,
+    "total_cap_min": 70.0,
+    "total_within_cap": true,
+    "note": "wall clock alone cannot clear the gate: the failed start is counted in all_starts_total, and start count / stop conditions are judged independently of time."
+  },
+  "evidence_location": [
+    {
+      "cited_as": "results/attempt1-failed/live-stage.json",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/attempt1-failed/run/network/backend_rpc_summary.json",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/diagnostic/flows.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/diagnostic/stages.json",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/flow-comparison.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/stage-comparison.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/port-intervals.csv",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    },
+    {
+      "cited_as": "results/event-links.jsonl",
+      "present_in_task_dir": false,
+      "present_in_history_package": true,
+      "tracked_in_git_snapshot": false,
+      "resolves_without_unpacking": false
+    }
+  ],
+  "documentation_findings": {
+    "D1": {
+      "finding": "原 REPORT 称首轮现场完整保留于 results/attempt1-failed/，但该目录不在 Git 快照也不在服务器任务目录内，只存在于完整历史包中；引用路径须先解包才可解析。",
+      "impact": "不影响证据存在性；影响审核可解析性与 REPORT 引用的准确性。",
+      "action": "已在 r02 报告中给出包内绝对路径、ARCHIVE.json 条目与 SHA256。"
+    },
+    "D2": {
+      "finding": "REPORT 引用的 results/diagnostic/flows.csv、stages.json、native_schedule.jsonl 同样仅存在于完整历史包，ARCHIVE.json 记 tracked_snapshot=false。",
+      "impact": "逐流/逐阶段复算必须先解包；本轮已在独立目录解包并逐文件核对哈希。",
+      "action": "复算脚本只读 archive-audit 解包副本，不写回任务目录。"
+    },
+    "D3": {
+      "finding": "logs/commands.md 把首次 live 记为“静态草稿失败启动”并称“无补跑”，同时在同一节记录 472621 ns、12 条 native 注册；表述与自身证据矛盾，且表格编号与时间顺序不一致（#7/#8 修复晚于 #9 启动）。",
+      "impact": "原验收据此把失败启动排除在判定外，导致 A6 误判 passed。",
+      "action": "已在 V4 登记，并在修正验收中改为按启动次数与停止条件判定。"
+    }
+  },
+  "ns3_simulation_time_limit_seconds": 30.0,
+  "mechanism_checks_passed": true,
+  "replay_fidelity_passed": true,
+  "layer3_status": "not_measured",
+  "limitations": [
+    "8 requests, all batches size 1; single seed 7; estimated profile and synthetic routing; artificial SLO.",
+    "End-to-end counterfactual SLO/goodput change not measured.",
+    "This recheck did not run live, replay, or any long experiment; it cannot upgrade WSL evidence to a server experiment."
+  ],
+  "commander_decisions": [
+    "Whether the T003 evidence chain is admissible despite 2 live starts and the unobserved stop condition.",
+    "Whether to require a fresh, budget-compliant rework (new task number or -r03 directory) on the server.",
+    "Whether to accept the narrowed research conclusion and how to record it in PROGRESS.md (commander-owned; execution agent did not edit it).",
+    "Whether the citation gap (raw evidence only inside the history package) needs a REPORT erratum."
+  ]
+}
